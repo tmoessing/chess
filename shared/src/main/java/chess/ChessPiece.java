@@ -1,5 +1,7 @@
 package chess;
 
+import chess.movement.PieceMoveCalculator;
+
 import java.util.Collection;
 
 /**
@@ -10,7 +12,12 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -28,15 +35,15 @@ public class ChessPiece {
     /**
      * @return Which team this chess piece belongs to
      */
-    public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+    public ChessGame.TeamColor getTeamColor(){
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -47,6 +54,12 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        //Calculate Moves
+        PieceMoveCalculator possible_moves_object = new PieceMoveCalculator(this, myPosition);
+        possible_moves_object.calculate();
+
+        // Set Moves and Return
+        Collection<ChessMove> moveCollection = possible_moves_object.collection_of_possible_moves;
+        return moveCollection;
     }
 }
