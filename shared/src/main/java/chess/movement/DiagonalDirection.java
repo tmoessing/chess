@@ -9,13 +9,13 @@ import java.util.Collection;
 public class DiagonalDirection {
     public Collection<ChessMove> moveCollection;
     private ChessPosition startPosition;
-    private ChessPiece.PieceType chessPieceType;
     private ChessPiece.PieceType promotionPieceType = null;
+    private int moveLimit;
 
-    public DiagonalDirection(Collection<ChessMove> moveCollection,ChessPosition startPosition, ChessPiece chessPiece) {
+    public DiagonalDirection(Collection<ChessMove> moveCollection,ChessPosition startPosition, int moveLimit) {
         this.moveCollection = moveCollection;
         this.startPosition = startPosition;
-        this.chessPieceType = chessPiece.getPieceType();
+        this.moveLimit = moveLimit;
     }
 
     public void calculate_all_diagonal_moves() {
@@ -29,8 +29,9 @@ public class DiagonalDirection {
         boolean in_bounds = true;
         int y_row = startPosition.getRow();
         int x_col = startPosition.getColumn();
+        int moveCounter = 0;
 
-        while (in_bounds) {
+        while (in_bounds & (moveCounter < moveLimit)) {
             //Create Possible Position
             y_row = y_row + 1;
             x_col = x_col + 1;
@@ -42,6 +43,7 @@ public class DiagonalDirection {
             } else {
                 ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
                 moveCollection.add(possible_move);
+                moveCounter++;
             }
         }
     }
@@ -49,8 +51,9 @@ public class DiagonalDirection {
         boolean in_bounds = true;
         int y_row = startPosition.getRow();
         int x_col = startPosition.getColumn();
+        int moveCounter = 0;
 
-        while (in_bounds) {
+        while (in_bounds & (moveCounter < moveLimit)) {
             //Create Possible Position
             y_row = y_row - 1;
             x_col = x_col - 1;
@@ -63,6 +66,7 @@ public class DiagonalDirection {
             else {
                 ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
                 moveCollection.add(possible_move);
+                moveCounter++;
             }
         }
     }
@@ -70,8 +74,9 @@ public class DiagonalDirection {
         boolean in_bounds = true;
         int y_row = startPosition.getRow();
         int x_col = startPosition.getColumn();
+        int moveCounter = 0;
 
-        while (in_bounds) {
+        while (in_bounds & (moveCounter < moveLimit)) {
             //Create Possible Position
             y_row = y_row + 1;
             x_col = x_col - 1;
@@ -84,6 +89,7 @@ public class DiagonalDirection {
             else {
                 ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
                 moveCollection.add(possible_move);
+                moveCounter++;
             }
         }
     }
@@ -91,8 +97,9 @@ public class DiagonalDirection {
         boolean in_bounds = true;
         int y_row = startPosition.getRow();
         int x_col = startPosition.getColumn();
+        int moveCounter = 0;
 
-        while (in_bounds) {
+        while (in_bounds & (moveCounter < moveLimit)) {
             //Create Possible Position
             y_row = y_row - 1;
             x_col = x_col + 1;
@@ -105,6 +112,7 @@ public class DiagonalDirection {
             else {
                 ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
                 moveCollection.add(possible_move);
+                moveCounter++;
             }
         }
     }
