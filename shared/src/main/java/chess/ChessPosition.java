@@ -38,7 +38,7 @@ public class ChessPosition {
     }
     @Override
     public int hashCode() {
-        return this.row * this.col;
+        return (this.row * this.row) - this.col;
     }
     /**
      * @return which row this position is in

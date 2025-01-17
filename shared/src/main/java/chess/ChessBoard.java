@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.*;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -12,6 +14,23 @@ public class ChessBoard {
 
     public ChessBoard() {
         
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (board[row][col] != null) {
+                    sb.append("|").append(board[row][col]);
+                } else {
+                    sb.append("| ");
+                }
+            }
+            sb.append("|\n");
+        }
+        return sb.toString();
     }
 
     /**
@@ -45,6 +64,41 @@ public class ChessBoard {
      */
     public void resetBoard() {
         this.board = new ChessPiece[8][8];
+        List<Integer> rookCols = List.of(0, 7);
+        List<Integer> knightCols = List.of(1,6);
+        List<Integer> bishopCols = List.of(2, 5);
+
+        // Set Pawns
+        for (int col = 0; col < 8; col++) {
+            board[1][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            board[6][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        }
+
+        // Set Rooks
+        for (int rook_col_num : rookCols) {
+            board[0][rook_col_num] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+            board[7][rook_col_num] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        }
+
+        // Set Knights
+        for (int knight_col_num : knightCols) {
+            board[0][knight_col_num] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+            board[7][knight_col_num] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        }
+
+        // Set Bishops
+        for (int bishop_col_num : bishopCols) {
+            board[0][bishop_col_num] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+            board[7][bishop_col_num] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        }
+
+        // Set Queens and Kings
+        board[0][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        board[0][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+
+        board[7][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        board[7][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+
 
     }
 }

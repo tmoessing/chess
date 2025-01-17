@@ -46,13 +46,13 @@ public class ChessMove {
     @Override
     public int hashCode() {
         int hash = (this.startPosition.hashCode() * this.endPosition.hashCode());
-
         if (this.promotionPiece != null) {
             return hash + this.promotionPiece.hashCode();
         } else {
             return hash+1;
         }
     }
+
     /**
      * @return ChessPosition of starting location
      */

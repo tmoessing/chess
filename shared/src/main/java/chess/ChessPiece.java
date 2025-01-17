@@ -2,7 +2,7 @@ package chess;
 
 import chess.movement.PieceMoveCalculator;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -21,6 +21,17 @@ public class ChessPiece {
     }
 
     @Override
+    public String toString() {
+        Map<PieceType, Character> pieceMap = Map.of(PieceType.PAWN, 'p', PieceType.KNIGHT, 'n', PieceType.ROOK, 'r', PieceType.QUEEN, 'q', PieceType.KING, 'k', PieceType.BISHOP, 'b');
+        Character toPrint = pieceMap.get(type);
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
+            return String.format("%s", toPrint);
+        } else {
+            return String.format("%s", Character.toUpperCase(toPrint));
+        }
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -29,15 +40,12 @@ public class ChessPiece {
         } if (this.getClass() != obj.getClass()) {
             return false;
         }
-
         ChessPiece cp = (ChessPiece) obj;
-
         return this.pieceColor == cp.pieceColor && this.type == cp.type;
     }
 
     @Override
     public int hashCode() {
-
         return this.pieceColor.hashCode() + this.type.hashCode();
     }
 
