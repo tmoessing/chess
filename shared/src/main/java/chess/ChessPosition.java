@@ -15,10 +15,31 @@ public class ChessPosition {
         this.row = row;
         this.col = col;
     }
+
     @Override
     public String toString() {
         return String.format("(%d,%d)", this.row, this.col);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        ChessPosition cp = (ChessPosition) obj;
+
+        return (this.row == cp.row && this.col == cp.col);
+    }
+//    @Override
+//    public int hashCode() {
+//        return this
+//    }
     /**
      * @return which row this position is in
      * 1 codes for the bottom row

@@ -20,6 +20,26 @@ public class ChessPiece {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } if (this == obj) {
+            return true;
+        } if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        ChessPiece cp = (ChessPiece) obj;
+
+        return this.pieceColor == cp.pieceColor && this.type == cp.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.pieceColor.hashCode() + this.type.hashCode();
+    }
+
     /**
      * The various different chess piece options
      */
@@ -59,7 +79,7 @@ public class ChessPiece {
         possible_moves_object.calculate();
 
         // Set Moves and Return
-        Collection<ChessMove> moveCollection = possible_moves_object.collection_of_possible_moves;
+        Collection<ChessMove> moveCollection = possible_moves_object.moveCollection;
         return moveCollection;
     }
 }
