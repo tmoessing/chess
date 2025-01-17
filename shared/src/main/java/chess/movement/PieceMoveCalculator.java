@@ -37,13 +37,15 @@ public class PieceMoveCalculator {
             //   Horizontal and Vertical
         }
         else if (chessPieceType == ChessPiece.PieceType.BISHOP) {
-                DiagonalDirection calculateMoves = new DiagonalDirection(this.moveCollection, this.myPosition, 100);
-                calculateMoves.calculate_all_diagonal_moves();
-                this.moveCollection = calculateMoves.moveCollection;
+            DiagonalDirection calculateMoves = new DiagonalDirection(this.moveCollection, this.myPosition, 100);
+            calculateMoves.calculate_all_diagonal_moves();
+            this.moveCollection = calculateMoves.moveCollection;
 
         }
-//        else if (chess_piece == ChessPiece.PieceType.KNIGHT) {
-//
-//        }
+        else if (chessPieceType == ChessPiece.PieceType.KNIGHT) {
+            LShapedDirection calculateMoves = new LShapedDirection(this.moveCollection, this.myPosition);
+            calculateMoves.calculate_lshaped_moves();
+            this.moveCollection = calculateMoves.moveCollection;
+        }
     }
 }
