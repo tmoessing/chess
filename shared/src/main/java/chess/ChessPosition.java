@@ -36,10 +36,10 @@ public class ChessPosition {
 
         return (this.row == cp.row && this.col == cp.col);
     }
-//    @Override
-//    public int hashCode() {
-//        return this
-//    }
+    @Override
+    public int hashCode() {
+        return this.row * this.col;
+    }
     /**
      * @return which row this position is in
      * 1 codes for the bottom row

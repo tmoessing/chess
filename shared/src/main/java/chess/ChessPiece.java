@@ -37,6 +37,7 @@ public class ChessPiece {
 
     @Override
     public int hashCode() {
+
         return this.pieceColor.hashCode() + this.type.hashCode();
     }
 

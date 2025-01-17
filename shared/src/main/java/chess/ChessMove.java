@@ -42,6 +42,17 @@ public class ChessMove {
 
         return this.startPosition.equals(cm.startPosition) && this.endPosition.equals(cm.endPosition) && (this.promotionPiece == cm.promotionPiece);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = (this.startPosition.hashCode() * this.endPosition.hashCode());
+
+        if (this.promotionPiece != null) {
+            return hash + this.promotionPiece.hashCode();
+        } else {
+            return hash+1;
+        }
+    }
     /**
      * @return ChessPosition of starting location
      */
