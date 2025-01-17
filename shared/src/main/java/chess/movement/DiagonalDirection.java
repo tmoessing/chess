@@ -12,108 +12,45 @@ public class DiagonalDirection {
     private ChessPiece.PieceType promotionPieceType = null;
     private int moveLimit;
 
+    // Calculate Variables
+    private boolean in_bounds;
+    private int y_row;
+    private int x_col;
+    private int moveCounter;
+
     public DiagonalDirection(Collection<ChessMove> moveCollection,ChessPosition startPosition, int moveLimit) {
         this.moveCollection = moveCollection;
         this.startPosition = startPosition;
         this.moveLimit = moveLimit;
     }
-
     public void calculate_all_diagonal_moves() {
-        this.upper_right_positions();
-        this.upper_left_positions();
-        this.lower_left_positions();
-        this.lower_right_positions();
+        this.calculate_diagonal_moves(1,1);
+        this.calculate_diagonal_moves(-1, -1);
+        this.calculate_diagonal_moves(1, -1);
+        this.calculate_diagonal_moves(-1, 1);
     }
-
-    public void upper_right_positions() {
-        boolean in_bounds = true;
-        int y_row = startPosition.getRow();
-        int x_col = startPosition.getColumn();
-        int moveCounter = 0;
-
-        while (in_bounds & (moveCounter < moveLimit)) {
-            //Create Possible Position
-            y_row = y_row + 1;
-            x_col = x_col + 1;
-            ChessPosition endPosition = new ChessPosition(y_row, x_col);
-
-            //Check Bounds
-            if (new CheckBounds().verify_out_of_bounds(y_row, x_col)) {
-                in_bounds = false;
-            } else {
-                ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
-                moveCollection.add(possible_move);
-                moveCounter++;
-            }
+    public void restart_loop () {
+        y_row = startPosition.getRow();
+        x_col = startPosition.getColumn();
+        in_bounds = true;
+        moveCounter = 0;
+    }
+    public void calculate_diagonal_moves(int y_row_increment, int x_row_increment) {
+        this.restart_loop();
+        while (in_bounds && moveCounter < moveLimit) {
+            y_row += y_row_increment;
+            x_col += x_row_increment;
+            this.processes_on_coordinate(y_row,x_col);
         }
     }
-    public void lower_left_positions() {
-        boolean in_bounds = true;
-        int y_row = startPosition.getRow();
-        int x_col = startPosition.getColumn();
-        int moveCounter = 0;
-
-        while (in_bounds & (moveCounter < moveLimit)) {
-            //Create Possible Position
-            y_row = y_row - 1;
-            x_col = x_col - 1;
+    public void processes_on_coordinate(int y_row,int x_col) {
+        if (new CheckBounds().verify_out_of_bounds(y_row, x_col)) {
+            this.in_bounds = false;
+        } else {
             ChessPosition endPosition = new ChessPosition(y_row, x_col);
-
-            //Check Bounds
-            if (new CheckBounds().verify_out_of_bounds(y_row, x_col)) {
-                in_bounds = false;
-            }
-            else {
-                ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
-                moveCollection.add(possible_move);
-                moveCounter++;
-            }
-        }
-    }
-    public void upper_left_positions() {
-        boolean in_bounds = true;
-        int y_row = startPosition.getRow();
-        int x_col = startPosition.getColumn();
-        int moveCounter = 0;
-
-        while (in_bounds & (moveCounter < moveLimit)) {
-            //Create Possible Position
-            y_row = y_row + 1;
-            x_col = x_col - 1;
-            ChessPosition endPosition = new ChessPosition(y_row, x_col);
-
-            //Check Bounds
-            if (new CheckBounds().verify_out_of_bounds(y_row, x_col)) {
-                in_bounds = false;
-            }
-            else {
-                ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
-                moveCollection.add(possible_move);
-                moveCounter++;
-            }
-        }
-    }
-    public void lower_right_positions() {
-        boolean in_bounds = true;
-        int y_row = startPosition.getRow();
-        int x_col = startPosition.getColumn();
-        int moveCounter = 0;
-
-        while (in_bounds & (moveCounter < moveLimit)) {
-            //Create Possible Position
-            y_row = y_row - 1;
-            x_col = x_col + 1;
-            ChessPosition endPosition = new ChessPosition(y_row, x_col);
-
-            //Check Bounds
-            if (new CheckBounds().verify_out_of_bounds(y_row, x_col)) {
-                in_bounds = false;
-            }
-            else {
-                ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
-                moveCollection.add(possible_move);
-                moveCounter++;
-            }
+            ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionPieceType);
+            moveCollection.add(possible_move);
+            moveCounter++;
         }
     }
 }
