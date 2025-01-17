@@ -1,5 +1,6 @@
 package chess.movement;
 
+import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -9,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PieceMoveCalculator {
+    private ChessBoard chessBoard;
     public Collection<ChessMove> moveCollection;
     private ChessPiece chessPiece;
     private ChessPosition myPosition;
     private ChessPiece.PieceType chessPieceType;
 
-    public PieceMoveCalculator(ChessPiece chessPiece, ChessPosition myPosition) {
+
+    public PieceMoveCalculator(chess.ChessBoard chessBoard, ChessPiece chessPiece, ChessPosition myPosition) {
+        this.chessBoard = chessBoard;
         this.moveCollection = new ArrayList<ChessMove>();
         this.chessPiece = chessPiece;
         this.myPosition = myPosition;
@@ -33,7 +37,7 @@ public class PieceMoveCalculator {
         } else if (chessPieceType == ChessPiece.PieceType.BISHOP) {
             this.calculate_diagonal_moves(100);
         } else if (chessPieceType == ChessPiece.PieceType.KNIGHT) {
-            LShapedDirection calculateMoves = new LShapedDirection(this.moveCollection, this.myPosition);
+            LShapedDirection calculateMoves = new LShapedDirection(chessBoard, chessPiece, this.moveCollection, this.myPosition);
             calculateMoves.calculate_lshaped_moves();
             this.moveCollection = calculateMoves.moveCollection;
         } else if (chessPieceType == ChessPiece.PieceType.ROOK) {
@@ -45,19 +49,19 @@ public class PieceMoveCalculator {
     }
     public void calculate_diagonal_moves(int moveLimit) {
         // Diagonal
-        DiagonalDirection calculateMoves = new DiagonalDirection(this.moveCollection, this.myPosition, moveLimit);
+        DiagonalDirection calculateMoves = new DiagonalDirection(chessBoard, chessPiece, this.moveCollection, this.myPosition, moveLimit);
         calculateMoves.calculate_all_diagonal_moves();
         this.moveCollection = calculateMoves.moveCollection;
     }
 
     public void calculate_horizontal_moves(int moveLimit) {
-        HorizontalDirection calculateMoves = new HorizontalDirection(this.moveCollection, this.myPosition, moveLimit);
+        HorizontalDirection calculateMoves = new HorizontalDirection(chessBoard, chessPiece, this.moveCollection, this.myPosition, moveLimit);
         calculateMoves.calculate_all_horizontal_moves();
         this.moveCollection = calculateMoves.moveCollection;
     }
 
     public void calculate_vertical_moves(int moveLimit) {
-        VerticalDirection calculateMoves = new VerticalDirection(this.moveCollection, this.myPosition, moveLimit);
+        VerticalDirection calculateMoves = new VerticalDirection(chessBoard, chessPiece, this.moveCollection, this.myPosition, moveLimit);
         calculateMoves.calculate_all_vertical_moves();
         this.moveCollection = calculateMoves.moveCollection;
     }
