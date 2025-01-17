@@ -6,22 +6,16 @@ import chess.ChessPosition;
 
 import java.util.*;
 
-public class LShapedDirection {
-   public Collection<ChessMove> moveCollection;
-   private ChessPosition startPosition;
-   private ChessPiece.PieceType promotionType = null;
-
+public class LShapedDirection extends DirectionCalculator{
 
    public LShapedDirection(Collection<ChessMove> moveCollection, ChessPosition startPosition) {
        this.moveCollection = moveCollection;
        this.startPosition = startPosition;
    }
 
-
-
    public void calculate_lshaped_moves() {
-       int y_row = startPosition.getRow();
-       int x_col = startPosition.getColumn();
+       y_row = startPosition.getRow();
+       x_col = startPosition.getColumn();
 
        List<int[]> lShapedMoves = new ArrayList<>();
        lShapedMoves.add(new int[]{y_row + 2, x_col + 1});
@@ -37,18 +31,7 @@ public class LShapedDirection {
          int[] move = lShapedMoves.get(i);
          int row = move[0];
          int col = move[1];
-         ChessPosition endPosition = new ChessPosition(row, col);
-
-         if (new CheckBounds().verify_out_of_bounds(row, col)) {
-             return;
-         }
-         else {
-             ChessMove possible_move = new ChessMove(startPosition, endPosition, promotionType);
-             moveCollection.add(possible_move);
-         }
+         super.processes_on_coordinate(row, col);
        }
    }
-
-
 }
-
