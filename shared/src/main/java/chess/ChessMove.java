@@ -12,7 +12,7 @@ public class ChessMove {
 
     private ChessPosition startPosition;
     private ChessPosition endPosition;
-    private ChessPiece.PieceType promotionPiece;
+    public ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
@@ -51,6 +51,10 @@ public class ChessMove {
         } else {
             return hash+1;
         }
+    }
+
+    public void setPromotinalPiece(ChessPiece.PieceType promotionPiece) {
+        this.promotionPiece = promotionPiece;
     }
 
     /**

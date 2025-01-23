@@ -20,6 +20,11 @@ public class DiagonalDirection extends DirectionCalculator {
         this.calculate_diagonal_moves(-1, 1);
     }
 
+    public void calculate_all_diagonal_pawn_moves(int direction) {
+            this.calculate_diagonal_moves(direction, 1);
+            this.calculate_diagonal_moves(direction, -1);
+        }
+
     public void calculate_diagonal_moves(int y_row_increment, int x_row_increment) {
         super.restart_loop();
         while (in_bounds && not_blocked && moveCounter < moveLimit) {

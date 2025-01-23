@@ -18,6 +18,10 @@ public class VerticalDirection extends  DirectionCalculator {
       this.calculate_vertical_moves(-1);
    }
 
+   public void calculate_pawn_vertical_moves(int direction){
+        this.calculate_vertical_moves(direction);
+   }
+
    public void calculate_vertical_moves(int y_row_increment){
       super.restart_loop();
       while (in_bounds && not_blocked && moveCounter < moveLimit) {

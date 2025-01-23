@@ -1,11 +1,6 @@
 package chess.movement;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
-import jdk.jshell.Diag;
-
+import chess.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -44,7 +39,7 @@ public class PieceMoveCalculator {
             this.calculate_horizontal_moves(100);
             this.calculate_vertical_moves(100);
         } else if (chessPieceType == ChessPiece.PieceType.PAWN) {
-            // NEED PAWN
+            this.calculate_pawn_moves();
         }
     }
     public void calculate_diagonal_moves(int moveLimit) {
@@ -65,5 +60,39 @@ public class PieceMoveCalculator {
         calculateMoves.calculate_all_vertical_moves();
         this.moveCollection = calculateMoves.moveCollection;
     }
+    public void calculate_pawn_moves() {
+        int move_limit;
+        int direction;
+        boolean promotion = false;
 
+        // Deal with Promotion
+        if (this.myPosition.getRow() == 7 && chessPiece.pieceColor == ChessGame.TeamColor.WHITE) {
+            promotion = true;
+        } else if (this.myPosition.getRow() == 2 && chessPiece.pieceColor == ChessGame.TeamColor.BLACK)
+        {promotion = true;}
+
+        // Deal with Starting Row
+        if (this.myPosition.getRow() == 2 && chessPiece.pieceColor == ChessGame.TeamColor.WHITE) {
+            move_limit = 2;
+        } else if (this.myPosition.getRow() == 7 && chessPiece.pieceColor == ChessGame.TeamColor.BLACK) {
+            move_limit = 2;}
+        else {move_limit = 1;}
+
+        // Deal with forward or backward
+        if (chessPiece.pieceColor == ChessGame.TeamColor.WHITE) {direction = 1;} else {direction = -1;}
+
+        // Vertical Movements
+        VerticalDirection verticalMove = new VerticalDirection(chessBoard, chessPiece, moveCollection, this.myPosition, move_limit);
+        if (promotion) {verticalMove.promotion = true;}
+        verticalMove.calculate_pawn_vertical_moves(direction);
+
+        // Diagonal Movements
+        move_limit = 1;
+        DiagonalDirection diagonalDirection = new DiagonalDirection(chessBoard, chessPiece, moveCollection, this.myPosition, move_limit);
+        //  Set Pawn Specifcs
+        if (promotion) {diagonalDirection.promotion = true;}
+        diagonalDirection.diagonal_attack = true;
+
+        diagonalDirection.calculate_all_diagonal_pawn_moves(direction);
+    }
 }
