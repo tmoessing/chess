@@ -2,7 +2,8 @@ package chess;
 
 import chess.movement.PieceMoveCalculator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,42 +12,34 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private ChessGame.TeamColor pieceColor;
+    private PieceType type;
 
-    public final ChessGame.TeamColor pieceColor;
-    private final PieceType type;
-
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public void setPieceColor(ChessGame.TeamColor pieceColor) {
         this.pieceColor = pieceColor;
+    }
+
+    public void setType(PieceType type) {
         this.type = type;
     }
 
     @Override
-    public String toString() {
-        Map<PieceType, Character> pieceMap = Map.of(PieceType.PAWN, 'p', PieceType.KNIGHT, 'n', PieceType.ROOK, 'r', PieceType.QUEEN, 'q', PieceType.KING, 'k', PieceType.BISHOP, 'b');
-        Character toPrint = pieceMap.get(type);
-        if (pieceColor == ChessGame.TeamColor.BLACK) {
-            return String.format("%s", toPrint);
-        } else {
-            return String.format("%s", Character.toUpperCase(toPrint));
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        } if (this == obj) {
-            return true;
-        } if (this.getClass() != obj.getClass()) {
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ChessPiece cp = (ChessPiece) obj;
-        return this.pieceColor == cp.pieceColor && this.type == cp.type;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return this.pieceColor.hashCode() + this.type.hashCode();
+        return Objects.hash(pieceColor, type);
+    }
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
+        setPieceColor(pieceColor);
+        setType(type);
     }
 
     /**
@@ -64,15 +57,15 @@ public class ChessPiece {
     /**
      * @return Which team this chess piece belongs to
      */
-    public ChessGame.TeamColor getTeamColor(){
-        return pieceColor;
+    public ChessGame.TeamColor getTeamColor() {
+        return this.pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return type;
+        return this.type;
     }
 
     /**
@@ -83,12 +76,8 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        //Calculate Moves
-        PieceMoveCalculator possible_moves_object = new PieceMoveCalculator(board, this, myPosition);
-        possible_moves_object.calculate();
-
-        // Set Moves and Return
-        Collection<ChessMove> moveCollection = possible_moves_object.moveCollection;
-        return moveCollection;
+        PieceMoveCalculator moveCalculator = new PieceMoveCalculator(this, board, myPosition);
+        moveCalculator.calculate_moves();
+        return moveCalculator.getChessMoveCollection();
     }
 }

@@ -21,17 +21,12 @@ public class ChessBoard {
         return Objects.deepEquals(board, that.board);
     }
 
-
-    public ChessBoard() {
-        
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = -1; row < 8; row++) {
+            for (int col = -1; col < 8; col++) {
                 if (board[row][col] != null) {
                     sb.append("|").append(board[row][col]);
                 } else {
@@ -43,6 +38,10 @@ public class ChessBoard {
         return sb.toString();
     }
 
+    public ChessBoard() {
+
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -50,9 +49,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        int row = 8-position.getRow();
-        int column = position.getColumn()-1;
-        board[row][column] = piece;
+        int y_row = 8-position.getRow();
+        int x_col = position.getColumn()-1;
+        board[y_row][x_col] = piece;
     }
 
     /**
@@ -63,9 +62,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        int row = 8-position.getRow();
-        int column = position.getColumn()-1;
-        return board[row][column];
+        int y_row = 8-position.getRow();
+        int x_col = position.getColumn()-1;
+        return board[y_row][x_col];
     }
 
     /**

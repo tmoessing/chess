@@ -1,36 +1,46 @@
 package chess.movement;
 
-import chess.*;
-import java.util.*;
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
+import java.util.Collection;
 
 public class DiagonalDirection extends DirectionCalculator {
 
-    public DiagonalDirection(ChessBoard chessBoard, ChessPiece chessPiece, Collection<ChessMove> moveCollection, ChessPosition startPosition, int moveLimit) {
-        this.chessBoard = chessBoard;
-        this.chessPiece = chessPiece;
-        this.moveCollection = moveCollection;
-        this.startPosition = startPosition;
-        this.moveLimit = moveLimit;
+    public DiagonalDirection(Collection<ChessMove> chessMoveCollection, ChessPiece chessPiece, ChessBoard chessBoard, ChessPosition chessPosition){
+        super(chessMoveCollection,chessPiece,chessBoard,chessPosition);
     }
 
-    public void calculate_all_diagonal_moves() {
+    public void calculate_moves(int moveLimit){
+        this.moveLimit = moveLimit;
         this.calculate_diagonal_moves(1, 1);
         this.calculate_diagonal_moves(-1, -1);
-        this.calculate_diagonal_moves(1, -1);
         this.calculate_diagonal_moves(-1, 1);
+        this.calculate_diagonal_moves(1, -1);
     }
 
-    public void calculate_all_diagonal_pawn_moves(int direction) {
-            this.calculate_diagonal_moves(direction, 1);
-            this.calculate_diagonal_moves(direction, -1);
-        }
+    public void calculate_pawn_moves(int moveLimit, boolean promotion, int direction){
+        this.moveLimit = moveLimit;
+        this.promotion = promotion;
+        this.direction = direction;
+        this.diagonal = true;
+        this.calculate_diagonal_moves(direction, 1);
+        this.calculate_diagonal_moves(direction, -1);
+    }
 
-    public void calculate_diagonal_moves(int y_row_increment, int x_row_increment) {
-        super.restart_loop();
-        while (in_bounds && not_blocked && moveCounter < moveLimit) {
-            y_row += y_row_increment;
-            x_col += x_row_increment;
-            super.processes_on_coordinate(y_row, x_col);
+    public void calculate_diagonal_moves(int y_row_i, int x_col_i){
+        super.set_loop();
+        int y_row = this.chessPosition.getRow();
+        int x_col = this.chessPosition.getCol();
+
+        while (in_bounds & not_blocked & (moveCounter < moveLimit)){
+            y_row += y_row_i;
+            x_col += x_col_i;
+
+            ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
+            super.handle_possible_move(this.chessPosition, possiblePosition);
         }
     }
 }

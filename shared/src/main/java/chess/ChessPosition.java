@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Objects;
+
 /**
  * Represents a single square position on a chess board
  * <p>
@@ -7,45 +9,51 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessPosition {
+    private int row;
+    private int col;
 
-    private final int row;
-    private final int col;
-
-    public ChessPosition(int row, int col) {
+    public void setRow(int row) {
         this.row = row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(int col) {
         this.col = col;
     }
 
     @Override
-    public String toString() {
-        return String.format("(%d,%d)", this.row, this.col);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (this == obj) {
-            return true;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        ChessPosition cp = (ChessPosition) obj;
-
-        return (this.row == cp.row && this.col == cp.col);
+        ChessPosition that = (ChessPosition) o;
+        return row == that.row && col == that.col;
     }
+
     @Override
     public int hashCode() {
-        return (this.row * this.row) - this.col;
+        return Objects.hash(row, col);
     }
+
+    @Override
+    public String toString() {
+        return "(" + row + "," + col + ')';
+    }
+
+    public ChessPosition(int row, int col) {
+        setRow(row);
+        setCol(col);
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
      */
     public int getRow() {
-      return row;
+        return this.row;
     }
 
     /**
@@ -53,6 +61,6 @@ public class ChessPosition {
      * 1 codes for the left row
      */
     public int getColumn() {
-        return col;
+        return this.col;
     }
 }

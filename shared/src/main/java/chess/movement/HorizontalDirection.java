@@ -1,28 +1,35 @@
 package chess.movement;
 
-import chess.*;
-import java.util.*;
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
-public class HorizontalDirection extends DirectionCalculator {
+import java.util.Collection;
 
-    public HorizontalDirection(ChessBoard chessBoard, ChessPiece chessPiece, Collection<ChessMove> moveCollection, ChessPosition startPosition, int moveLimit ) {
-        this.chessBoard = chessBoard;
-        this.chessPiece = chessPiece;
-        this.startPosition = startPosition;
-        this.moveCollection = moveCollection;
-        this.moveLimit = moveLimit;
+public class HorizontalDirection extends  DirectionCalculator{
+
+    public HorizontalDirection(Collection<ChessMove> chessMoveCollection, ChessPiece chessPiece, ChessBoard chessBoard, ChessPosition chessPosition){
+        super(chessMoveCollection,chessPiece,chessBoard,chessPosition);
     }
 
-    public void calculate_all_horizontal_moves(){
-        this.calculate_horizontal_moves(1);
+    public void calculate_moves(int moveLimit){
+        this.moveLimit = moveLimit;
+        this.calculate_horizontal_moves( 1);
         this.calculate_horizontal_moves(-1);
     }
 
-    public void calculate_horizontal_moves(int x_col_increment) {
-        super.restart_loop();
-        while (in_bounds && not_blocked && moveCounter < moveLimit) {
-            x_col += x_col_increment;
-            super.processes_on_coordinate(y_row, x_col);
+
+    public void calculate_horizontal_moves(int x_col_i){
+        super.set_loop();
+        int y_row = this.chessPosition.getRow();
+        int x_col = this.chessPosition.getCol();
+
+        while (in_bounds & not_blocked & (moveCounter < moveLimit)){
+            x_col += x_col_i;
+
+            ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
+            super.handle_possible_move(this.chessPosition, possiblePosition);
         }
     }
 }
