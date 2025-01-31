@@ -10,15 +10,14 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    public ChessGame() {
-
-    }
+    private ChessBoard chessBoard;
+    private TeamColor currentTurn;
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return currentTurn;
     }
 
     /**
@@ -27,8 +26,32 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        this.currentTurn = team;
     }
+
+    /**
+     * Sets this game's chessboard with a given board
+     *
+     * @param board the new board to use
+     */
+    public void setBoard(ChessBoard board) {
+        this.chessBoard = board;
+    }
+
+    /**
+     * Gets the current chessboard
+     *
+     * @return the chessboard
+     */
+    public ChessBoard getBoard() {
+        return this.chessBoard;
+    }
+
+    public ChessGame() {
+
+    }
+
+
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -46,7 +69,9 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
+        Collection<ChessMove> chessPieceValidMoves = chessPiece.pieceMoves(this.chessBoard, startPosition);
+        return chessPieceValidMoves;
     }
 
     /**
@@ -56,7 +81,31 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
+        ChessPiece.PieceType chessPiecePromotion = move.getPromotionPiece();
+        Collection<ChessMove> chessMoveCollection = validMoves(startPosition);
+
+        if (chessPiece.getTeamColor() != this.currentTurn) {
+            throw new InvalidMoveException("It is the other color's turn");
+        }
+
+        // Make Move
+        if (chessMoveCollection.contains(move)) {
+            this.chessBoard.addPiece(startPosition, null);
+
+            // Handle Pawn Promotion
+            if (chessPiecePromotion != null) {
+                chessPiece = new ChessPiece(chessPiece.getTeamColor(), chessPiecePromotion);
+            }
+
+            this.chessBoard.addPiece(endPosition, chessPiece);
+            setTeamTurn();
+        } else {
+            throw new InvalidMoveException();
+        }
+
     }
 
     /**
@@ -90,21 +139,4 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 
-    /**
-     * Sets this game's chessboard with a given board
-     *
-     * @param board the new board to use
-     */
-    public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    /**
-     * Gets the current chessboard
-     *
-     * @return the chessboard
-     */
-    public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
-    }
 }
