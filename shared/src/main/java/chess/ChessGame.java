@@ -17,6 +17,15 @@ public class ChessGame {
     private Map<String, ChessPosition> chessWMap = new HashMap<>();
     private TeamColor currentTurn;
 
+    // Castling Variables
+    private boolean whiteKingMoved = false;
+    private boolean whiteRRookMoved = false;
+    private boolean whiteLRookMoved = false;
+    private boolean blackKingMoved = false;
+    private boolean blackRRookMoved = false;
+    private boolean blackLRookMoved = false;
+
+    // EnPassant Variables
     private ChessMove lastChessMove;
 
     /**
@@ -223,8 +232,29 @@ public class ChessGame {
 
     }
 
-    public void canEnPassant(){
+    public void updateCastlingVariables(ChessMove lastChessMove) {
+        ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
+        if (!whiteKingMoved && (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.KING) && (lastChessPieceMoved.getTeamColor() == TeamColor.WHITE)) {
+            whiteKingMoved = true;
+        } else if (!blackKingMoved && (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.KING) && (lastChessPieceMoved.getTeamColor() == TeamColor.BLACK)) {
+            blackKingMoved = true;
+        }
+    }
 
+    public boolean canEnPassant(){
+        ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
+        if (lastChessPieceMoved.getPieceType() != ChessPiece.PieceType.PAWN) {
+            return false;
+        } else {
+            //Check if Pawn Moved Forward Twice
+            if ((lastChessPieceMoved.getTeamColor() == TeamColor.WHITE) && (this.lastChessMove.getStartPosition().getRow() == 2) && (this.lastChessMove.getEndPosition().getRow() == 4)) {
+                return true;
+            } else if ((lastChessPieceMoved.getTeamColor() == TeamColor.BLACK) && (this.lastChessMove.getStartPosition().getRow() == 7) && (this.lastChessMove.getEndPosition().getRow() == 5)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
 }
