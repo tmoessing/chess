@@ -170,15 +170,12 @@ public class ChessGame {
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
         ChessPiece chessPieceObject = this.chessBoard.getPiece(startPosition);
+        // Make sure piece exists in location
+        if (chessPieceObject == null){throw new InvalidMoveException("No piece is start position");}
         ChessPiece.PieceType chessPiece = chessPieceObject.getPieceType();
         TeamColor chessPieceColor = chessPieceObject.getTeamColor();
         ChessPiece.PieceType chessPiecePromotion = move.getPromotionPiece();
         Collection<ChessMove> chessMoveCollection = validMoves(startPosition);
-
-        // Make sure piece exists in location
-//        if (chessPieceObject == null){
-//            throw new InvalidMoveException("No piece is start position");
-//        }
 
         // Check Right Color Piece is moving
         if (chessPieceColor != this.currentTurn) {
