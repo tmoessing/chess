@@ -97,9 +97,6 @@ public class ChessGame {
 
                 // Get Piece Color
                 TeamColor chessPieceColor = chessPiece.getTeamColor();
-                if (chessPieceColor != teamColor) {
-                    continue;
-                }
 
                 // Update King Position
                 if (chessPieceColor == TeamColor.WHITE && chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
@@ -107,6 +104,13 @@ public class ChessGame {
                 } else if (chessPieceColor == TeamColor.BLACK && chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
                     this.blackKing = indexChessPosition;
                 }
+
+                // Continue if piece isn't color requested
+                if (chessPieceColor != teamColor) {
+                    continue;
+                }
+
+
 
                 // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
                 Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
@@ -130,20 +134,26 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
-        Collection<ChessMove> chessMoveCollection = chessPiece.pieceMoves(this.chessBoard, startPosition);
-        Collection<ChessMove> chessMoveCollectionNew = new ArrayList<ChessMove>();
+        TeamColor chessPieceColor = chessPiece.getTeamColor();
+        Collection<ChessMove> validTeamColorChessMovesCollection = chessPiece.pieceMoves(this.chessBoard, startPosition);
+        Collection<ChessMove> newValidTeamColorChessMovesCollection = new ArrayList<ChessMove>();
 
-        // Create Chess Board Copy
-//        this.chessBoardCopy = this.chessBoard;
-//
-//        for (ChessMove chessMove : chessMoveCollection) {
-//            this.chessBoardCopy.addPiece(chessMove.getStartPosition(), null);
-//            this.chessBoardCopy.addPiece(chessMove.getEndPosition(), chessPiece);
-//            if (!isInCheck(chessPiece.getTeamColor())) {
-//                chessMoveCollectionNew.add(chessMove);
-//            }
-//        }
-        return chessMoveCollectionNew;
+        // Iterate through each possible chess move. Add chess moves to collection of valid moves when other pieces are on the board
+        for (ChessMove chessMoveIndex : validTeamColorChessMovesCollection) {
+            // Make Chess Move
+            this.chessBoard.addPiece(startPosition, null);
+            this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), chessPiece);
+
+            if (!isInCheck(chessPieceColor)) {
+                newValidTeamColorChessMovesCollection.add(chessMoveIndex);
+            }
+
+            // Revert Chess Move
+            this.chessBoard.addPiece(startPosition, chessPiece);
+            this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), null);
+        }
+
+        return newValidTeamColorChessMovesCollection;
     }
 
     /**
