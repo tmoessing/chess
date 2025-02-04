@@ -11,11 +11,9 @@ import java.util.*;
 public class ChessGame {
 
     private ChessBoard chessBoard;
-    private Map<String, ChessPosition> chessBMap = new HashMap<>();
-    private Collection<ChessPosition> blackValidMoves = new ArrayList<ChessPosition>();
-    private Collection<ChessPosition> whiteValidMoves = new ArrayList<ChessPosition>();
-    private Map<String, ChessPosition> chessWMap = new HashMap<>();
     private TeamColor currentTurn;
+    private ChessPosition blackKing;
+    private ChessPosition whiteKing;
 
     // Castling Variables
     private boolean whiteKingMoved = false;
@@ -44,6 +42,11 @@ public class ChessGame {
         this.currentTurn = team;
     }
 
+    public TeamColor getOtherTeamColor(TeamColor teamColor){
+        TeamColor otherTeamColor;
+        if (teamColor == TeamColor.WHITE) {otherTeamColor = TeamColor.BLACK;} else {otherTeamColor = TeamColor.WHITE;}
+        return otherTeamColor;
+    }
     /**
      * Sets this game's chessboard with a given board
      *
@@ -52,34 +55,6 @@ public class ChessGame {
     public void setBoard(ChessBoard board) {
         this.chessBoard = board;
 
-        for (int row = 1; row < 9; row++) {
-            for (int col = 1; col < 9; col++){
-                ChessPosition indexChessPosition = new ChessPosition(row, col);
-                ChessPiece chessPiece = board.getPiece(indexChessPosition);
-                if (chessPiece == null){
-                    continue;
-                }
-
-                TeamColor chessPieceColor = chessPiece.getTeamColor();
-                Dictionary<ChessPiece.PieceType, ChessPosition> chessDict;
-
-                StringBuilder result = new StringBuilder();
-                if (chessPiece.getPieceType() == ChessPiece.PieceType.KING){
-                    result.append(chessPiece.getPieceType());
-                } else {
-                    result.append(chessPiece.getPieceType()).append(col);
-                }
-
-                if (chessPieceColor == TeamColor.WHITE) {
-                    chessWMap.put(result.toString(), indexChessPosition);
-                    whiteValidMoves.addAll(this.receiveEndPositions(indexChessPosition));
-
-                } else if (chessPieceColor == TeamColor.BLACK){
-                    chessBMap.put(result.toString(), indexChessPosition);
-                    blackValidMoves.addAll(this.receiveEndPositions(indexChessPosition));
-                }
-            }
-        }
     }
 
     /**
@@ -107,6 +82,45 @@ public class ChessGame {
         BLACK
     }
 
+    public Collection<ChessPosition> createValidTeamColorChessPositionCollection(TeamColor teamColor){
+        Collection<ChessMove> validTeamColorChessMovesCollection = new ArrayList<ChessMove>();
+        Collection<ChessPosition> validTeamColorChessEndPositionCollection = new ArrayList<ChessPosition>();
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++){
+                ChessPosition indexChessPosition = new ChessPosition(row, col);
+
+                // Check if position holds piece
+                ChessPiece chessPiece = this.chessBoard.getPiece(indexChessPosition);
+                if (chessPiece == null){
+                    continue;
+                }
+
+                // Get Piece Color
+                TeamColor chessPieceColor = chessPiece.getTeamColor();
+                if (chessPieceColor != teamColor) {
+                    continue;
+                }
+
+                // Update King Position
+                if (chessPieceColor == TeamColor.WHITE && chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    this.whiteKing = indexChessPosition;
+                } else if (chessPieceColor == TeamColor.BLACK && chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    this.blackKing = indexChessPosition;
+                }
+
+                // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
+                Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
+                validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
+            }
+        }
+
+        // Grab End Positions from ChessMoves
+        for (ChessMove chessMoveIndex : validTeamColorChessMovesCollection) {
+            validTeamColorChessEndPositionCollection.add(chessMoveIndex.getEndPosition());
+        }
+        return validTeamColorChessEndPositionCollection;
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -116,17 +130,20 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
-        return chessPiece.pieceMoves(this.chessBoard, startPosition);
-    }
+        Collection<ChessMove> chessMoveCollection = chessPiece.pieceMoves(this.chessBoard, startPosition);
+        Collection<ChessMove> chessMoveCollectionNew = new ArrayList<ChessMove>();
 
-    public Collection<ChessPosition> receiveEndPositions(ChessPosition startPosition) {
-        Collection<ChessPosition> endChessPiecePositions = new ArrayList<ChessPosition>();
-        Collection<ChessMove> chessPieceValidMoves = this.validMoves(startPosition);
-
-        for (ChessMove chessMove : chessPieceValidMoves) {
-            endChessPiecePositions.add(chessMove.getEndPosition());
-        }
-        return endChessPiecePositions;
+        // Create Chess Board Copy
+//        this.chessBoardCopy = this.chessBoard;
+//
+//        for (ChessMove chessMove : chessMoveCollection) {
+//            this.chessBoardCopy.addPiece(chessMove.getStartPosition(), null);
+//            this.chessBoardCopy.addPiece(chessMove.getEndPosition(), chessPiece);
+//            if (!isInCheck(chessPiece.getTeamColor())) {
+//                chessMoveCollectionNew.add(chessMove);
+//            }
+//        }
+        return chessMoveCollectionNew;
     }
 
     /**
@@ -159,14 +176,14 @@ public class ChessGame {
             throw new InvalidMoveException("Move given is not Valid");
         }
 
-        // Check check
-//        if (isInCheck(chessPieceColor)) {
-//            throw new InvalidMoveException("This move puts you in check");
-//        }
-
         // Handle Pawn Promotion
         if (chessPiecePromotion != null) {
             chessPieceObject = new ChessPiece(chessPieceColor, chessPiecePromotion);
+        }
+
+        // Check check
+        if (isInCheck(chessPieceColor)) {
+            throw new InvalidMoveException("This move puts you in check");
         }
 
         // Move Piece
@@ -189,23 +206,18 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingPosition;
+        Collection<ChessPosition> teamColorValidChessPositionCollection = this.createValidTeamColorChessPositionCollection(this.getOtherTeamColor(teamColor));
 
-        if (teamColor == TeamColor.WHITE) {
-            kingPosition = chessWMap.get("KING");
-            if (blackValidMoves.contains(kingPosition)){
-                return true;
-            } else {
-                return false;
-            }
+        // Set's King Position
+        ChessPosition kingPosition;
+        if (teamColor == TeamColor.WHITE){
+            kingPosition = this.whiteKing;
         } else {
-            kingPosition = chessBMap.get("KING");
-            if (whiteValidMoves.contains(kingPosition)){
-                return true;
-            } else {
-                return false;
-            }
+            kingPosition = this.blackKing;
         }
+
+        //Check if any of the other opponent's chess pieces contain the current teams king position
+        return teamColorValidChessPositionCollection.contains(kingPosition);
     }
     /**
      * Determines if the given team is in checkmate
