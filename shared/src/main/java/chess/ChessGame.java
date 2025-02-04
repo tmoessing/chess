@@ -134,6 +134,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
+        ChessBoard chessBoardCopy = this.chessBoard;
         TeamColor chessPieceColor = chessPiece.getTeamColor();
         Collection<ChessMove> validTeamColorChessMovesCollection = chessPiece.pieceMoves(this.chessBoard, startPosition);
         Collection<ChessMove> newValidTeamColorChessMovesCollection = new ArrayList<ChessMove>();
@@ -142,6 +143,9 @@ public class ChessGame {
         for (ChessMove chessMoveIndex : validTeamColorChessMovesCollection) {
             // Make Chess Move
             this.chessBoard.addPiece(startPosition, null);
+
+            // Store ChessPiece in endPosition
+            ChessPiece chessPieceInEndPosition = this.chessBoard.getPiece(chessMoveIndex.getEndPosition());
             this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), chessPiece);
 
             if (!isInCheck(chessPieceColor)) {
@@ -150,7 +154,7 @@ public class ChessGame {
 
             // Revert Chess Move
             this.chessBoard.addPiece(startPosition, chessPiece);
-            this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), null);
+            this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), chessPieceInEndPosition);
         }
 
         return newValidTeamColorChessMovesCollection;
