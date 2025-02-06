@@ -1,5 +1,7 @@
 package chess;
 
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.*;
 
 /**
@@ -66,6 +68,13 @@ public class ChessGame {
         return this.chessBoard;
     }
 
+    public ChessPosition getTeamKingPosition(TeamColor teamColor) {
+        // Set's King Position
+        ChessPosition kingPosition;
+        if (teamColor == TeamColor.WHITE){kingPosition = this.whiteKing;} else {kingPosition = this.blackKing;}
+        return kingPosition;
+    }
+
     public ChessGame() {
         chessBoard = new ChessBoard();
         chessBoard.resetBoard();
@@ -80,6 +89,10 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public ChessMove addEnPassantMove(ChessPiece chessPiece) {
+        throw new RuntimeException("Not implemented");
     }
 
     public Collection<ChessPosition> createValidTeamColorChessPositionCollection(TeamColor teamColor){
@@ -110,8 +123,6 @@ public class ChessGame {
                     continue;
                 }
 
-
-
                 // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
                 Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
                 validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
@@ -134,7 +145,6 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
-        ChessBoard chessBoardCopy = this.chessBoard;
         TeamColor chessPieceColor = chessPiece.getTeamColor();
         Collection<ChessMove> validTeamColorChessMovesCollection = chessPiece.pieceMoves(this.chessBoard, startPosition);
         Collection<ChessMove> newValidTeamColorChessMovesCollection = new ArrayList<ChessMove>();
@@ -155,6 +165,35 @@ public class ChessGame {
             // Revert Chess Move
             this.chessBoard.addPiece(startPosition, chessPiece);
             this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), chessPieceInEndPosition);
+        }
+
+        // Check EnPassant Conditions
+        // Check for a previous move
+        if (this.lastChessMove != null) {
+            // Check if current piece is a pawn
+            if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
+
+                // Check if Piece Moved is a Pawn
+                if (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    ChessPosition pawnStartPosition = this.lastChessMove.getStartPosition();
+                    ChessPosition pawnEndPosition = this.lastChessMove.getEndPosition();
+
+                    // Check if Pawn is the opposite color
+                    if (chessPieceColor != lastChessPieceMoved.getTeamColor()) {
+                        // Check if Pawn Moved Forward Twice
+                        if (Math.abs(pawnStartPosition.getRow() - pawnEndPosition.getRow()) == 2) {
+                            // Check if current piece is on either side of pawn
+                            int pawnColumn = pawnEndPosition.getColumn();
+                            if ((startPosition.getColumn() == pawnColumn + 1) || (startPosition.getColumn() == pawnColumn - 1)) {
+                                ChessPosition enPassantEndPosition = new ChessPosition(pawnEndPosition.getRow()-1, pawnColumn);
+                                ChessMove enPassantMove = new ChessMove(startPosition, enPassantEndPosition, null);
+                                newValidTeamColorChessMovesCollection.add(enPassantMove);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return newValidTeamColorChessMovesCollection;
@@ -192,14 +231,15 @@ public class ChessGame {
             chessPieceObject = new ChessPiece(chessPieceColor, chessPiecePromotion);
         }
 
-        // Check check
-        if (isInCheck(chessPieceColor)) {
-            throw new InvalidMoveException("This move puts you in check");
-        }
+        // Check if team is in check
+        if (isInCheck(chessPieceColor)) {throw new InvalidMoveException("This move puts you in check");}
 
         // Move Piece
         this.chessBoard.addPiece(startPosition, null);
         this.chessBoard.addPiece(endPosition, chessPieceObject);
+
+        // Save past move
+        this.lastChessMove = move;
 
         // Switch Color
         if (chessPieceColor == TeamColor.BLACK) {
@@ -207,7 +247,6 @@ public class ChessGame {
         } else {
             setTeamTurn(TeamColor.BLACK);
         }
-
     }
 
     /**
@@ -217,18 +256,12 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessPosition> teamColorValidChessPositionCollection = this.createValidTeamColorChessPositionCollection(this.getOtherTeamColor(teamColor));
+        Collection<ChessPosition> otherTeamColorValidChessPositionCollection = this.createValidTeamColorChessPositionCollection(this.getOtherTeamColor(teamColor));
 
-        // Set's King Position
-        ChessPosition kingPosition;
-        if (teamColor == TeamColor.WHITE){
-            kingPosition = this.whiteKing;
-        } else {
-            kingPosition = this.blackKing;
-        }
+        ChessPosition kingPosition = this.getTeamKingPosition(teamColor);
 
         //Check if any of the other opponent's chess pieces contain the current teams king position
-        return teamColorValidChessPositionCollection.contains(kingPosition);
+        return otherTeamColorValidChessPositionCollection.contains(kingPosition);
     }
     /**
      * Determines if the given team is in checkmate
@@ -237,7 +270,21 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+//        // Check if King has any valid moves
+//        ChessPosition kingPosition = this.getTeamKingPosition(teamColor);
+//        Collection<ChessMove> kingAvailableMoves = this.validMoves(kingPosition);
+//        if (!kingAvailableMoves.isEmpty()){
+//            return false;
+//        }
+
+        // Check if all team colors pieces valid pieces contain a move that puts out of check or blocks check from happening
+
+        Collection<ChessPosition> teamColorValidChessPositionCollection = this.createValidTeamColorChessPositionCollection(teamColor);
+        if (teamColorValidChessPositionCollection.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
