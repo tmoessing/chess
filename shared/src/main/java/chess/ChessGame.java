@@ -25,6 +25,8 @@ public class ChessGame {
 
     // EnPassant Variables
     private ChessMove lastChessMove;
+    private boolean canEnPassant = false;
+    private ChessPosition pawnPosition;
 
     /**
      * @return Which team's turn it is
@@ -47,6 +49,7 @@ public class ChessGame {
         if (teamColor == TeamColor.WHITE) {otherTeamColor = TeamColor.BLACK;} else {otherTeamColor = TeamColor.WHITE;}
         return otherTeamColor;
     }
+
     /**
      * Sets this game's chessboard with a given board
      *
@@ -89,10 +92,6 @@ public class ChessGame {
         BLACK
     }
 
-    public ChessMove addEnPassantMove(ChessPiece chessPiece) {
-        throw new RuntimeException("Not implemented");
-    }
-
     public Collection<ChessMove> createValidTeamColorChessMoveCollection(TeamColor teamColor){
         Collection<ChessMove> validTeamColorChessMovesCollection = new ArrayList<ChessMove>();
         for (int row = 1; row < 9; row++) {
@@ -120,11 +119,19 @@ public class ChessGame {
                     continue;
                 }
 
+                // Check EnPassant Conditions
+                this.setCanEnPassant(indexChessPosition, chessPiece);
+                if (this.canEnPassant) {
+                    ChessMove enPassantMove = this.createEnPassantMove(indexChessPosition, chessPiece);
+                    validTeamColorChessMovesCollection.add(enPassantMove);
+                }
+
                 // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
                 Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
                 validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
             }
         }
+
         return validTeamColorChessMovesCollection;
     }
 
@@ -160,33 +167,12 @@ public class ChessGame {
         }
 
         // Check EnPassant Conditions
-        // Check for a previous move
-        if (this.lastChessMove != null) {
-            // Check if current piece is a pawn
-            if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
-
-                // Check if Piece Moved is a Pawn
-                if (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.PAWN) {
-                    ChessPosition pawnStartPosition = this.lastChessMove.getStartPosition();
-                    ChessPosition pawnEndPosition = this.lastChessMove.getEndPosition();
-
-                    // Check if Pawn is the opposite color
-                    if (chessPieceColor != lastChessPieceMoved.getTeamColor()) {
-                        // Check if Pawn Moved Forward Twice
-                        if (Math.abs(pawnStartPosition.getRow() - pawnEndPosition.getRow()) == 2) {
-                            // Check if current piece is on either side of pawn
-                            int pawnColumn = pawnEndPosition.getColumn();
-                            if ((startPosition.getColumn() == pawnColumn + 1) || (startPosition.getColumn() == pawnColumn - 1)) {
-                                ChessPosition enPassantEndPosition = new ChessPosition(pawnEndPosition.getRow()-1, pawnColumn);
-                                ChessMove enPassantMove = new ChessMove(startPosition, enPassantEndPosition, null);
-                                newValidTeamColorChessMovesCollection.add(enPassantMove);
-                            }
-                        }
-                    }
-                }
-            }
+        this.setCanEnPassant(startPosition, chessPiece);
+        if (this.canEnPassant) {
+            ChessMove enPassantMove = this.createEnPassantMove(startPosition, chessPiece);
+            newValidTeamColorChessMovesCollection.add(enPassantMove);
         }
+
         return newValidTeamColorChessMovesCollection;
     }
 
@@ -200,6 +186,7 @@ public class ChessGame {
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
         ChessPiece chessPieceObject = this.chessBoard.getPiece(startPosition);
+
         // Make sure piece exists in location
         if (chessPieceObject == null){throw new InvalidMoveException("No piece is start position");}
         ChessPiece.PieceType chessPiece = chessPieceObject.getPieceType();
@@ -223,7 +210,17 @@ public class ChessGame {
         }
 
         // Check if team is in check
-        if (isInCheck(chessPieceColor)) {throw new InvalidMoveException("This move puts you in check");}
+        if (isInCheck(chessPieceColor)) {throw new InvalidMoveException("You are in check and can't move this piece");}
+
+        // Check if EnPassant Conditions is true and see if given move is enPassant move
+        this.setCanEnPassant(startPosition, chessPieceObject);
+        if (this.canEnPassant) {
+            ChessMove enPassantMove = this.createEnPassantMove(startPosition, chessPieceObject);
+            if (enPassantMove.equals(move)) {
+                //Remove Pawn
+                this.chessBoard.addPiece(this.pawnPosition, null);
+            }
+        }
 
         // Move Piece
         this.chessBoard.addPiece(startPosition, null);
@@ -259,6 +256,7 @@ public class ChessGame {
         //Check if any of the other opponent's chess pieces contain the current teams king position
         return othervalidTeamColorChessEndPositionCollection.contains(kingPosition);
     }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -269,7 +267,6 @@ public class ChessGame {
         // Check if all team colors pieces valid pieces contain a move that puts out of check or blocks check from happening
         Collection<ChessMove> teamColorValidChessMoveCollection = this.createValidTeamColorChessMoveCollection(teamColor);
         return this.doesValidMovesContainNoCheck(teamColor, teamColorValidChessMoveCollection);
-
     }
 
     public boolean doesValidMovesContainNoCheck(TeamColor teamColor, Collection<ChessMove> teamColorValidChessMoveCollection ) {
@@ -311,11 +308,6 @@ public class ChessGame {
             return this.doesValidMovesContainNoCheck(teamColor, teamColorValidChessMoveCollection);
         }
     }
-
-    public void canCastle(){
-
-    }
-
     public void updateCastlingVariables(ChessMove lastChessMove) {
         ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
         if (!whiteKingMoved && (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.KING) && (lastChessPieceMoved.getTeamColor() == TeamColor.WHITE)) {
@@ -325,20 +317,29 @@ public class ChessGame {
         }
     }
 
-    public boolean canEnPassant(){
-        ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
-        if (lastChessPieceMoved.getPieceType() != ChessPiece.PieceType.PAWN) {
-            return false;
-        } else {
-            //Check if Pawn Moved Forward Twice
-            if ((lastChessPieceMoved.getTeamColor() == TeamColor.WHITE) && (this.lastChessMove.getStartPosition().getRow() == 2) && (this.lastChessMove.getEndPosition().getRow() == 4)) {
-                return true;
-            } else if ((lastChessPieceMoved.getTeamColor() == TeamColor.BLACK) && (this.lastChessMove.getStartPosition().getRow() == 7) && (this.lastChessMove.getEndPosition().getRow() == 5)) {
-                return true;
-            } else {
-                return false;
+    public void setCanEnPassant(ChessPosition startPosition, ChessPiece chessPiece) {
+        // Check for a previous move
+        if (this.lastChessMove != null) {
+            ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
+            // Check if last piece moved is a pawn and moved twice
+            if ((lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.PAWN) && (Math.abs(this.lastChessMove.getStartPosition().getRow() - this.lastChessMove.getEndPosition().getRow()) == 2)) {
+                // Check if current piece is a pawn on same row and column +- 1 as well as opposite color
+                if ((chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) && (this.lastChessMove.getEndPosition().getRow() == startPosition.getRow()) && (Math.abs(this.lastChessMove.getEndPosition().getColumn() - startPosition.getColumn()) == 1) && (lastChessPieceMoved.getTeamColor() != chessPiece.getTeamColor())) {
+                    this.canEnPassant = true;
+                    this.pawnPosition = this.lastChessMove.getEndPosition();
+                    return;
+                }
             }
         }
+        this.canEnPassant = false;
     }
 
+    public ChessMove createEnPassantMove(ChessPosition startPosition, ChessPiece chessPiece) {
+        // Add EnPassant as valid move
+        int direction;
+
+        if (chessPiece.getTeamColor() == TeamColor.WHITE) {direction = 1;} else {direction = -1;}
+        ChessPosition enPassantEndPosition = new ChessPosition(this.lastChessMove.getEndPosition().getRow() + direction, this.lastChessMove.getEndPosition().getColumn());
+        return new ChessMove(startPosition, enPassantEndPosition, null);
+    }
 }

@@ -102,6 +102,7 @@ public class DirectionCalculator {
 
     public void handle_pawn_move(ChessPosition startPosition, ChessPosition possiblePosition){
         if (diagonal){
+            this.moveCounter++;
             if (chessBoard.getPiece(possiblePosition) != null) {
                 not_blocked = false;
                 if (chessPiece.getTeamColor() != chessBoard.getPiece(possiblePosition).getTeamColor()) {
@@ -115,5 +116,6 @@ public class DirectionCalculator {
             }
             this.add_move(startPosition, possiblePosition);
         }
+
     }
 }
