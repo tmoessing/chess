@@ -15,12 +15,12 @@ public class LDirection extends DirectionCalculator {
         super(chessMoveCollection,chessPiece,chessBoard,chessPosition);
     }
 
-    public void calculate_moves(){
-        super.set_loop();
+    public void calculateMoves(){
+        super.setLoop();
         int y_row = this.chessPosition.getRow();
         int x_col = this.chessPosition.getCol();
 
-        List<ChessPosition> positionList = new ArrayList<ChessPosition>();
+        List<ChessPosition> positionList = new ArrayList<>();
         positionList.add(new ChessPosition(y_row+2, x_col+1));
         positionList.add(new ChessPosition(y_row+2, x_col-1));
         positionList.add(new ChessPosition(y_row-2, x_col+1));
@@ -31,7 +31,7 @@ public class LDirection extends DirectionCalculator {
         positionList.add(new ChessPosition(y_row-1, x_col-2));
 
         for (ChessPosition possiblePosition : positionList){
-            super.handle_possible_move(this.chessPosition, possiblePosition);
+            super.handlePossibleMove(this.chessPosition, possiblePosition);
         }
     }
 }

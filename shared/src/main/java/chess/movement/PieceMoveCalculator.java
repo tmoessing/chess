@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PieceMoveCalculator {
-   private Collection<ChessMove> chessMoveCollection = new ArrayList<ChessMove>();
+   private Collection<ChessMove> chessMoveCollection = new ArrayList<>();
    private ChessPiece chessPiece;
    private ChessBoard chessBoard;
    private ChessPosition chessPosition;
@@ -33,46 +33,46 @@ public class PieceMoveCalculator {
         setChessPosition(chessPosition);
    }
 
-   public void calculate_moves() {
+   public void calculateMoves() {
         if (chessPiece.getPieceType() == ChessPiece.PieceType.BISHOP) {
-            this.calculate_diagonal_moves(100);
+            this.calculateDiagonalMoves(100);
         } else if (chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
-            this.calculate_diagonal_moves(1);
-            this.calculate_vertical_moves(1);
-            this.calculate_horizontal_moves(1);
+            this.calculateDiagonalMoves(1);
+            this.calculateVerticalMoves(1);
+            this.calculateHorizontalMoves(1);
         } else if (chessPiece.getPieceType() == ChessPiece.PieceType.QUEEN) {
-            this.calculate_diagonal_moves(100);
-            this.calculate_vertical_moves(100);
-            this.calculate_horizontal_moves(100);
+            this.calculateDiagonalMoves(100);
+            this.calculateVerticalMoves(100);
+            this.calculateHorizontalMoves(100);
         } else if (chessPiece.getPieceType() == ChessPiece.PieceType.ROOK) {
-            this.calculate_vertical_moves(100);
-            this.calculate_horizontal_moves(100);
+            this.calculateVerticalMoves(100);
+            this.calculateHorizontalMoves(100);
         } else if (chessPiece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
             LDirection moveCalc = new LDirection(chessMoveCollection, chessPiece, chessBoard, chessPosition);
-            moveCalc.calculate_moves();
+            moveCalc.calculateMoves();
             this.chessMoveCollection = moveCalc.getChessMoveCollection();
         } else if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-            this.calculate_pawn_moves();
+            this.calculatePawnMoves();
         }
 
    }
 
-   public void calculate_diagonal_moves(int moveLimit) {
+   public void calculateDiagonalMoves(int moveLimit) {
         DiagonalDirection moveCalc = new DiagonalDirection(chessMoveCollection, chessPiece, chessBoard, chessPosition);
-        moveCalc.calculate_moves(moveLimit);
+        moveCalc.calculateMoves(moveLimit);
         this.chessMoveCollection = moveCalc.getChessMoveCollection();
     }
-    public void calculate_horizontal_moves(int moveLimit) {
+    public void calculateHorizontalMoves(int moveLimit) {
         HorizontalDirection moveCalc = new HorizontalDirection(chessMoveCollection, chessPiece, chessBoard, chessPosition);
-        moveCalc.calculate_moves(moveLimit);
+        moveCalc.calculateMoves(moveLimit);
         this.chessMoveCollection = moveCalc.getChessMoveCollection();
     }
-    public void calculate_vertical_moves(int moveLimit) {
+    public void calculateVerticalMoves(int moveLimit) {
         VerticalDirection moveCalc = new VerticalDirection(chessMoveCollection, chessPiece, chessBoard, chessPosition);
-        moveCalc.calculate_moves(moveLimit);
+        moveCalc.calculateMoves(moveLimit);
         this.chessMoveCollection = moveCalc.getChessMoveCollection();
     }
-    public void calculate_pawn_moves() {
+    public void calculatePawnMoves() {
         int direction;
         int moveLimit;
         boolean promotion;
@@ -96,14 +96,14 @@ public class PieceMoveCalculator {
 
         //Vertical
         VerticalDirection moveCalc = new VerticalDirection(chessMoveCollection, chessPiece, chessBoard, chessPosition);
-        moveCalc.calculate_pawn_moves(moveLimit, promotion, direction);
+        moveCalc.calculatePawnMoves(moveLimit, promotion, direction);
         this.chessMoveCollection = moveCalc.getChessMoveCollection();
 
         moveLimit = 1;
 
         //Diagonal
         DiagonalDirection moveCalc2 = new DiagonalDirection(chessMoveCollection, chessPiece, chessBoard, chessPosition);
-        moveCalc2.calculate_pawn_moves(moveLimit, promotion, direction);
+        moveCalc2.calculatePawnMoves(moveLimit, promotion, direction);
         this.chessMoveCollection = moveCalc2.getChessMoveCollection();
 
     }

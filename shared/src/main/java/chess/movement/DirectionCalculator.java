@@ -51,19 +51,19 @@ public class DirectionCalculator {
         setChessPosition(chessPosition);
     }
 
-    public void set_loop(){
+    public void setLoop(){
         this.moveCounter = 0;
         this.in_bounds = true;
         this.not_blocked = true;
     }
 
-    public boolean check_bounds(ChessPosition possiblePosition){
+    public boolean checkBounds(ChessPosition possiblePosition){
         int y_row = possiblePosition.getRow();
         int x_col = possiblePosition.getColumn();
         return (y_row >= 1 & x_col >= 1 & y_row <=8 & x_col <=8);
     }
 
-    public void add_move(ChessPosition startPosition, ChessPosition possiblePosition){
+    public void addMove(ChessPosition startPosition, ChessPosition possiblePosition){
         if (this.promotion) {
             ChessMove chessMove1 = new ChessMove(startPosition, possiblePosition, ChessPiece.PieceType.QUEEN);
             ChessMove chessMove2 = new ChessMove(startPosition, possiblePosition, ChessPiece.PieceType.KNIGHT);
@@ -80,14 +80,14 @@ public class DirectionCalculator {
         }
     }
 
-    public void handle_possible_move(ChessPosition startPosition, ChessPosition possiblePosition){
-        this.in_bounds = this.check_bounds(possiblePosition);
+    public void handlePossibleMove(ChessPosition startPosition, ChessPosition possiblePosition){
+        this.in_bounds = this.checkBounds(possiblePosition);
         if (!in_bounds) {
             return;
         }
 
         if (this.chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-            this.handle_pawn_move(startPosition, possiblePosition);
+            this.handlePawnMove(startPosition, possiblePosition);
             return;
         }
 
@@ -97,16 +97,16 @@ public class DirectionCalculator {
                 return;
             }
         }
-        this.add_move(startPosition, possiblePosition);
+        this.addMove(startPosition, possiblePosition);
     }
 
-    public void handle_pawn_move(ChessPosition startPosition, ChessPosition possiblePosition){
+    public void handlePawnMove(ChessPosition startPosition, ChessPosition possiblePosition){
         if (diagonal){
             this.moveCounter++;
             if (chessBoard.getPiece(possiblePosition) != null) {
                 not_blocked = false;
                 if (chessPiece.getTeamColor() != chessBoard.getPiece(possiblePosition).getTeamColor()) {
-                    this.add_move(startPosition, possiblePosition);
+                    this.addMove(startPosition, possiblePosition);
                 }
             }
         } else {
@@ -114,7 +114,7 @@ public class DirectionCalculator {
                 not_blocked = false;
                 return;
             }
-            this.add_move(startPosition, possiblePosition);
+            this.addMove(startPosition, possiblePosition);
         }
 
     }

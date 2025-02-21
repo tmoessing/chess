@@ -13,15 +13,15 @@ public class HorizontalDirection extends  DirectionCalculator{
         super(chessMoveCollection,chessPiece,chessBoard,chessPosition);
     }
 
-    public void calculate_moves(int moveLimit){
+    public void calculateMoves(int moveLimit){
         this.moveLimit = moveLimit;
-        this.calculate_horizontal_moves( 1);
-        this.calculate_horizontal_moves(-1);
+        this.calculateHorizontalMoves( 1);
+        this.calculateHorizontalMoves(-1);
     }
 
 
-    public void calculate_horizontal_moves(int x_col_i){
-        super.set_loop();
+    public void calculateHorizontalMoves(int x_col_i){
+        super.setLoop();
         int y_row = this.chessPosition.getRow();
         int x_col = this.chessPosition.getCol();
 
@@ -29,7 +29,7 @@ public class HorizontalDirection extends  DirectionCalculator{
             x_col += x_col_i;
 
             ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
-            super.handle_possible_move(this.chessPosition, possiblePosition);
+            super.handlePossibleMove(this.chessPosition, possiblePosition);
         }
     }
 }

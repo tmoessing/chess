@@ -13,25 +13,25 @@ public class DiagonalDirection extends DirectionCalculator {
         super(chessMoveCollection,chessPiece,chessBoard,chessPosition);
     }
 
-    public void calculate_moves(int moveLimit){
+    public void calculateMoves(int moveLimit){
         this.moveLimit = moveLimit;
-        this.calculate_diagonal_moves(1, 1);
-        this.calculate_diagonal_moves(-1, -1);
-        this.calculate_diagonal_moves(-1, 1);
-        this.calculate_diagonal_moves(1, -1);
+        this.calculateDiagonalMoves(1, 1);
+        this.calculateDiagonalMoves(-1, -1);
+        this.calculateDiagonalMoves(-1, 1);
+        this.calculateDiagonalMoves(1, -1);
     }
 
-    public void calculate_pawn_moves(int moveLimit, boolean promotion, int direction){
+    public void calculatePawnMoves(int moveLimit, boolean promotion, int direction){
         this.moveLimit = moveLimit;
         this.promotion = promotion;
         this.direction = direction;
         this.diagonal = true;
-        this.calculate_diagonal_moves(direction, 1);
-        this.calculate_diagonal_moves(direction, -1);
+        this.calculateDiagonalMoves(direction, 1);
+        this.calculateDiagonalMoves(direction, -1);
     }
 
-    public void calculate_diagonal_moves(int y_row_i, int x_col_i){
-        super.set_loop();
+    public void calculateDiagonalMoves(int y_row_i, int x_col_i){
+        super.setLoop();
         int y_row = this.chessPosition.getRow();
         int x_col = this.chessPosition.getCol();
 
@@ -40,7 +40,7 @@ public class DiagonalDirection extends DirectionCalculator {
             x_col += x_col_i;
 
             ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
-            super.handle_possible_move(this.chessPosition, possiblePosition);
+            super.handlePossibleMove(this.chessPosition, possiblePosition);
         }
     }
 }
