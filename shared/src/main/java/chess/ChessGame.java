@@ -15,14 +15,6 @@ public class ChessGame {
     private ChessPosition blackKing;
     private ChessPosition whiteKing;
 
-    // Castling Variables
-    private boolean whiteKingMoved = false;
-    private boolean whiteRRookMoved = false;
-    private boolean whiteLRookMoved = false;
-    private boolean blackKingMoved = false;
-    private boolean blackRRookMoved = false;
-    private boolean blackLRookMoved = false;
-
     // EnPassant Variables
     private ChessMove lastChessMove;
     private boolean canEnPassant = false;
@@ -192,12 +184,13 @@ public class ChessGame {
         ChessPiece.PieceType chessPiece = chessPieceObject.getPieceType();
         TeamColor chessPieceColor = chessPieceObject.getTeamColor();
         ChessPiece.PieceType chessPiecePromotion = move.getPromotionPiece();
-        Collection<ChessMove> chessMoveCollection = validMoves(startPosition);
 
         // Check Right Color Piece is moving
         if (chessPieceColor != this.currentTurn) {
             throw new InvalidMoveException("It is the other color's turn");
         }
+
+        Collection<ChessMove> chessMoveCollection = validMoves(startPosition);
 
         //Check for Valid Move
         if (!chessMoveCollection.contains(move)) {
@@ -306,14 +299,6 @@ public class ChessGame {
             return false;
         } else {
             return this.doesValidMovesContainNoCheck(teamColor, teamColorValidChessMoveCollection);
-        }
-    }
-    public void updateCastlingVariables(ChessMove lastChessMove) {
-        ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
-        if (!whiteKingMoved && (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.KING) && (lastChessPieceMoved.getTeamColor() == TeamColor.WHITE)) {
-            whiteKingMoved = true;
-        } else if (!blackKingMoved && (lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.KING) && (lastChessPieceMoved.getTeamColor() == TeamColor.BLACK)) {
-            blackKingMoved = true;
         }
     }
 
