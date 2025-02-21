@@ -15,21 +15,7 @@ public class HorizontalDirection extends  DirectionCalculator{
 
     public void calculateMoves(int moveLimit){
         this.moveLimit = moveLimit;
-        this.calculateHorizontalMoves( 1);
-        this.calculateHorizontalMoves(-1);
-    }
-
-
-    public void calculateHorizontalMoves(int x_col_i){
-        super.setLoop();
-        int y_row = this.chessPosition.getRow();
-        int x_col = this.chessPosition.getCol();
-
-        while (in_bounds & not_blocked & (moveCounter < moveLimit)){
-            x_col += x_col_i;
-
-            ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
-            super.handlePossibleMove(this.chessPosition, possiblePosition);
-        }
+        super.calculateVerticalHorizontalMoves(1, 0);
+        super.calculateVerticalHorizontalMoves(-1, 0);
     }
 }

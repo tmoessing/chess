@@ -15,27 +15,14 @@ public class VerticalDirection extends DirectionCalculator {
 
     public void calculateMoves(int moveLimit){
         this.moveLimit = moveLimit;
-        this.calculateVerticalMoves(1);
-        this.calculateVerticalMoves(-1);
+        super.calculateVerticalHorizontalMoves(0, 1);
+        super.calculateVerticalHorizontalMoves(0, -1);
     }
 
     public void calculatePawnMoves(int moveLimit, boolean promotion, int direction){
         this.moveLimit = moveLimit;
         this.promotion = promotion;
         this.direction = direction;
-        this.calculateVerticalMoves(direction);
-    }
-
-    public void calculateVerticalMoves(int y_row_i){
-        super.setLoop();
-        int y_row = this.chessPosition.getRow();
-        int x_col = this.chessPosition.getCol();
-
-        while (in_bounds & not_blocked & (moveCounter < moveLimit)){
-            y_row += y_row_i;
-
-            ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
-            super.handlePossibleMove(this.chessPosition, possiblePosition);
-        }
+        super.calculateVerticalHorizontalMoves(0, direction);
     }
 }

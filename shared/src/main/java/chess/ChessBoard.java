@@ -48,9 +48,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        int y_row = 8-position.getRow();
-        int x_col = position.getColumn()-1;
-        board[y_row][x_col] = piece;
+        int yRow = 8-position.getRow();
+        int xCol = position.getColumn()-1;
+        board[yRow][xCol] = piece;
     }
 
     /**
@@ -61,9 +61,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        int y_row = 8-position.getRow();
-        int x_col = position.getColumn()-1;
-        return board[y_row][x_col];
+        int yRow = 8-position.getRow();
+        int xCol = position.getColumn()-1;
+        return board[yRow][xCol];
     }
 
     /**
@@ -83,21 +83,21 @@ public class ChessBoard {
         }
 
         // Set Rooks
-        for (int rook_col_num : rookCols) {
-            board[0][rook_col_num] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-            board[7][rook_col_num] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        for (int rookColNum : rookCols) {
+            board[0][rookColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+            board[7][rookColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
         }
 
         // Set Knights
-        for (int knight_col_num : knightCols) {
-            board[0][knight_col_num] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-            board[7][knight_col_num] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        for (int knightColNum : knightCols) {
+            board[0][knightColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+            board[7][knightColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
         }
 
         // Set Bishops
-        for (int bishop_col_num : bishopCols) {
-            board[0][bishop_col_num] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-            board[7][bishop_col_num] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        for (int bishopColNum : bishopCols) {
+            board[0][bishopColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+            board[7][bishopColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
         }
 
         // Set Queens and Kings

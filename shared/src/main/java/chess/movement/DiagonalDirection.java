@@ -30,16 +30,16 @@ public class DiagonalDirection extends DirectionCalculator {
         this.calculateDiagonalMoves(direction, -1);
     }
 
-    public void calculateDiagonalMoves(int y_row_i, int x_col_i){
+    public void calculateDiagonalMoves(int yRowI, int xColI){
         super.setLoop();
-        int y_row = this.chessPosition.getRow();
-        int x_col = this.chessPosition.getCol();
+        int yRow = this.chessPosition.getRow();
+        int xCol = this.chessPosition.getCol();
 
-        while (in_bounds & not_blocked & (moveCounter < moveLimit)){
-            y_row += y_row_i;
-            x_col += x_col_i;
+        while (inBounds & notBlocked & (moveCounter < moveLimit)){
+            yRow += yRowI;
+            xCol += xColI;
 
-            ChessPosition possiblePosition = new ChessPosition(y_row, x_col);
+            ChessPosition possiblePosition = new ChessPosition(yRow, xCol);
             super.handlePossibleMove(this.chessPosition, possiblePosition);
         }
     }

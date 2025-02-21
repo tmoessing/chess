@@ -16,8 +16,8 @@ public class DirectionCalculator {
 
     protected int moveLimit;
     protected int moveCounter;
-    protected boolean in_bounds;
-    protected boolean not_blocked;
+    protected boolean inBounds;
+    protected boolean notBlocked;
 
     //PAWN
     protected int direction;
@@ -51,16 +51,30 @@ public class DirectionCalculator {
         setChessPosition(chessPosition);
     }
 
+    public void calculateVerticalHorizontalMoves(int xColI, int yRowI){
+        this.setLoop();
+        int yRow = this.chessPosition.getRow();
+        int xCol = this.chessPosition.getCol();
+
+        while (inBounds & notBlocked & (moveCounter < moveLimit)){
+            xCol += xColI;
+            yRow += yRowI;
+
+            ChessPosition possiblePosition = new ChessPosition(yRow, xCol);
+            this.handlePossibleMove(this.chessPosition, possiblePosition);
+        }
+    }
+
     public void setLoop(){
         this.moveCounter = 0;
-        this.in_bounds = true;
-        this.not_blocked = true;
+        this.inBounds = true;
+        this.notBlocked = true;
     }
 
     public boolean checkBounds(ChessPosition possiblePosition){
-        int y_row = possiblePosition.getRow();
-        int x_col = possiblePosition.getColumn();
-        return (y_row >= 1 & x_col >= 1 & y_row <=8 & x_col <=8);
+        int yRow = possiblePosition.getRow();
+        int xCol = possiblePosition.getColumn();
+        return (yRow >= 1 & xCol >= 1 & yRow <=8 & xCol <=8);
     }
 
     public void addMove(ChessPosition startPosition, ChessPosition possiblePosition){
@@ -81,8 +95,8 @@ public class DirectionCalculator {
     }
 
     public void handlePossibleMove(ChessPosition startPosition, ChessPosition possiblePosition){
-        this.in_bounds = this.checkBounds(possiblePosition);
-        if (!in_bounds) {
+        this.inBounds = this.checkBounds(possiblePosition);
+        if (!inBounds) {
             return;
         }
 
@@ -92,7 +106,7 @@ public class DirectionCalculator {
         }
 
         if (chessBoard.getPiece(possiblePosition) != null){
-            not_blocked = false;
+            notBlocked = false;
             if (chessPiece.getTeamColor() == chessBoard.getPiece(possiblePosition).getTeamColor()){
                 return;
             }
@@ -104,14 +118,14 @@ public class DirectionCalculator {
         if (diagonal){
             this.moveCounter++;
             if (chessBoard.getPiece(possiblePosition) != null) {
-                not_blocked = false;
+                notBlocked = false;
                 if (chessPiece.getTeamColor() != chessBoard.getPiece(possiblePosition).getTeamColor()) {
                     this.addMove(startPosition, possiblePosition);
                 }
             }
         } else {
             if (chessBoard.getPiece(possiblePosition) != null) {
-                not_blocked = false;
+                notBlocked = false;
                 return;
             }
             this.addMove(startPosition, possiblePosition);

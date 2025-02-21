@@ -17,18 +17,18 @@ public class LDirection extends DirectionCalculator {
 
     public void calculateMoves(){
         super.setLoop();
-        int y_row = this.chessPosition.getRow();
-        int x_col = this.chessPosition.getCol();
+        int yRow = this.chessPosition.getRow();
+        int xCol = this.chessPosition.getCol();
 
         List<ChessPosition> positionList = new ArrayList<>();
-        positionList.add(new ChessPosition(y_row+2, x_col+1));
-        positionList.add(new ChessPosition(y_row+2, x_col-1));
-        positionList.add(new ChessPosition(y_row-2, x_col+1));
-        positionList.add(new ChessPosition(y_row-2, x_col-1));
-        positionList.add(new ChessPosition(y_row+1, x_col+2));
-        positionList.add(new ChessPosition(y_row-1, x_col+2));
-        positionList.add(new ChessPosition(y_row+1, x_col-2));
-        positionList.add(new ChessPosition(y_row-1, x_col-2));
+        positionList.add(new ChessPosition(yRow+2, xCol+1));
+        positionList.add(new ChessPosition(yRow+2, xCol-1));
+        positionList.add(new ChessPosition(yRow-2, xCol+1));
+        positionList.add(new ChessPosition(yRow-2, xCol-1));
+        positionList.add(new ChessPosition(yRow+1, xCol+2));
+        positionList.add(new ChessPosition(yRow-1, xCol+2));
+        positionList.add(new ChessPosition(yRow+1, xCol-2));
+        positionList.add(new ChessPosition(yRow-1, xCol-2));
 
         for (ChessPosition possiblePosition : positionList){
             super.handlePossibleMove(this.chessPosition, possiblePosition);
