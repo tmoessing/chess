@@ -1,11 +1,12 @@
 package dataaccess;
 
 import model.RegisterRequest;
-import model.RegisterResult;
 
 public interface UserDAO {
 
-    RegisterResult addUserData(RegisterRequest userData) throws DataAccessException;
+    boolean isUsernameTaken(String userName);
+
+    void addUserData(RegisterRequest userData);
 
     void findUserDataViaUsername(String userData) throws DataAccessException;
 

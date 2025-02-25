@@ -1,18 +1,30 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.*;
 
 public class UserService {
-    private final UserDAO dateAccess;
+    private UserDAO userDataAccess;
+    private AuthDAO authDataAccess;
 
-    public UserService(UserDAO dateAccess){
-        this.dateAccess = dateAccess;
+    public UserService(UserDAO dateAccess, AuthDAO authDataAccess){
+        this.userDataAccess = dateAccess;
+        this.authDataAccess = authDataAccess;
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
-       return dateAccess.addUserData(registerRequest);
+          if (userDataAccess.isUsernameTaken(registerRequest.username())) {
+              throw new DataAccessException("Username Taken");
+          }
+
+          userDataAccess.addUserData(registerRequest);
+
+          String authToken = authDataAccess.createAuthToken();
+          authDataAccess.addAuthData(registerRequest.username(), authToken);
+
+          return new RegisterResult(registerRequest.username(), authToken);
     }
 
     public LoginResult login(LoginRequest loginRequest) {

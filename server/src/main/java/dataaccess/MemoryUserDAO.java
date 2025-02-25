@@ -3,16 +3,25 @@ package dataaccess;
 
 import model.RegisterRequest;
 import model.RegisterResult;
+import model.UserData;
 
 import java.util.ArrayList;
 
 public class MemoryUserDAO implements UserDAO {
-    private ArrayList<String> userList = new ArrayList<>();
+    private static final ArrayList<UserData> userList = new ArrayList<>();
 
-    public RegisterResult addUserData(RegisterRequest userData) throws DataAccessException {
-        userList.add(userData.username());
-        String authToken = "1";
-        return new RegisterResult(userData.username(), authToken);
+    public boolean isUsernameTaken(String username) {
+        for (UserData userData : userList) {
+            if (userData.username().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addUserData(RegisterRequest registerRequest) {
+        UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+        userList.add(userData);
     }
 
     public void findUserDataViaUsername(String userData) throws DataAccessException {
@@ -20,6 +29,6 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public void deleteAllUsers() throws DataAccessException{
-
+        userList.clear();
     }
 }
