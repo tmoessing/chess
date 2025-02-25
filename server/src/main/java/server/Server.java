@@ -1,6 +1,5 @@
 package server;
 
-
 import spark.*;
 //import com.google.gson.Gson;
 //import exception.ResponseException;

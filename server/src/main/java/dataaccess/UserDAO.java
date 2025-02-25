@@ -1,8 +1,11 @@
 package dataaccess;
 
+import model.RegisterRequest;
+import model.RegisterResult;
+
 public interface UserDAO {
 
-    void addUserData(String userData) throws DataAccessException;
+    RegisterResult addUserData(RegisterRequest userData) throws DataAccessException;
 
     void findUserDataViaUsername(String userData) throws DataAccessException;
 

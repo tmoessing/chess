@@ -1,13 +1,18 @@
 package dataaccess;
 
 
+import model.RegisterRequest;
+import model.RegisterResult;
+
 import java.util.ArrayList;
 
 public class MemoryUserDAO implements UserDAO {
     private ArrayList<String> userList = new ArrayList<>();
 
-    public void addUserData(String userData) throws DataAccessException {
-        userList.add(userData);
+    public RegisterResult addUserData(RegisterRequest userData) throws DataAccessException {
+        userList.add(userData.username());
+        String authToken = "1";
+        return new RegisterResult(userData.username(), authToken);
     }
 
     public void findUserDataViaUsername(String userData) throws DataAccessException {
