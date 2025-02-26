@@ -1,9 +1,7 @@
 package server;
 
-import handler.RegisterHandler;
+import handler.*;
 import spark.*;
-//import com.google.gson.Gson;
-//import exception.ResponseException;
 
 
 public class Server {
@@ -16,8 +14,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", ((req, res) -> new RegisterHandler().handleRequest(req, res)));
 
-//        Spark.delete("/db", ((req, res) -> new DeleteHandler) );
-
+        Spark.delete("/db", ((req, res) -> new DeleteHandler().handleDelete(req, res)));
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();

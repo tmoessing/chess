@@ -10,18 +10,18 @@ import service.UserService;
 import spark.*;
 import com.google.gson.Gson;
 
-public class RegisterHandler {
+public class RegisterHandler extends Handler {
+
+    public RegisterHandler() {
+       super();
+    }
+
     public Object handleRequest(Request req, Response res) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
-
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-
-        UserService userService = new UserService(memoryUserDAO, memoryAuthDAO);
-
         RegisterResult registerResult;
+
         try {
-            if (registerRequest.username().isEmpty() || registerRequest.email().isEmpty() || registerRequest.password().isEmpty()){
+            if (registerRequest.username().isEmpty() || registerRequest.password().isEmpty() || registerRequest.email().isEmpty() ){
                 registerResult = new RegisterResult("Error: bad request", null);
                 res.status(400);
             } else {

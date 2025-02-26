@@ -1,6 +1,12 @@
 package dataaccess;
 
+import model.GameData;
+
+import java.util.ArrayList;
+
 public class MemoryGameDAO implements GameDAO {
+    private static final ArrayList<GameData> gameList = new ArrayList<>();
+
     public void createGame(String gameData) throws DataAccessException {
 
     }
@@ -17,7 +23,7 @@ public class MemoryGameDAO implements GameDAO {
 
     }
 
-    public void deleteAllGames() throws DataAccessException{
-
+    public void clearGames() {
+        gameList.clear();
     }
 }

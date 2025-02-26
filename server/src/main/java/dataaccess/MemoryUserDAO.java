@@ -28,7 +28,7 @@ public class MemoryUserDAO implements UserDAO {
         if (!userList.contains(userData)){throw new DataAccessException("Can not find user from userData");}
     }
 
-    public void deleteAllUsers() throws DataAccessException{
+    public void clearAllUsers() {
         userList.clear();
     }
 }

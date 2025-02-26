@@ -1,4 +1,14 @@
 package service;
 
-public class AuthService {
+import dataaccess.AuthDAO;
+
+public class AuthService extends Service {
+
+    public AuthService() {
+        super();
+    }
+
+    public void clearAuthData(){
+        authDataAccess.clearAuthData();
+    }
 }

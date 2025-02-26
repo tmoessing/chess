@@ -9,5 +9,5 @@ public interface GameDAO {
 
     void getAllGames() throws DataAccessException;
 
-    void deleteAllGames() throws DataAccessException;
+    void clearGames();
 }
