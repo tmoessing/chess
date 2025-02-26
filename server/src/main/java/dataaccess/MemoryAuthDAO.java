@@ -4,14 +4,14 @@ import model.AuthData;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class MemoryAuthDAO {
+public class MemoryAuthDAO implements AuthDAO {
     private static final ArrayList<AuthData> authList = new ArrayList<>();
 
     public String createAuthToken(){
         return UUID.randomUUID().toString();
     }
 
-    public void addAuthData(String authToken, String username) throws DataAccessException {
+    public void addAuthData(String authToken, String username){
         AuthData authData = new AuthData(authToken, username);
         authList.add(authData);
     }

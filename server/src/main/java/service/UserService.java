@@ -16,7 +16,7 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
           if (userDataAccess.isUsernameTaken(registerRequest.username())) {
-              throw new DataAccessException("Username Taken");
+              throw new DataAccessException("Error: already taken");
           }
 
           userDataAccess.addUserData(registerRequest);
@@ -27,9 +27,9 @@ public class UserService {
           return new RegisterResult(registerRequest.username(), authToken);
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
-//        return dateAccess.findUserDataViaUsername(loginRequest);
-    }
-
+//    public LoginResult login(LoginRequest loginRequest) {
+////        return dateAccess.findUserDataViaUsername(loginRequest);
+//    }
+//
     public void logout(LogoutRequest logoutRequest) {}
 }

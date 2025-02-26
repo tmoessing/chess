@@ -1,5 +1,6 @@
 package server;
 
+import handler.RegisterHandler;
 import spark.*;
 //import com.google.gson.Gson;
 //import exception.ResponseException;
@@ -13,7 +14,10 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-//        Spark.post("/user", this::createUser);
+        Spark.post("/user", ((req, res) -> new RegisterHandler().handleRequest(req, res)));
+
+//        Spark.delete("/db", ((req, res) -> new DeleteHandler) );
+
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
@@ -27,10 +31,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-//    private Object createUser(Request req, Response res)  {
 //        var pet = new Gson().fromJson(req.body(), Pet.class);
 //        pet = service.addPet(pet);
-//        webSocketHandler.makeNoise(pet.name(), pet.sound());
 //        return new Gson().toJson(pet);
-//    }
 }
