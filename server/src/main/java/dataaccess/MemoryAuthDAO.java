@@ -25,7 +25,13 @@ public class MemoryAuthDAO implements AuthDAO {
         return false;
     }
 
-    public void lookUpAuthToken() throws DataAccessException {
+    public String getUsernameViaAuthToken(String authToken) {
+        for (AuthData authData : authList) {
+            if (authData.authToken().equals(authToken)) {
+                return authData.username();
+            }
+        }
+        return null;
     }
 
     public void removeAuthToken(String authToken) {

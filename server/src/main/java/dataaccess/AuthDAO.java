@@ -8,7 +8,7 @@ public interface AuthDAO {
 
     boolean isAuthTokenExistent(String authToken);
 
-    void lookUpAuthToken() throws DataAccessException;
+    String getUsernameViaAuthToken(String authToken);
 
     void removeAuthToken(String authToken);
 
