@@ -1,11 +1,18 @@
 package dataaccess;
 
+import model.GameData;
+
 public interface GameDAO {
-    void createGame(String gameData) throws DataAccessException;
 
-    void findGameViaGameID(int gameID) throws DataAccessException;
+    int createGameID();
 
-    void joinGame(String username) throws DataAccessException;
+    boolean isGameExistent(int gameID);
+
+    boolean isGameJoinable(int gameID, String playerColor);
+
+    void createGame(int gameID, String gameName);
+
+    void joinGame(int gameID, String playerColor, String username);
 
     void getAllGames() throws DataAccessException;
 

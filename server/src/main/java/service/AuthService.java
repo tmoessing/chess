@@ -14,7 +14,6 @@ public class AuthService extends Service {
         }
 
         authDataAccess.removeAuthToken(authToken);
-
     }
 
 

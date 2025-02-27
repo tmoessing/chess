@@ -1,22 +1,62 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 public class MemoryGameDAO implements GameDAO {
     private static final ArrayList<GameData> gameList = new ArrayList<>();
 
-    public void createGame(String gameData) throws DataAccessException {
-
+    public int createGameID(){
+        return gameList.size() + 1;
     }
 
-    public void findGameViaGameID(int gameID) throws DataAccessException {
-
+    public boolean isGameExistent(int gameID) {
+        for (GameData gameData : gameList) {
+            if (gameData.gameID() == gameID) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void joinGame(String username) throws DataAccessException {
+    public boolean isGameJoinable(int gameID, String playerColor) {
+        for (GameData gameData : gameList) {
+            if (gameData.gameID() == gameID) {
+                if ((Objects.equals(playerColor, "BLACK") && gameData.blackUsername() == null || (Objects.equals(playerColor, "WHITE") && gameData.whiteUsername() == null))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    public void createGame(int gameID, String gameName) {
+        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
+        gameList.add(gameData);
+    }
+
+    public void joinGame(int gameID, String playerColor, String username) {
+        GameData newGameData = null;
+        for (GameData gameData : gameList) {
+            if (gameData.gameID() == gameID) {
+                String whiteUsername;
+                String blackUsername;
+                if (Objects.equals(playerColor, "WHITE")) {
+                    whiteUsername = username;
+                    blackUsername = gameData.blackUsername();
+                } else {
+                    whiteUsername = gameData.whiteUsername();
+                    blackUsername = username;
+                }
+                newGameData = new GameData(gameData.gameID(), whiteUsername, blackUsername, gameData.gameName(), gameData.game());
+                gameList.remove(gameData);
+            }
+        }
+        gameList.add(newGameData);
     }
 
     public void getAllGames() throws DataAccessException {
