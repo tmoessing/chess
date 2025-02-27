@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.GameData;
+import model.GameRecord;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -54,13 +55,19 @@ public class MemoryGameDAO implements GameDAO {
                 }
                 newGameData = new GameData(gameData.gameID(), whiteUsername, blackUsername, gameData.gameName(), gameData.game());
                 gameList.remove(gameData);
+                gameList.add(newGameData);
+                return;
             }
         }
-        gameList.add(newGameData);
     }
 
-    public void getAllGames() throws DataAccessException {
-
+    public ArrayList<GameRecord> listAllGames() {
+        ArrayList<GameRecord> gameRecordArrayList = new ArrayList<>();
+        for (GameData gameData : gameList) {
+            GameRecord gameRecord = new GameRecord(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
+            gameRecordArrayList.add(gameRecord);
+        }
+        return gameRecordArrayList;
     }
 
     public void clearGames() {

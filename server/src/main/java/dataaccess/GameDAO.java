@@ -1,6 +1,9 @@
 package dataaccess;
 
 import model.GameData;
+import model.GameRecord;
+
+import java.util.ArrayList;
 
 public interface GameDAO {
 
@@ -14,7 +17,7 @@ public interface GameDAO {
 
     void joinGame(int gameID, String playerColor, String username);
 
-    void getAllGames() throws DataAccessException;
+    ArrayList<GameRecord> listAllGames();
 
     void clearGames();
 }

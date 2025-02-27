@@ -19,6 +19,10 @@ public class UserHandler extends Handler {
 
     public Object handleRequest(Request req, Response res) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+            res.status(400);
+            return new Gson().toJson(new FailureRecord("Error: bad request"));
+        }
 
         try {
             if (registerRequest.username().isEmpty() || registerRequest.password().isEmpty() || registerRequest.email().isEmpty()) {

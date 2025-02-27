@@ -35,15 +35,13 @@ public class GameService extends Service {
 
     }
 
-//    public ListGamesResult listGames(String authToken) throws DataAccessException {
-//        if (!authDataAccess.isAuthTokenExistent(authToken)) {
-//            throw new DataAccessException("Error: unauthorized");
-//        }
-//
-//
-//
-//        return new ListGamesResult();
-//    }
+    public ListGamesResult listGames(String authToken) throws DataAccessException {
+        if (!authDataAccess.isAuthTokenExistent(authToken)) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        return new ListGamesResult(gameDataAccess.listAllGames());
+    }
 
     public void clearGames() {
         gameDataAccess.clearGames();

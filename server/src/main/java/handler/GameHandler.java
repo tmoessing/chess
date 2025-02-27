@@ -53,16 +53,16 @@ public class GameHandler extends Handler{
         }
     }
 
-//    public Object handleListGames(Request req, Response res) {
-//        String authToken = req.headers("authorization");
-//
-//        try {
-////            ListGamesResult listGamesResult = gameService.listGames(authToken);
-//            res.status(200);
-//            return new Gson().toJson(listGamesResult);
-//        } catch (DataAccessException e) {
-//            res.status(401);
-//            return new Gson().toJson(new FailureRecord(e.getMessage()));
-//        }
-//    }
+    public Object handleListGames(Request req, Response res) {
+        String authToken = req.headers("authorization");
+
+        try {
+            ListGamesResult listGamesResult = gameService.listGames(authToken);
+            res.status(200);
+            return new Gson().toJson(listGamesResult);
+        } catch (DataAccessException e) {
+            res.status(401);
+            return new Gson().toJson(new FailureRecord(e.getMessage()));
+        }
+    }
 }
