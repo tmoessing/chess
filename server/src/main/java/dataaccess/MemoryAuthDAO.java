@@ -16,11 +16,25 @@ public class MemoryAuthDAO implements AuthDAO {
         authList.add(authData);
     }
 
+    public boolean isAuthTokenExistent(String authToken) {
+        for (AuthData authData : authList) {
+            if (authData.authToken().equals(authToken)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void lookUpAuthToken() throws DataAccessException {
     }
 
-    public void removeAuthToken() throws DataAccessException {
-
+    public void removeAuthToken(String authToken) {
+        for (AuthData authData : authList) {
+            if (authData.authToken().equals(authToken)) {
+                authList.remove(authData);
+                return;
+            }
+        }
     }
 
     public void clearAuthData() {

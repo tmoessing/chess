@@ -1,6 +1,7 @@
 package dataaccess;
 
 
+import model.LoginRequest;
 import model.RegisterRequest;
 import model.RegisterResult;
 import model.UserData;
@@ -24,9 +25,15 @@ public class MemoryUserDAO implements UserDAO {
         userList.add(userData);
     }
 
-    public void findUserDataViaUsername(String userData) throws DataAccessException {
-        if (!userList.contains(userData)){throw new DataAccessException("Can not find user from userData");}
+    public UserData pullUserData(String username) {
+        for (UserData userData : userList) {
+            if (userData.username().equals(username)) {
+                return userData;
+            }
+        }
+        return null;
     }
+
 
     public void clearAllUsers() {
         userList.clear();

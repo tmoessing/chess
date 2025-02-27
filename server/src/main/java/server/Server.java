@@ -11,10 +11,14 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-        Spark.post("/user", ((req, res) -> new RegisterHandler().handleRequest(req, res)));
+        UserHandler userHandler = new UserHandler();
+        DeleteHandler deleteHandler = new DeleteHandler();
 
-        Spark.delete("/db", ((req, res) -> new DeleteHandler().handleDelete(req, res)));
+        // Register your endpoints and handle exceptions here.
+        Spark.post("/user", (userHandler::handleRequest));
+        Spark.post("/session", (userHandler::handleLogin));
+        Spark.delete("/session", (userHandler::handleLogout));
+        Spark.delete("/db", (deleteHandler::handleDelete));
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
@@ -27,8 +31,4 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-
-//        var pet = new Gson().fromJson(req.body(), Pet.class);
-//        pet = service.addPet(pet);
-//        return new Gson().toJson(pet);
 }

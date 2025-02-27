@@ -1,6 +1,6 @@
 package dataaccess;
 
-import model.RegisterRequest;
+import model.*;
 
 public interface UserDAO {
 
@@ -8,7 +8,7 @@ public interface UserDAO {
 
     void addUserData(RegisterRequest userData);
 
-    void findUserDataViaUsername(String userData) throws DataAccessException;
+    UserData pullUserData(String username);
 
     void clearAllUsers();
 
