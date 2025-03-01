@@ -32,12 +32,15 @@ public class GameHandler extends Handler{
     public Object handleJoinGame(Request req, Response res) {
         String authToken = req.headers("authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
+        if (joinGameRequest.playerColor() == null){
+            res.status(400);
+            return new Gson().toJson(new FailureRecord("Error: bad request"));
+        } else if (!joinGameRequest.playerColor().equals("WHITE") && !joinGameRequest.playerColor().equals("BLACK")) {
+            res.status(400);
+            return new Gson().toJson(new FailureRecord("Error: bad request"));
+        }
 
         try {
-            if (joinGameRequest.playerColor().isEmpty()) {
-                res.status(400);
-                return new Gson().toJson(new FailureRecord("Error: bad request"));
-            }
             res.status(200);
             gameService.joinGame(joinGameRequest, authToken);
             return new Gson().toJson(new SuccessResult());
