@@ -6,7 +6,6 @@ import model.GameRecord;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.UUID;
 
 public class MemoryGameDAO implements GameDAO {
     private static final ArrayList<GameData> gameList = new ArrayList<>();
@@ -62,15 +61,16 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public ArrayList<GameRecord> listAllGames() {
-        ArrayList<GameRecord> gameRecordArrayList = new ArrayList<>();
+        ArrayList<GameRecord> games = new ArrayList<>();
         for (GameData gameData : gameList) {
             GameRecord gameRecord = new GameRecord(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
-            gameRecordArrayList.add(gameRecord);
+            games.add(gameRecord);
         }
-        return gameRecordArrayList;
+        return games;
     }
 
     public void clearGames() {
+        ArrayList<GameData> gameList2 = gameList;
         gameList.clear();
     }
 }
