@@ -26,7 +26,8 @@ public class MemoryGameDAO implements GameDAO {
     public boolean isGameJoinable(int gameID, String playerColor) {
         for (GameData gameData : GAME_LIST) {
             if (gameData.gameID() == gameID) {
-                if ((Objects.equals(playerColor, "BLACK") && gameData.blackUsername() == null || (Objects.equals(playerColor, "WHITE") && gameData.whiteUsername() == null))) {
+                if ((Objects.equals(playerColor, "BLACK") && gameData.blackUsername() == null ||
+                        (Objects.equals(playerColor, "WHITE") && gameData.whiteUsername() == null))) {
                     return true;
                 }
             }
