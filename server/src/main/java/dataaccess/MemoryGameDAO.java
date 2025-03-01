@@ -53,7 +53,7 @@ public class MemoryGameDAO implements GameDAO {
                     whiteUsername = gameData.whiteUsername();
                     blackUsername = username;
                 }
-                newGameData = new GameData(gameData.gameID(), whiteUsername, blackUsername, gameData.gameName(), gameData.game());
+                newGameData = new GameData(gameID, whiteUsername, blackUsername, gameData.gameName(), gameData.game());
                 GAME_LIST.remove(gameData);
                 GAME_LIST.add(newGameData);
                 return;
@@ -62,12 +62,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public ArrayList<GameRecord> listAllGames() {
-        ArrayList<GameRecord> games = new ArrayList<>();
+        ArrayList<GameRecord> gameRecordArrayList = new ArrayList<>();
         for (GameData gameData : GAME_LIST) {
             GameRecord gameRecord = new GameRecord(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
-            games.add(gameRecord);
+            gameRecordArrayList.add(gameRecord);
         }
-        return games;
+        return gameRecordArrayList;
     }
 
     public void clearGames() {
