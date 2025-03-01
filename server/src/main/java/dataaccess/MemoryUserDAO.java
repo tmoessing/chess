@@ -1,18 +1,16 @@
 package dataaccess;
 
 
-import model.LoginRequest;
 import model.RegisterRequest;
-import model.RegisterResult;
 import model.UserData;
 
 import java.util.ArrayList;
 
 public class MemoryUserDAO implements UserDAO {
-    private static final ArrayList<UserData> userList = new ArrayList<>();
+    private static final ArrayList<UserData> USER_LIST = new ArrayList<>();
 
     public boolean isUsernameTaken(String username) {
-        for (UserData userData : userList) {
+        for (UserData userData : USER_LIST) {
             if (userData.username().equals(username)) {
                 return true;
             }
@@ -22,11 +20,11 @@ public class MemoryUserDAO implements UserDAO {
 
     public void addUserData(RegisterRequest registerRequest) {
         UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-        userList.add(userData);
+        USER_LIST.add(userData);
     }
 
     public UserData pullUserData(String username) {
-        for (UserData userData : userList) {
+        for (UserData userData : USER_LIST) {
             if (userData.username().equals(username)) {
                 return userData;
             }
@@ -36,6 +34,6 @@ public class MemoryUserDAO implements UserDAO {
 
 
     public void clearAllUsers() {
-        userList.clear();
+        USER_LIST.clear();
     }
 }

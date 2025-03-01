@@ -237,7 +237,10 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessMove> othervalidTeamColorValidChessMovesCollection = this.createValidTeamColorChessMoveCollection(this.getOtherTeamColor(teamColor));
+        Collection<ChessMove> othervalidTeamColorValidChessMovesCollection =
+                this.createValidTeamColorChessMoveCollection(
+                        this.getOtherTeamColor(teamColor)
+                );
         Collection<ChessPosition> othervalidTeamColorChessEndPositionCollection = new ArrayList<ChessPosition>();
         ChessPosition kingPosition = this.getTeamKingPosition(teamColor);
 
@@ -307,9 +310,14 @@ public class ChessGame {
         if (this.lastChessMove != null) {
             ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
             // Check if last piece moved is a pawn and moved twice
-            if ((lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.PAWN) && (Math.abs(this.lastChessMove.getStartPosition().getRow() - this.lastChessMove.getEndPosition().getRow()) == 2)) {
+            if ((lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.PAWN) &&
+                    (Math.abs(this.lastChessMove.getStartPosition().getRow() -
+                            this.lastChessMove.getEndPosition().getRow()) == 2)) {
                 // Check if current piece is a pawn on same row and column +- 1 as well as opposite color
-                if ((chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) && (this.lastChessMove.getEndPosition().getRow() == startPosition.getRow()) && (Math.abs(this.lastChessMove.getEndPosition().getColumn() - startPosition.getColumn()) == 1) && (lastChessPieceMoved.getTeamColor() != chessPiece.getTeamColor())) {
+                if ((chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) &&
+                        (this.lastChessMove.getEndPosition().getRow() == startPosition.getRow()) &&
+                        (Math.abs(this.lastChessMove.getEndPosition().getColumn() - startPosition.getColumn()) == 1)
+                        && (lastChessPieceMoved.getTeamColor() != chessPiece.getTeamColor())) {
                     this.canEnPassant = true;
                     this.pawnPosition = this.lastChessMove.getEndPosition();
                     return;
@@ -324,7 +332,8 @@ public class ChessGame {
         int direction;
 
         if (chessPiece.getTeamColor() == TeamColor.WHITE) {direction = 1;} else {direction = -1;}
-        ChessPosition enPassantEndPosition = new ChessPosition(this.lastChessMove.getEndPosition().getRow() + direction, this.lastChessMove.getEndPosition().getColumn());
+        ChessPosition enPassantEndPosition = new ChessPosition(this.lastChessMove.getEndPosition().getRow() + direction,
+                this.lastChessMove.getEndPosition().getColumn());
         return new ChessMove(startPosition, enPassantEndPosition, null);
     }
 }

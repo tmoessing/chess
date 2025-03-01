@@ -78,10 +78,12 @@ public class PieceMoveCalculator {
         boolean promotion;
 
         // PROMOTION
-        promotion = (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE && chessPosition.getRow() == 7) || (chessPiece.getTeamColor() == ChessGame.TeamColor.BLACK && chessPosition.getRow() == 2);
+        promotion = (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE && chessPosition.getRow() == 7) ||
+                    (chessPiece.getTeamColor() == ChessGame.TeamColor.BLACK && chessPosition.getRow() == 2);
 
         // MOVE LIMIT
-        if ((chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE && chessPosition.getRow() == 2) || (chessPiece.getTeamColor() == ChessGame.TeamColor.BLACK && chessPosition.getRow() == 7)){
+        if ((chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE && chessPosition.getRow() == 2) ||
+                (chessPiece.getTeamColor() == ChessGame.TeamColor.BLACK && chessPosition.getRow() == 7)){
             moveLimit = 2;
         } else {
             moveLimit = 1;

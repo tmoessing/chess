@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
-    private static final ArrayList<AuthData> authList = new ArrayList<>();
+    private static final ArrayList<AuthData> AUTH_LIST = new ArrayList<>();
 
     public String createAuthToken(){
         return UUID.randomUUID().toString();
@@ -13,11 +13,11 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public void addAuthData(String authToken, String username){
         AuthData authData = new AuthData(authToken, username);
-        authList.add(authData);
+        AUTH_LIST.add(authData);
     }
 
     public boolean isAuthTokenExistent(String authToken) {
-        for (AuthData authData : authList) {
+        for (AuthData authData : AUTH_LIST) {
             if (authData.authToken().equals(authToken)) {
                 return true;
             }
@@ -26,7 +26,7 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public String getUsernameViaAuthToken(String authToken) {
-        for (AuthData authData : authList) {
+        for (AuthData authData : AUTH_LIST) {
             if (authData.authToken().equals(authToken)) {
                 return authData.username();
             }
@@ -35,15 +35,15 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public void removeAuthToken(String authToken) {
-        for (AuthData authData : authList) {
+        for (AuthData authData : AUTH_LIST) {
             if (authData.authToken().equals(authToken)) {
-                authList.remove(authData);
+                AUTH_LIST.remove(authData);
                 return;
             }
         }
     }
 
     public void clearAuthData() {
-        authList.clear();
+        AUTH_LIST.clear();
     }
 }

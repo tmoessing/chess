@@ -11,8 +11,6 @@ import java.io.Reader;
 
 public class UserHandler extends Handler {
 
-    private static final Logger log = LoggerFactory.getLogger(UserHandler.class);
-
     public UserHandler() {
        super();
     }
