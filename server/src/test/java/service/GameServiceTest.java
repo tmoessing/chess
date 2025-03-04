@@ -61,7 +61,7 @@ class GameServiceTest {
         // Join Game
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", observedCreateGameResult.gameID());
         gameService.joinGame(joinGameRequest, "good_auth_token");
-        assertEquals("good_auth_token", memoryGameDAO.listAllGames().getFirst().whiteUsername());
+        assertEquals("username", memoryGameDAO.listAllGames().getFirst().whiteUsername());
     }
 
     @Test
