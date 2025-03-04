@@ -16,6 +16,7 @@ public class Server {
         DeleteHandler deleteHandler = new DeleteHandler();
 
         // Register your endpoints and handle exceptions here.
+        Spark.get("/", (req, res) -> "Welcome to the API!");
         Spark.post("/user", (userHandler::handleRequest));
         Spark.post("/session", (userHandler::handleLogin));
         Spark.delete("/session", (userHandler::handleLogout));
