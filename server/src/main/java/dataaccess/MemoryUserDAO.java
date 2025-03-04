@@ -32,7 +32,6 @@ public class MemoryUserDAO implements UserDAO {
         return null;
     }
 
-
     public void clearAllUsers() {
         USER_LIST.clear();
     }
