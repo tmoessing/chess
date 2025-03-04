@@ -23,14 +23,24 @@ class GameServiceTest {
         gameService = new GameService();
         memoryGameDAO = new MemoryGameDAO();
         memoryAuthDAO = new MemoryAuthDAO();
+
+        memoryGameDAO.clearGames();
+    }
+
+    CreateGameResult createGameResult() throws DataAccessException{
+        // Authenticate User
+        String authToken = "good_auth_token";
+        String username = "username";
+        memoryAuthDAO.addAuthData(authToken, username);
+
+        // Create Game
+        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
+        return gameService.createGame(createGameRequestTest, authToken);
     }
 
     @Test
     void createGameSuccess() throws DataAccessException {
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        String authToken = "good_auth_token";
-        memoryAuthDAO.addAuthData(authToken, "username");
-        CreateGameResult observedCreateGameResult = gameService.createGame(createGameRequestTest, authToken);
+        CreateGameResult observedCreateGameResult = createGameResult();
         assertEquals(new CreateGameResult(1), observedCreateGameResult);
     }
 
@@ -39,95 +49,66 @@ class GameServiceTest {
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
         String authToken = "bad_auth_token";
         Exception exception = assertThrows(DataAccessException.class,
-                () -> {gameService.listGames(authToken);});
+                () -> {gameService.createGame(createGameRequestTest, authToken);});
 
         assertEquals("Error: unauthorized", exception.getMessage());
     }
 
     @Test
     void joinGameSuccess() throws DataAccessException {
-        memoryGameDAO.clearGames();
-
-        // Authenticate User
-        String authToken = "good_auth_token";
-        String username = "username";
-        memoryAuthDAO.addAuthData(authToken, username);
-
-        // Create Game
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        CreateGameResult observedCreateGameResult = gameService.createGame(createGameRequestTest, authToken);
+        CreateGameResult observedCreateGameResult = createGameResult();
 
         // Join Game
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", observedCreateGameResult.gameID());
-        gameService.joinGame(joinGameRequest, authToken);
-        assertEquals(username, memoryGameDAO.listAllGames().getFirst().whiteUsername());
+        gameService.joinGame(joinGameRequest, "good_auth_token");
+        assertEquals("good_auth_token", memoryGameDAO.listAllGames().getFirst().whiteUsername());
     }
 
     @Test
     void joinGameUnauthorized() throws DataAccessException {
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        String authToken = "bad_auth_token";
+        CreateGameResult observedCreateGameResult = createGameResult();
+
+        JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", observedCreateGameResult.gameID());
+        String authToken2 = "bad_auth_token";
         Exception exception = assertThrows(DataAccessException.class,
-                () -> {gameService.listGames(authToken);});
+                () -> {gameService.joinGame(joinGameRequest, authToken2);});
 
         assertEquals("Error: unauthorized", exception.getMessage());
     }
 
     @Test
     void joinGameBadRequest() throws DataAccessException {
-        // Authenticate User
-        String authToken = "good_auth_token";
-        String username = "username";
-        memoryAuthDAO.addAuthData(authToken, username);
-
-        // Create Game
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        CreateGameResult observedCreateGameResult = gameService.createGame(createGameRequestTest, authToken);
+        CreateGameResult observedCreateGameResult = createGameResult();
 
         // Join Game
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 3);
 
         Exception exception = assertThrows(DataAccessException.class,
-                () -> {gameService.joinGame(joinGameRequest, authToken);});
+                () -> {gameService.joinGame(joinGameRequest, "good_auth_token");});
 
         assertEquals("Error: bad request", exception.getMessage());
     }
 
     @Test
     void joinGameAlreadyTaken() throws DataAccessException {
-        // Authenticate User
-        String authToken = "good_auth_token";
-        String username = "username";
-        memoryAuthDAO.addAuthData(authToken, username);
-
-        // Create Game
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        CreateGameResult observedCreateGameResult = gameService.createGame(createGameRequestTest, authToken);
+        CreateGameResult observedCreateGameResult = createGameResult(); // Create Game
 
         // Join Game
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", observedCreateGameResult.gameID());
-        gameService.joinGame(joinGameRequest, authToken);
+        gameService.joinGame(joinGameRequest, "good_auth_token");
 
         Exception exception = assertThrows(DataAccessException.class,
-                () -> {gameService.joinGame(joinGameRequest, authToken);});
+                () -> {gameService.joinGame(joinGameRequest, "good_auth_token");});
 
         assertEquals("Error: already taken", exception.getMessage());
     }
 
     @Test
     void listGamesSuccess() throws DataAccessException {
-        memoryGameDAO.clearGames();
-
-        // Authenticate User
-        String authToken = "good_auth_token";
-        memoryAuthDAO.addAuthData(authToken, "username");
-
-        // Create Game
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        CreateGameResult observedCreateGameResult = gameService.createGame(createGameRequestTest, authToken);
+        createGameResult();
 
         // List Games
-        ListGamesResult listGamesResult = gameService.listGames(authToken);
+        ListGamesResult listGamesResult = gameService.listGames("good_auth_token");
         assertEquals(1, listGamesResult.games().size());
     }
 
@@ -143,13 +124,7 @@ class GameServiceTest {
 
     @Test
     void clearGames() throws DataAccessException {
-        // Authenticate User
-        String authToken = "good_auth_token";
-        memoryAuthDAO.addAuthData(authToken, "username");
-
-        // Create Game
-        CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
-        CreateGameResult observedCreateGameResult = gameService.createGame(createGameRequestTest, authToken);
+        createGameResult();
 
         // Clear Game
         gameService.clearGames();
