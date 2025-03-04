@@ -26,7 +26,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame_success() throws DataAccessException {
+    void createGameSuccess() throws DataAccessException {
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
         String authToken = "good_auth_token";
         memoryAuthDAO.addAuthData(authToken, "username");
@@ -35,7 +35,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame_unauthorized() throws DataAccessException {
+    void createGameUnauthorized() throws DataAccessException {
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
         String authToken = "bad_auth_token";
         Exception exception = assertThrows(DataAccessException.class,
@@ -45,7 +45,7 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame_success() throws DataAccessException {
+    void joinGameSuccess() throws DataAccessException {
         memoryGameDAO.clearGames();
 
         // Authenticate User
@@ -64,7 +64,7 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame_unauthorized() throws DataAccessException {
+    void joinGameUnauthorized() throws DataAccessException {
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
         String authToken = "bad_auth_token";
         Exception exception = assertThrows(DataAccessException.class,
@@ -74,7 +74,7 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame_bad_request() throws DataAccessException {
+    void joinGameBadRequest() throws DataAccessException {
         // Authenticate User
         String authToken = "good_auth_token";
         String username = "username";
@@ -94,7 +94,7 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame_already_taken() throws DataAccessException {
+    void joinGameAlreadyTaken() throws DataAccessException {
         // Authenticate User
         String authToken = "good_auth_token";
         String username = "username";
@@ -115,7 +115,7 @@ class GameServiceTest {
     }
 
     @Test
-    void listGames_success() throws DataAccessException {
+    void listGamesSuccess() throws DataAccessException {
         memoryGameDAO.clearGames();
 
         // Authenticate User
@@ -132,7 +132,7 @@ class GameServiceTest {
     }
 
     @Test
-    void listGames_unauthorized() throws DataAccessException {
+    void listGamesUnauthorized() throws DataAccessException {
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
         String authToken = "bad_auth_token";
         Exception exception = assertThrows(DataAccessException.class,

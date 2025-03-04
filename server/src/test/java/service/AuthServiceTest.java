@@ -20,7 +20,7 @@ class AuthServiceTest {
     private MemoryAuthDAO memoryAuthDAO;
 
     @BeforeEach
-    void set_up() {
+    void setUp() {
         authService = new AuthService();
         userService = new UserService();
         memoryUserDAO = new MemoryUserDAO();
@@ -31,7 +31,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void logout_success() throws DataAccessException{
+    void logoutSuccess() throws DataAccessException{
         // Register
         String username = "username";
         String password = "password";
@@ -52,7 +52,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void logout_failure() throws DataAccessException{
+    void logoutFailure() throws DataAccessException{
 
         Exception exception = assertThrows(DataAccessException.class,
                 () -> {authService.logout("bad_auth");});

@@ -19,7 +19,7 @@ class UserServiceTest {
     private MemoryAuthDAO memoryAuthDAO;
 
     @BeforeEach
-    void set_up() {
+    void setUp() {
         userService = new UserService();
         memoryUserDAO = new MemoryUserDAO();
         memoryAuthDAO = new MemoryAuthDAO();
@@ -29,7 +29,7 @@ class UserServiceTest {
     }
 
     @Test
-    void register_success() throws DataAccessException {
+    void registerSuccess() throws DataAccessException {
         String username = "username";
         RegisterRequest registerRequest = new RegisterRequest(username, "password", "email");
         RegisterResult registerResult = userService.register(registerRequest);
@@ -38,7 +38,7 @@ class UserServiceTest {
     }
 
     @Test
-    void register_already_taken() throws DataAccessException {
+    void registerAlreadyTaken() throws DataAccessException {
         String username = "username";
         RegisterRequest registerRequest = new RegisterRequest(username, "password", "email");
         RegisterResult registerResult = userService.register(registerRequest);
@@ -50,7 +50,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_success() throws DataAccessException{
+    void loginSuccess() throws DataAccessException{
         // Register
         String username = "username";
         String password = "password";
@@ -67,7 +67,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_failure() throws DataAccessException{
+    void loginFailure() throws DataAccessException{
         // Register
         String username = "username";
         String password = "password";
