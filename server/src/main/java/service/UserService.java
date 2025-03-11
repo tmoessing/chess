@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.*;
-import org.eclipse.jetty.util.log.Log;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService extends Service {
 
@@ -10,12 +10,27 @@ public class UserService extends Service {
         super();
     }
 
+    private String hashPassword(String clearTextPassword) {
+        return BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+    }
+
+    private boolean verifyUser(String username, String providedClearTextPassword) {
+        // read the previously hashed password from the database
+        var hashedPassword = userDataAccess.pullUserData(username).password();
+
+        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
+    }
+
+
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         if (userDataAccess.isUsernameTaken(registerRequest.username())) {
             throw new DataAccessException("Error: already taken");
         }
+        String username = registerRequest.username();
+        String password = hashPassword(registerRequest.password());
+        String email = registerRequest.email();
 
-        userDataAccess.addUserData(registerRequest);
+        userDataAccess.addUserData(username, password, email);
 
         String authToken = authDataAccess.createAuthToken();
         authDataAccess.addAuthData(authToken, registerRequest.username());
@@ -28,14 +43,17 @@ public class UserService extends Service {
             throw new DataAccessException("Error: unauthorized");
         }
 
-        UserData userData = userDataAccess.pullUserData(loginRequest.username());
-        if (!userData.password().equals(loginRequest.password())){
+        String username = loginRequest.username();
+        String password = loginRequest.password();
+
+        UserData userData = userDataAccess.pullUserData(username);
+        if (!verifyUser(username, password)){
             throw new DataAccessException("Error: unauthorized");
         }
 
         String authToken = authDataAccess.createAuthToken();
-        authDataAccess.addAuthData(authToken, loginRequest.username());
-        return new LoginResult(loginRequest.username(), authToken);
+        authDataAccess.addAuthData(authToken, username);
+        return new LoginResult(username, authToken);
     }
 
     public void clearUsers() {

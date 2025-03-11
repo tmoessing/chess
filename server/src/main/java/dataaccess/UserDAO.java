@@ -6,7 +6,7 @@ public interface UserDAO {
 
     boolean isUsernameTaken(String userName);
 
-    void addUserData(RegisterRequest userData);
+    void addUserData(String username, String password, String email);
 
     UserData pullUserData(String username);
 

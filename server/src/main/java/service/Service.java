@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public abstract class Service {
     protected UserDAO userDataAccess;

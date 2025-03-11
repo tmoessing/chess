@@ -1,7 +1,5 @@
 package dataaccess;
 
-
-import model.RegisterRequest;
 import model.UserData;
 
 import java.util.ArrayList;
@@ -18,8 +16,8 @@ public class MemoryUserDAO implements UserDAO {
         return false;
     }
 
-    public void addUserData(RegisterRequest registerRequest) {
-        UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+    public void addUserData(String username, String password, String email) {
+        UserData userData = new UserData(username, password, email);
         USER_LIST.add(userData);
     }
 
