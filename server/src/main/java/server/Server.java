@@ -1,10 +1,19 @@
 package server;
 
+import dataaccess.DatabaseManager;
 import handler.*;
 import spark.*;
 
 
 public class Server {
+
+    public Server() {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (Exception e) {
+            System.out.println("ERROR" + e.getMessage());
+        }
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

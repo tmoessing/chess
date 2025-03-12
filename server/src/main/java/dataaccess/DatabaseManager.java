@@ -9,7 +9,7 @@ public class DatabaseManager {
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
 
-    /**
+    /*
      * Load the database information for the db.properties file.
      */
     static {
@@ -36,7 +36,7 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+    public static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
@@ -70,15 +70,13 @@ public class DatabaseManager {
         }
     }
 
-    static void configureDatabase(String[] createTableStatements) {
+    static void configureDatabase(String[] statements) {
         try {
-            DatabaseManager.createDatabase();
             try (var conn = DatabaseManager.getConnection()) {
-                for (var statement : createTableStatements) {
+                for (var statement : statements)
                     try (var preparedStatement = conn.prepareStatement(statement)) {
                         preparedStatement.executeUpdate();
                     }
-                }
             } catch (SQLException e) {
                 System.out.println("SQL error: " + e.getMessage());
             }
