@@ -153,14 +153,14 @@ public class DatabaseTests {
 
         for (Package p : getClass().getClassLoader().getDefinedPackages()) {
             try {
-                Class<?> clazz = Class.forName(p.getName() + ".dataaccess.DatabaseManager");
+                Class<?> clazz = Class.forName(p.getName() + ".DatabaseManager");
                 clazz.getDeclaredMethod("getConnection");
                 databaseManagerClass = clazz;
                 return clazz;
             } catch (ReflectiveOperationException ignored) {}
         }
         throw new ClassNotFoundException("Unable to load database in order to verify persistence. " +
-                "Are you using dataaccess.DatabaseManager to set your credentials? " +
+                "Are you using DatabaseManager to set your credentials? " +
                 "Did you edit the signature of the getConnection method?");
     }
 
