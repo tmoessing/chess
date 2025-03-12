@@ -26,6 +26,7 @@ public class UserService extends Service {
         if (userDataAccess.isUsernameTaken(registerRequest.username())) {
             throw new DataAccessException("Error: already taken");
         }
+
         String username = registerRequest.username();
         String password = hashPassword(registerRequest.password());
         String email = registerRequest.email();
@@ -52,7 +53,7 @@ public class UserService extends Service {
         }
 
         String authToken = authDataAccess.createAuthToken();
-        authDataAccess.addAuthData(authToken, username);
+        authDataAccess.addAuthData(username, authToken);
         return new LoginResult(username, authToken);
     }
 

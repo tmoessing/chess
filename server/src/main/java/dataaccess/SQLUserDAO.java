@@ -22,7 +22,20 @@ public class SQLUserDAO implements UserDAO {
         DatabaseManager.configureDatabase(createUsersTable);
     }
 
-    public boolean isUsernameTaken(String userName) {
+    public boolean isUsernameTaken(String username) {
+        String query = "SELECT 1 FROM users WHERE username=? LIMIT 1";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, username);
+
+            try (var rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException | DataAccessException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
         return false;
     }
 
@@ -32,6 +45,23 @@ public class SQLUserDAO implements UserDAO {
     }
 
     public UserData pullUserData(String username) {
+        String query = "SELECT username, password, email FROM users WHERE username=? LIMIT 1";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, username);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String password = rs.getString("password");
+                    String email = rs.getString("email");
+                    return new UserData(username, password, email);
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
         return null;
     }
 
