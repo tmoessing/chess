@@ -8,10 +8,10 @@ public abstract class Service {
     protected GameDAO gameDataAccess;
     protected AuthDAO authDataAccess;
 
-    public Service(){
-        this.userDataAccess = new MemoryUserDAO();
-        this.gameDataAccess = new MemoryGameDAO();
-        this.authDataAccess = new MemoryAuthDAO();
+    public Service() {
+        this.userDataAccess = new SQLUserDAO();
+        this.gameDataAccess = new SQLGameDAO();
+        this.authDataAccess = new SQLAuthDAO();
     }
 }
 
