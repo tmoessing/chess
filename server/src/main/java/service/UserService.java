@@ -33,7 +33,7 @@ public class UserService extends Service {
         userDataAccess.addUserData(username, password, email);
 
         String authToken = authDataAccess.createAuthToken();
-        authDataAccess.addAuthData(authToken, registerRequest.username());
+        authDataAccess.addAuthData(registerRequest.username(), authToken);
 
         return new RegisterResult(registerRequest.username(), authToken);
     }
