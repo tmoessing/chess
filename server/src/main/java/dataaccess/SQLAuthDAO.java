@@ -50,11 +50,27 @@ public class SQLAuthDAO implements AuthDAO {
 
 
     public String getUsernameViaAuthToken(String authToken) {
-        return "";
+        String query = "SELECT username FROM auths WHERE authToken=? LIMIT 1";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, authToken);
+
+            try (var rs = ps.executeQuery()) {
+                 if (rs.next()) {
+                     return rs.getString("username");
+                 }
+            }
+        } catch (SQLException | DataAccessException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+        return null;
     }
 
     public void removeAuthToken(String authToken) {
-
+        var statement = "DELETE FROM auths where authToken=?";
+        executeUpdate(statement, authToken);
     }
 
     public void clearAuthData() {
