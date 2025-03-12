@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import model.*;
 
 public class GameService extends Service {

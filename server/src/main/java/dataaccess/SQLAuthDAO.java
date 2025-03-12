@@ -47,8 +47,6 @@ public class SQLAuthDAO implements AuthDAO {
         return false;
     }
 
-
-
     public String getUsernameViaAuthToken(String authToken) {
         String query = "SELECT username FROM auths WHERE authToken=? LIMIT 1";
 
@@ -83,10 +81,13 @@ public class SQLAuthDAO implements AuthDAO {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-//                    else if (param instanceof PetType p) ps.setString(i + 1, p.toString());
-                    else if (param == null) ps.setNull(i + 1, NULL);
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case null -> ps.setNull(i + 1, NULL);
+                        default -> {
+                        }
+                    }
                 }
                 ps.executeUpdate();
 
@@ -97,8 +98,10 @@ public class SQLAuthDAO implements AuthDAO {
 
                 return 0;
             }
-        } catch (SQLException | DataAccessException e) {
-//            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        } catch (SQLException e) {
+            System.out.println("SQL error: " + e.getMessage());
+        } catch (DataAccessException e) {
+            System.out.println("Database error: " + e.getMessage());
         }
         return 0;
     }

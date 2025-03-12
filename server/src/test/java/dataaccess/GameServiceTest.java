@@ -23,6 +23,7 @@ class GameServiceTest {
         sqlGameDAO = new SQLGameDAO();
         sqlAuthDAO = new SQLAuthDAO();
 
+        sqlAuthDAO.clearAuthData();
         sqlGameDAO.clearGames();
     }
 
@@ -30,7 +31,7 @@ class GameServiceTest {
         // Authenticate User
         String authToken = "good_auth_token";
         String username = "username";
-        sqlAuthDAO.addAuthData(authToken, username);
+        sqlAuthDAO.addAuthData(username, authToken);
 
         // Create Game
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");

@@ -91,7 +91,11 @@ public class SQLUserDAO implements UserDAO {
                 }
                 return 0;
             }
-        } catch (SQLException | DataAccessException ignored) {}
+        } catch (SQLException e) {
+            System.out.println("SQL error: " + e.getMessage());
+        } catch (DataAccessException e) {
+        System.out.println("Database error: " + e.getMessage());
+    }
         return 0;
     }
 }
