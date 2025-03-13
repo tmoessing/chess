@@ -86,9 +86,9 @@ public class SQLGameDAO implements GameDAO {
     }
 
  public void createGame(int gameID, String gameName) {
-        var statement = "INSERT INTO games (gameID, gameName, ChessGameJSON) VALUES (?, ?, ?)";
-        var ChessGameJSON = new Gson().toJson(new ChessGame());
-        DatabaseManager.executeUpdate(statement, gameID, gameName, ChessGameJSON);
+        var statement = "INSERT INTO games (gameID, gameName, chessGameJSON) VALUES (?, ?, ?)";
+        var chessGameJSON = new Gson().toJson(new ChessGame());
+        DatabaseManager.executeUpdate(statement, gameID, gameName, chessGameJSON);
  }
 
  public void joinGame(int gameID, String playerColor, String username) {

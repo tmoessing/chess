@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLUserDAO;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
@@ -16,39 +16,39 @@ class AuthServiceTest {
 
     private AuthService authService;
     private UserService userService;
-    private MemoryUserDAO memoryUserDAO;
-    private MemoryAuthDAO memoryAuthDAO;
+    private SQLUserDAO sqlUserDAO;
+    private SQLAuthDAO sqlAuthDAO;
 
     @BeforeEach
     void setUp() {
         authService = new AuthService();
         userService = new UserService();
-        memoryUserDAO = new MemoryUserDAO();
-        memoryAuthDAO = new MemoryAuthDAO();
+        sqlUserDAO = new SQLUserDAO();
+        sqlAuthDAO = new SQLAuthDAO();
 
-        memoryUserDAO.clearAllUsers();
-        memoryAuthDAO.clearAuthData();
+        sqlUserDAO.clearAllUsers();
+        sqlAuthDAO.clearAuthData();
     }
 
     @Test
-    void logoutSuccess() throws DataAccessException{
+    void logoutSuccess() throws DataAccessException {
         // Register
         String username = "username";
         String password = "password";
         RegisterRequest registerRequest = new RegisterRequest(username, password, "email");
         RegisterResult registerResult = userService.register(registerRequest);
-        assertTrue(memoryAuthDAO.isAuthTokenExistent(registerResult.authToken()));
-        assertTrue(memoryUserDAO.isUsernameTaken(username));
+        assertTrue(sqlAuthDAO.isAuthTokenExistent(registerResult.authToken()));
+        assertTrue(sqlUserDAO.isUsernameTaken(username));
 
         // Login
         LoginRequest loginRequest = new LoginRequest(username, password);
         LoginResult loginResult = userService.login(loginRequest);
-        assertTrue(memoryAuthDAO.isAuthTokenExistent(loginResult.authToken()));
-        assertTrue(memoryUserDAO.isUsernameTaken(loginRequest.username()));
+        assertTrue(sqlAuthDAO.isAuthTokenExistent(loginResult.authToken()));
+        assertTrue(sqlUserDAO.isUsernameTaken(loginRequest.username()));
 
         authService.logout(loginResult.authToken());
 
-        assertFalse(memoryAuthDAO.isAuthTokenExistent(loginResult.authToken()));
+        assertFalse(sqlAuthDAO.isAuthTokenExistent(loginResult.authToken()));
     }
 
     @Test
@@ -64,10 +64,10 @@ class AuthServiceTest {
         String username = "username";
         RegisterRequest registerRequest = new RegisterRequest(username, "password", "email");
         RegisterResult registerResult = userService.register(registerRequest);
-        assertTrue(memoryAuthDAO.isAuthTokenExistent(registerResult.authToken()));
+        assertTrue(sqlAuthDAO.isAuthTokenExistent(registerResult.authToken()));
 
         authService.clearAuthData();
 
-        assertFalse(memoryAuthDAO.isAuthTokenExistent(registerResult.authToken()));
+        assertFalse(sqlAuthDAO.isAuthTokenExistent(registerResult.authToken()));
     }
 }

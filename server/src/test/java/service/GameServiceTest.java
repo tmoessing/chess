@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import model.CreateGameRequest;
 import model.CreateGameResult;
 import model.JoinGameRequest;
@@ -10,28 +10,30 @@ import model.ListGamesResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GameServiceTest {
 
     private GameService gameService;
-    private MemoryAuthDAO memoryAuthDAO;
-    private MemoryGameDAO memoryGameDAO;
+    private SQLAuthDAO sqlAuthDAO;
+    private SQLGameDAO sqlGameDAO;
 
     @BeforeEach
     void setup() {
         gameService = new GameService();
-        memoryGameDAO = new MemoryGameDAO();
-        memoryAuthDAO = new MemoryAuthDAO();
+        sqlGameDAO = new SQLGameDAO();
+        sqlAuthDAO = new SQLAuthDAO();
 
-        memoryGameDAO.clearGames();
+        sqlAuthDAO.clearAuthData();
+        sqlGameDAO.clearGames();
     }
 
-    CreateGameResult createGameResult() throws DataAccessException{
+    CreateGameResult createGameResult() throws DataAccessException {
         // Authenticate User
         String authToken = "good_auth_token";
         String username = "username";
-        memoryAuthDAO.addAuthData(username, authToken);
+        sqlAuthDAO.addAuthData(username, authToken);
 
         // Create Game
         CreateGameRequest createGameRequestTest = new CreateGameRequest("gameNameTest");
@@ -61,7 +63,7 @@ class GameServiceTest {
         // Join Game
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", observedCreateGameResult.gameID());
         gameService.joinGame(joinGameRequest, "good_auth_token");
-        assertEquals("username", memoryGameDAO.listAllGames().getFirst().whiteUsername());
+        assertEquals("username", sqlGameDAO.listAllGames().getFirst().whiteUsername());
     }
 
     @Test
@@ -129,6 +131,6 @@ class GameServiceTest {
         // Clear Game
         gameService.clearGames();
 
-        assertEquals(0, memoryGameDAO.listAllGames().size());
+        assertEquals(0, sqlGameDAO.listAllGames().size());
     }
 }
