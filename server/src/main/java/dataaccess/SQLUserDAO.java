@@ -16,7 +16,7 @@ public class SQLUserDAO implements UserDAO {
               `password` CHAR(64) NOT NULL,
               `email` VARCHAR(320) NOT NULL UNIQUE,
               PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+            );
            """
         };
         DatabaseManager.configureDatabase(createUsersTable);
@@ -41,7 +41,7 @@ public class SQLUserDAO implements UserDAO {
 
     public void addUserData(String username, String password, String email) {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, username, password, email);
+        DatabaseManager.executeUpdate(statement, username, password, email);
     }
 
     public UserData pullUserData(String username) {
@@ -67,35 +67,6 @@ public class SQLUserDAO implements UserDAO {
 
     public void clearAllUsers() {
         var statement = "TRUNCATE users";
-        executeUpdate(statement);
-    }
-
-    private int executeUpdate(String statement, Object... params) {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL error: " + e.getMessage());
-        } catch (DataAccessException e) {
-        System.out.println("Database error: " + e.getMessage());
-    }
-        return 0;
+        DatabaseManager.executeUpdate(statement);
     }
 }

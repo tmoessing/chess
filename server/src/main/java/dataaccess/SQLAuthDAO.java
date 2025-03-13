@@ -15,7 +15,7 @@ public class SQLAuthDAO implements AuthDAO {
               `authToken` VARCHAR(255) NOT NULL UNIQUE,
               `username` VARCHAR(255) NOT NULL,
               PRIMARY KEY (`authToken`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+            );
            """
         };
         DatabaseManager.configureDatabase(createAuthsTable);
@@ -27,7 +27,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     public void addAuthData(String username, String authToken) {
         var statement = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
-        executeUpdate(statement, authToken, username);
+        DatabaseManager.executeUpdate(statement, authToken, username);
     }
 
     public boolean isAuthTokenExistent(String authToken) {
@@ -68,41 +68,13 @@ public class SQLAuthDAO implements AuthDAO {
 
     public void removeAuthToken(String authToken) {
         var statement = "DELETE FROM auths where authToken=?";
-        executeUpdate(statement, authToken);
+        DatabaseManager.executeUpdate(statement, authToken);
     }
 
     public void clearAuthData() {
         var statement = "TRUNCATE auths";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
     }
 
-    private int executeUpdate(String statement, Object... params) { // throws ResponseException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
 
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL error: " + e.getMessage());
-        } catch (DataAccessException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-        return 0;
-    }
 }

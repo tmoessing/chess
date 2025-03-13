@@ -20,19 +20,19 @@ public class SQLGameDAO implements GameDAO {
          `whiteUsername` VARCHAR(255),
          `blackUsername` VARCHAR(255),
          `ChessGameJSON` TEXT NOT NULL
-         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+         );
          """
-     };
-     DatabaseManager.configureDatabase(createGamesTable);
+        };
+        DatabaseManager.configureDatabase(createGamesTable);
  }
 
  public int createGameID() {
-    String query = "SELECT COUNT(*) FROM games";
+    String query = "SELECT COUNT(gameID) FROM games";
      try (var conn = DatabaseManager.getConnection();
           var ps = conn.prepareStatement(query)) {
          try (var rs = ps.executeQuery()) {
              if (rs.next()) {
-                 return rs.getInt("gameID") +1;
+                 return rs.getInt(1)+1;
              }
          }
      } catch (SQLException | DataAccessException e) {
@@ -88,7 +88,7 @@ public class SQLGameDAO implements GameDAO {
  public void createGame(int gameID, String gameName) {
         var statement = "INSERT INTO games (gameID, gameName, ChessGameJSON) VALUES (?, ?, ?)";
         var ChessGameJSON = new Gson().toJson(new ChessGame());
-        executeUpdate(statement, gameID, gameName, ChessGameJSON);
+        DatabaseManager.executeUpdate(statement, gameID, gameName, ChessGameJSON);
  }
 
  public void joinGame(int gameID, String playerColor, String username) {
@@ -99,7 +99,7 @@ public class SQLGameDAO implements GameDAO {
             statement = "UPDATE games SET blackUsername=? WHERE gameID=?";
         }
 
-        executeUpdate(statement, username, gameID);
+     DatabaseManager.executeUpdate(statement, username, gameID);
  }
 
  public ArrayList<GameRecord> listAllGames() {
@@ -125,35 +125,6 @@ public class SQLGameDAO implements GameDAO {
 
  public void clearGames() {
     var statement = "TRUNCATE games";
-    executeUpdate(statement);
+     DatabaseManager.executeUpdate(statement);
  }
-
- private int executeUpdate(String statement, Object... params) {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL error: " + e.getMessage());
-        } catch (DataAccessException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-        return 0;
-    }
 }
