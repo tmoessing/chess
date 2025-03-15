@@ -13,9 +13,19 @@ public class PreLoginClient {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
-            case "" -> "";
+            case "login" -> login();
+            case "register" -> register();
+            case "quit" -> "quit";
             default -> help();
         };
+    }
+
+    public String login() {
+        return "";
+    }
+
+    public String register() {
+        return "";
     }
 
     public String help() {
