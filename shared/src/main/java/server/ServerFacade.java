@@ -80,9 +80,13 @@ public class ServerFacade {
         RegisterResult registerResult = this.makeRequest("POST", path, request, RegisterResult.class);
         authToken = registerResult.authToken();
     }
-//
-//    public LoginResult login(LoginRequest request) {...}
-//
+
+    public void login(LoginRequest request) throws ResponseException {
+        var path = "/session";
+        LoginResult loginResult = this.makeRequest("POST", path, request, LoginResult.class);
+        authToken = loginResult.authToken();
+    }
+
 //    public SuccessResult logout() {...}
 //
 //    public SuccessResult clear() {...}

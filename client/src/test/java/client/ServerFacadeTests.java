@@ -58,6 +58,8 @@ public class ServerFacadeTests {
 
     @Test
     public void loginSuccess() throws ResponseException {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        facade.register(registerRequest);
         LoginRequest loginRequest = new LoginRequest("username", "password");
         assertDoesNotThrow( () -> facade.login(loginRequest));
     }
