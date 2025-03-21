@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 
 import model.*;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.*;
 import java.net.*;
@@ -88,7 +89,11 @@ public class ServerFacade {
         authToken = loginResult.authToken();
     }
 
-//    public SuccessResult logout() {...}
+    public void logout() throws ResponseException {
+        var path = "/session";
+        SuccessResult successResult = this.makeRequest("DELETE", path, new SuccessResult(), SuccessResult.class);
+        authToken = null;
+    }
 //
 //    public SuccessResult clear() {...}
 //

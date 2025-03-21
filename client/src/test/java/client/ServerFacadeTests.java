@@ -86,11 +86,11 @@ public class ServerFacadeTests {
     @Test
     public void logoutSuccess() throws ResponseException {
         facade.register(registerRequest);
-        assertDoesNotThrow( () -> facade.logout());
+        assertDoesNotThrow(() -> facade.logout());
     }
 
     @Test
     public void logoutFailure() throws ResponseException {
-        assertThrows(ResponseException.class, facade.logout());
+        assertThrows(ResponseException.class, () -> facade.logout());
     }
 }
