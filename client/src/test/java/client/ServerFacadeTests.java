@@ -71,6 +71,23 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void logoutSuccess() throws ResponseException {
+        facade.register(registerRequest);
+        assertDoesNotThrow(() -> facade.logout());
+    }
+
+    @Test
+    public void logoutFailure() throws ResponseException {
+        assertThrows(ResponseException.class, () -> facade.logout());
+    }
+
+    @Test
+    public void clearSuccess() throws ResponseException {
+        facade.register(registerRequest);
+        assertDoesNotThrow(() -> facade.clear());
+    }
+
+    @Test
     public void createGameSuccess() throws ResponseException {
         facade.register(registerRequest);
         CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
@@ -81,16 +98,5 @@ public class ServerFacadeTests {
     public void createGameFailure() {
         CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
         assertThrows(ResponseException.class, () -> facade.createGame(createGameRequest));
-    }
-
-    @Test
-    public void logoutSuccess() throws ResponseException {
-        facade.register(registerRequest);
-        assertDoesNotThrow(() -> facade.logout());
-    }
-
-    @Test
-    public void logoutFailure() throws ResponseException {
-        assertThrows(ResponseException.class, () -> facade.logout());
     }
 }

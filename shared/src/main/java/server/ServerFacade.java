@@ -94,9 +94,12 @@ public class ServerFacade {
         SuccessResult successResult = this.makeRequest("DELETE", path, new SuccessResult(), SuccessResult.class);
         authToken = null;
     }
-//
-//    public SuccessResult clear() {...}
-//
+
+    public void clear() throws ResponseException {
+        var path = "/db";
+        SuccessResult successResult = this.makeRequest("DELETE", path, new SuccessResult(), SuccessResult.class);
+    }
+
 //    public ListGamesResult listGames() {...}
 //
     public void createGame(CreateGameRequest request) throws ResponseException {
