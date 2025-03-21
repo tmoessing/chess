@@ -1,5 +1,8 @@
 package client;
 
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
+import dataaccess.SQLUserDAO;
 import exception.ResponseException;
 import model.*;
 import org.junit.jupiter.api.*;
@@ -20,6 +23,18 @@ public class ServerFacadeTests {
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:" + port);
+    }
+
+    @BeforeEach
+    public void setup() {
+        // Clear Databases
+        SQLAuthDAO sqlAuthDAO = new SQLAuthDAO();
+        SQLGameDAO sqlGameDAO = new SQLGameDAO();
+        SQLUserDAO sqlUserDAO = new SQLUserDAO();
+
+        sqlUserDAO.clearAllUsers();
+        sqlGameDAO.clearGames();
+        sqlAuthDAO.clearAuthData();
     }
 
     @AfterAll
