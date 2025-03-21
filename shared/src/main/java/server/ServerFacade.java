@@ -3,6 +3,8 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 
+import model.*;
+
 import java.io.*;
 import java.net.*;
 
@@ -71,5 +73,19 @@ public class ServerFacade {
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
+
+//    public RegisterResult register(RegisterRequest request) {...}
+//
+//    public LoginResult login(LoginRequest request) {...}
+//
+//    public SuccessResult logout() {...}
+//
+//    public SuccessResult clear() {...}
+//
+//    public ListGamesResult listGames() {...}
+//
+//    public CreateGameResult createGame(CreateGameRequest request) {...}
+//
+//    public SuccessResult joinGame(JoinGameRequest request) {...}
 
 }
