@@ -71,4 +71,16 @@ public class ServerFacadeTests {
         LoginRequest loginRequest = new LoginRequest("username", "password1");
         assertThrows(ResponseException.class, () -> facade.login(loginRequest));
     }
+
+    @Test
+    public void createGameSuccess() {
+        CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
+        assertDoesNotThrow( () -> facade.createGame(createGameRequest));
+    }
+
+    @Test
+    public void createGameFailure() {
+        CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
+        assertThrows(ResponseException.class, () -> facade.createGame(createGameRequest));
+    }
 }
