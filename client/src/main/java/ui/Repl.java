@@ -8,7 +8,7 @@ public class Repl {
     private final PreLoginClient client;
 
     public Repl() {
-        client = new PreLoginClient();
+        client = new PreLoginClient("http://localhost:8080");
     }
 
     public void run() {

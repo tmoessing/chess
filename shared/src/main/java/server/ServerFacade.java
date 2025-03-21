@@ -11,6 +11,7 @@ import java.net.*;
 public class ServerFacade {
 
     private final String serverUrl;
+    private String authToken;
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -74,7 +75,11 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-//    public RegisterResult register(RegisterRequest request) {...}
+    public void register(RegisterRequest request) throws ResponseException {
+        var path = "/user";
+        RegisterResult registerResult = this.makeRequest("POST", path, request, RegisterResult.class);
+        authToken = registerResult.authToken();
+    }
 //
 //    public LoginResult login(LoginRequest request) {...}
 //

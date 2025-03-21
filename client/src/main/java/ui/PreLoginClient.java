@@ -7,7 +7,7 @@ public class PreLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
 
-    PreLoginClient() {
+    PreLoginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
