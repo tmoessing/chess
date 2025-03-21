@@ -22,6 +22,7 @@ public class ServerFacade {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
+            http.setRequestProperty("authorization", this.authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);
@@ -93,7 +94,10 @@ public class ServerFacade {
 //
 //    public ListGamesResult listGames() {...}
 //
-//    public CreateGameResult createGame(CreateGameRequest request) {...}
+    public void createGame(CreateGameRequest request) throws ResponseException {
+        var path = "/game";
+        this.makeRequest("POST", path, request, CreateGameResult.class);
+    }
 //
 //    public SuccessResult joinGame(JoinGameRequest request) {...}
 

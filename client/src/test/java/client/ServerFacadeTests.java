@@ -73,7 +73,9 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGameSuccess() {
+    public void createGameSuccess() throws ResponseException {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        facade.register(registerRequest);
         CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
         assertDoesNotThrow( () -> facade.createGame(createGameRequest));
     }
