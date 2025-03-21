@@ -55,4 +55,18 @@ public class ServerFacadeTests {
         facade.register(registerRequest);
         assertThrows(ResponseException.class, () -> facade.register(registerRequest));
     }
+
+    @Test
+    public void loginSuccess() throws ResponseException {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
+        assertDoesNotThrow( () -> facade.login(loginRequest));
+    }
+
+    @Test
+    public void loginFailure() throws ResponseException {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        facade.register(registerRequest);
+        LoginRequest loginRequest = new LoginRequest("username", "password1");
+        assertThrows(ResponseException.class, () -> facade.login(loginRequest));
+    }
 }
