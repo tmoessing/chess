@@ -5,13 +5,13 @@ import model.*;
 import server.ServerFacade;
 import java.util.Arrays;
 
-public class PreLoginClient {
+public class PreLoginClient implements Client {
     private final ServerFacade server;
-    private final String serverUrl;
+    private final String serverURL;
 
-    PreLoginClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
+    PreLoginClient(String serverURL) {
+        server = new ServerFacade(serverURL);
+        this.serverURL = serverURL;
     }
 
     public String eval(String input) {
@@ -21,7 +21,7 @@ public class PreLoginClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "login" -> login(params);
-                case "register" -> register();
+                case "register" -> register(params);
                 case "quit" -> "Thanks for playing";
                 default -> help();
             };
@@ -36,13 +36,23 @@ public class PreLoginClient {
            String password = params[1];
            LoginRequest loginRequest = new LoginRequest(username, password);
            server.login(loginRequest);
+           Repl.client = new PostLoginClient(this.serverURL);
            return String.format("Logged in as %s", username);
         }
         return "Error: Not Enough Information";
     }
 
-    public String register() {
-        return "";
+    public String register(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
+            RegisterRequest registerRequest  = new RegisterRequest(username, password, email);
+            server.register(registerRequest);
+            Repl.client = new PostLoginClient(this.serverURL);
+            return String.format("Registered - Welcome %s!", username);
+        }
+        return "Error: Not Enough Information";
     }
 
     public String help() {

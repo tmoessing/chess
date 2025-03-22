@@ -1,10 +1,16 @@
 package ui;
 
+import server.ServerFacade;
+
 import java.util.Arrays;
 
-public class PostLoginClient {
-    PostLoginClient() {
+public class PostLoginClient implements Client {
+    private final ServerFacade server;
+    private final String serverURL;
 
+    PostLoginClient(String serverURL) {
+        server = new ServerFacade(serverURL);
+        this.serverURL = serverURL;
     }
 
     public String eval(String input) {
@@ -23,7 +29,8 @@ public class PostLoginClient {
     }
 
     public String logout() {
-        return "";
+        Repl.client = new PreLoginClient(this.serverURL);
+        return "bye";
     }
 
     public String createGame() {
@@ -43,7 +50,7 @@ public class PostLoginClient {
     }
 
     public String help() {
-        return "Why do you need help?";
+        return "Why do you need help? 2";
     }
 
 }
