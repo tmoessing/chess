@@ -23,7 +23,7 @@ public class PostLoginClient implements Client {
             case "list games" -> listGames();
             case "play game" -> playGame();
             case "observe game" -> observeGame();
-            case "quit" -> "quit";
+            case "quit" -> Repl.quitingMessage;
             default -> help();
         };
     }

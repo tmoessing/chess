@@ -22,7 +22,7 @@ public class PreLoginClient implements Client {
             return switch (cmd) {
                 case "login" -> login(params);
                 case "register" -> register(params);
-                case "quit" -> "Thanks for playing";
+                case "quit" -> Repl.quitingMessage;
                 default -> help();
             };
         } catch (ResponseException ex) {

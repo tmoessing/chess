@@ -6,6 +6,7 @@ import static ui.EscapeSequences.*;
 
 public class Repl {
     public static Client client;
+    public static String quitingMessage = "Quiting: Thanks for playing!";
 
     public Repl(String serverURL) {
         client = new PreLoginClient(serverURL);
@@ -18,7 +19,7 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")) {
+        while (!result.equals(quitingMessage)) {
             printPrompt();
             String line = scanner.nextLine();
             try {
