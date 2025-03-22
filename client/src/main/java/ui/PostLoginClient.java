@@ -1,5 +1,6 @@
 package ui;
 
+import exception.ResponseException;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -50,7 +51,19 @@ public class PostLoginClient implements Client {
     }
 
     public String help() {
-        return "Why do you need help? 2";
+        return "Instructions:" +
+                "\n create <NAME> - a game" +
+                "\n list - games" +
+                "\n join <ID> [WHITE|BLACK] - a game" +
+                "\n observe <ID> - a game" +
+                "\n logout - when you are done" +
+                "\n quit - playing chess" +
+                "\n help - with possible commands";
+    }
+
+    public String clear() throws ResponseException {
+        server.clear();
+        return "Clearing...";
     }
 
 }

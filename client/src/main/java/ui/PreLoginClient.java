@@ -14,6 +14,11 @@ public class PreLoginClient implements Client {
         this.serverURL = serverURL;
     }
 
+    private void switchClients() {
+
+        System.out.print(Repl.client.help());
+    }
+
     public String eval(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
@@ -22,6 +27,7 @@ public class PreLoginClient implements Client {
             return switch (cmd) {
                 case "login" -> login(params);
                 case "register" -> register(params);
+                case "clear" -> clear();
                 case "quit" -> Repl.quitingMessage;
                 default -> help();
             };
@@ -31,32 +37,42 @@ public class PreLoginClient implements Client {
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length != 2) {
            String username = params[0];
            String password = params[1];
            LoginRequest loginRequest = new LoginRequest(username, password);
            server.login(loginRequest);
+           System.out.printf("Logging in... \nWelcome %s!", username);
            Repl.client = new PostLoginClient(this.serverURL);
-           return String.format("Logged in as %s", username);
+           return "";
         }
         return "Error: Not Enough Information";
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length != 3) {
             String username = params[0];
             String password = params[1];
             String email = params[2];
             RegisterRequest registerRequest  = new RegisterRequest(username, password, email);
             server.register(registerRequest);
+            System.out.printf("Registering.. \nWelcome %s, here are some of the new ", username);
             Repl.client = new PostLoginClient(this.serverURL);
-            return String.format("Registered - Welcome %s!", username);
+            return Repl.client.help();
         }
         return "Error: Not Enough Information";
     }
 
     public String help() {
-        return "Why do you need help?";
+        return "Instructions: \nregister <USERNAME> <PASSWORD> <EMAIL> - to create an account" +
+                "\nlogin <USERNAME> <PASSWORD> - to play chess" +
+                "\nquit - playing chess" +
+                "\nhelp - with possible commands";
+    }
+
+    public String clear() throws ResponseException {
+        server.clear();
+        return "Clearing...";
     }
 
 }

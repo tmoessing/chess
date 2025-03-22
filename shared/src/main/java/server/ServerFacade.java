@@ -92,13 +92,13 @@ public class ServerFacade {
 
     public void logout() throws ResponseException {
         var path = "/session";
-        SuccessResult successResult = this.makeRequest("DELETE", path, new SuccessResult(), SuccessResult.class);
+        SuccessResult successResult = this.makeRequest("DELETE", path, new EmptyRequest(), SuccessResult.class);
         authToken = null;
     }
 
     public void clear() throws ResponseException {
         var path = "/db";
-        SuccessResult successResult = this.makeRequest("DELETE", path, new SuccessResult(), SuccessResult.class);
+        SuccessResult successResult = this.makeRequest("DELETE", path, new EmptyRequest(), SuccessResult.class);
     }
 
     public void listGames() throws ResponseException {
