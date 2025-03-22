@@ -15,24 +15,28 @@ public class PostLoginClient implements Client {
     }
 
     public String eval(String input) {
-        var tokens = input.toLowerCase().split(" ");
-        var cmd = (tokens.length > 0) ? tokens[0] : "help";
-        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-        return switch (cmd) {
-            case "logout" -> logout();
-            case "create game" -> createGame();
-            case "list games" -> listGames();
-            case "play game" -> playGame();
-            case "observe game" -> observeGame();
-            case "clear" -> clear();
-            case "quit" -> Repl.quitingMessage;
-            default -> help();
-        };
+        try {
+            var tokens = input.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "logout" -> logout();
+                case "create game" -> createGame();
+                case "list games" -> listGames();
+                case "play game" -> playGame();
+                case "observe game" -> observeGame();
+                case "clear" -> clear();
+                case "quit" -> Repl.quitingMessage;
+                default -> help();
+            };
+        } catch (ResponseException ex) {
+            return ex.getMessage();
+        }
     }
 
     public String logout() {
         Repl.client = new PreLoginClient(this.serverURL);
-        return "bye";
+        return "Thanks for Playing";
     }
 
     public String createGame() {
