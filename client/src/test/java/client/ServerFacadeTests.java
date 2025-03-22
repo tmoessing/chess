@@ -17,7 +17,7 @@ public class ServerFacadeTests {
     private static Server server;
     private static ServerFacade facade;
 
-    private RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+    private final RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
 
     @BeforeAll
     public static void init() {
@@ -112,4 +112,24 @@ public class ServerFacadeTests {
         CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
         assertThrows(ResponseException.class, () -> facade.createGame(createGameRequest));
     }
+
+    @Test
+    public void joinGameSuccess() throws ResponseException {
+        facade.register(registerRequest);
+        CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
+        assertDoesNotThrow( () -> facade.createGame(createGameRequest));
+        JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
+        assertDoesNotThrow( () -> facade.joinGame(joinGameRequest));
+    }
+
+    @Test
+    public void joinGameFailure() throws ResponseException {
+        facade.register(registerRequest);
+        CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
+        assertDoesNotThrow( () -> facade.createGame(createGameRequest));
+        JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
+        facade.joinGame(joinGameRequest);
+        assertThrows(ResponseException.class,  () -> facade.joinGame(joinGameRequest));
+    }
+
 }

@@ -18,7 +18,8 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path,
+                              Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -109,7 +110,10 @@ public class ServerFacade {
         var path = "/game";
         CreateGameResult createGameResult = this.makeRequest("POST", path, request, CreateGameResult.class);
     }
-//
-//    public SuccessResult joinGame(JoinGameRequest request) {...}
+
+    public void joinGame(JoinGameRequest request) throws ResponseException {
+        var path = "/game";
+        SuccessResult successResult = this.makeRequest("PUT", path, request, SuccessResult.class);
+    }
 
 }
