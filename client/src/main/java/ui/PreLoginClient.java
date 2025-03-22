@@ -14,11 +14,6 @@ public class PreLoginClient implements Client {
         this.serverURL = serverURL;
     }
 
-    private void switchClients() {
-
-        System.out.print(Repl.client.help());
-    }
-
     public String eval(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
@@ -28,8 +23,9 @@ public class PreLoginClient implements Client {
                 case "login" -> login(params);
                 case "register" -> register(params);
                 case "clear" -> clear();
+                case "help" -> help();
                 case "quit" -> Repl.quitingMessage;
-                default -> help();
+                default -> "Invalid instruction";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -37,7 +33,7 @@ public class PreLoginClient implements Client {
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length != 2) {
+        if (params.length != 1) {
            String username = params[0];
            String password = params[1];
            LoginRequest loginRequest = new LoginRequest(username, password);
@@ -50,13 +46,13 @@ public class PreLoginClient implements Client {
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length != 3) {
+        if (params.length != 2) {
             String username = params[0];
             String password = params[1];
             String email = params[2];
             RegisterRequest registerRequest  = new RegisterRequest(username, password, email);
             server.register(registerRequest);
-            System.out.printf("Registering.. \nWelcome %s, here are some of the new ", username);
+            System.out.printf("Registering... \nWelcome %s, here are some of the new ", username);
             Repl.client = new PostLoginClient(this.serverURL);
             return Repl.client.help();
         }

@@ -1,6 +1,7 @@
 package ui;
 
 import exception.ResponseException;
+import model.CreateGameRequest;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -21,13 +22,14 @@ public class PostLoginClient implements Client {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "logout" -> logout();
-                case "create game" -> createGame();
-                case "list games" -> listGames();
-                case "play game" -> playGame();
-                case "observe game" -> observeGame();
+                case "create" -> createGame(params);
+                case "list" -> listGames();
+                case "play" -> playGame(params);
+                case "observe" -> observeGame(params);
                 case "clear" -> clear();
+                case "help" -> help();
                 case "quit" -> Repl.quitingMessage;
-                default -> help();
+                default -> "Invalid instruction";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -39,19 +41,25 @@ public class PostLoginClient implements Client {
         return "Thanks for Playing";
     }
 
-    public String createGame() {
-        return  "";
+    public String createGame(String... params) throws ResponseException {
+        if (params.length != 0) {
+            String gameName = params[0];
+            CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
+            server.createGame(createGameRequest);
+            return String.format("Created game %s", gameName);
+        }
+        return  "Error Handling Given Command. Write 'help' for Help!";
     }
 
     public String listGames() {
         return  "";
     }
 
-    public String playGame() {
+    public String playGame(String... params) {
         return "";
     }
 
-    public String observeGame() {
+    public String observeGame(String... params) {
         return "";
     }
 
