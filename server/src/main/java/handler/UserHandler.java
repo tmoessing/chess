@@ -2,12 +2,8 @@ package handler;
 
 import dataaccess.DataAccessException;
 import model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import spark.*;
 import com.google.gson.Gson;
-
-import java.io.Reader;
 
 public class UserHandler extends Handler {
 
@@ -15,7 +11,7 @@ public class UserHandler extends Handler {
        super();
     }
 
-    public Object handleRequest(Request req, Response res) {
+    public Object handleReqister(Request req, Response res) {
         RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             res.status(400);

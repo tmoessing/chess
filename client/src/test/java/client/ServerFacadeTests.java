@@ -88,6 +88,19 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void listGamesSuccess() throws ResponseException {
+        facade.register(registerRequest);
+        CreateGameRequest createGameRequest = new CreateGameRequest("game_name");
+        facade.createGame(createGameRequest);
+        assertDoesNotThrow(() -> facade.listGames());
+    }
+
+    @Test
+    public void listGamesFailure() {
+        assertThrows(ResponseException.class, () -> facade.listGames());
+    }
+
+    @Test
     public void createGameSuccess() throws ResponseException {
         facade.register(registerRequest);
         CreateGameRequest createGameRequest = new CreateGameRequest("game_name");

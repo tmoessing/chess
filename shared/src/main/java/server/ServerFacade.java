@@ -100,11 +100,14 @@ public class ServerFacade {
         SuccessResult successResult = this.makeRequest("DELETE", path, new SuccessResult(), SuccessResult.class);
     }
 
-//    public ListGamesResult listGames() {...}
-//
+    public void listGames() throws ResponseException {
+        var path = "/game";
+        ListGamesResult listGamesResult = this.makeRequest("GET", path, null, ListGamesResult.class);
+    }
+
     public void createGame(CreateGameRequest request) throws ResponseException {
         var path = "/game";
-        this.makeRequest("POST", path, request, CreateGameResult.class);
+        CreateGameResult createGameResult = this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 //
 //    public SuccessResult joinGame(JoinGameRequest request) {...}

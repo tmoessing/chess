@@ -15,6 +15,10 @@ public class GameHandler extends Handler{
         String authToken = req.headers("authorization");
         CreateGameRequest createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
 
+        if (createGameRequest.gameName() == null) {
+            res.status(400);
+            return new Gson().toJson(new FailureRecord("Error: bad request"));
+        }
         try {
             if (createGameRequest.gameName().isEmpty()) {
                 res.status(400);
