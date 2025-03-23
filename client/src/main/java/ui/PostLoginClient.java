@@ -56,6 +56,8 @@ public class PostLoginClient implements Client {
     }
 
     public String playGame(String... params) {
+        String color = "BLACK";
+        Repl.client = new InGameClient(serverURL, new ChessBoardBuilder(color));
         return "";
     }
 
