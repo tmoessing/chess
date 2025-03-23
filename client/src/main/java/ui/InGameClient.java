@@ -24,10 +24,16 @@ public class InGameClient implements Client {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
+            case "logout" -> logout();
             case "help" -> help();
             case "quit" -> Repl.quitingMessage;
             default -> "Invalid instruction";
         };
+    }
+
+    public String logout() {
+        Repl.client = new PreLoginClient(this.serverURL);
+        return "Thanks for Playing";
     }
 
     @Override

@@ -24,7 +24,7 @@ public class PostLoginClient implements Client {
                 case "logout" -> logout();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
-                case "play" -> playGame(params);
+                case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "clear" -> clear();
                 case "help" -> help();
@@ -59,12 +59,12 @@ public class PostLoginClient implements Client {
             GameRecord game = listGamesResult.games().get(gameCounter);
             System.out.print(game.gameName()+ "(" + (gameCounter+1) + ")" + " - (");
             if (game.whiteUsername() != null) {
-                System.out.print("White:" + game.whiteUsername());
+                System.out.print("White: " + game.whiteUsername() + " ");
             } else {
                 System.out.print("White:    ");
             }
             if (game.blackUsername() != null) {
-                System.out.print("Black: " + game.blackUsername() + ")\n");
+                System.out.print("Black: " + game.blackUsername() + " )\n");
             } else {
                 System.out.print("Black:    )\n\n");
             }
@@ -72,8 +72,15 @@ public class PostLoginClient implements Client {
         return "";
     }
 
-    public String playGame(String... params) {
-        String color = "BLACK";
+    public String joinGame(String... params) throws ResponseException {
+        int clientGameID = Integer.parseInt(params[0]) - 1;
+        String color = params[1].toUpperCase();
+
+        ListGamesResult listGamesResult = server.listGames();
+        int gameID = listGamesResult.games().get(clientGameID).gameID();
+        JoinGameRequest joinGameRequest = new JoinGameRequest(color, gameID);
+        server.joinGame(joinGameRequest);
+
         Repl.client = new InGameClient(serverURL, new ChessBoardBuilder(color));
         return "";
     }
