@@ -29,11 +29,13 @@ public class PreLoginClient implements Client {
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            return "Error: Not Enough Information";
         }
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length != 1) {
+        if (params.length == 2) {
            String username = params[0];
            String password = params[1];
            LoginRequest loginRequest = new LoginRequest(username, password);
@@ -41,12 +43,15 @@ public class PreLoginClient implements Client {
            System.out.printf("Logging in... \nWelcome %s!", username);
            Repl.client = new PostLoginClient(this.serverURL);
            return "";
+        } else if (params.length > 2) {
+            return "Error: Too Much Information";
+        } else {
+            return "Error: Not Enough Information";
         }
-        return "Error: Not Enough Information";
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length != 2) {
+        if (params.length == 3) {
             String username = params[0];
             String password = params[1];
             String email = params[2];
@@ -55,8 +60,11 @@ public class PreLoginClient implements Client {
             System.out.printf("Registering... \nWelcome %s, here are some of the new ", username);
             Repl.client = new PostLoginClient(this.serverURL);
             return Repl.client.help();
+        } else if (params.length > 3) {
+            return "Error: Too Much Information";
+        } else {
+            return "Error: Not Enough Information";
         }
-        return "Error: Not Enough Information";
     }
 
     public String help() {
