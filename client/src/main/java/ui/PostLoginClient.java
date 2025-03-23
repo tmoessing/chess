@@ -33,6 +33,8 @@ public class PostLoginClient implements Client {
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            return "Error: Not Enough Information";
         }
     }
 
@@ -73,11 +75,23 @@ public class PostLoginClient implements Client {
     }
 
     public String joinGame(String... params) throws ResponseException {
-        int clientGameID = Integer.parseInt(params[0]) - 1;
+        int clientGameID;
+        try {
+            clientGameID = Integer.parseInt(params[0]) - 1;
+        } catch (NumberFormatException ex) {
+            return "Please enter a numeric number";
+        }
+
         String color = params[1].toUpperCase();
 
-        ListGamesResult listGamesResult = server.listGames();
-        int gameID = listGamesResult.games().get(clientGameID).gameID();
+        int gameID;
+        try {
+            ListGamesResult listGamesResult = server.listGames();
+            gameID = listGamesResult.games().get(clientGameID).gameID();
+        } catch (IndexOutOfBoundsException ex) {
+            return "Invalid GameID";
+        }
+
         JoinGameRequest joinGameRequest = new JoinGameRequest(color, gameID);
         server.joinGame(joinGameRequest);
 
@@ -85,7 +99,24 @@ public class PostLoginClient implements Client {
         return "";
     }
 
-    public String observeGame(String... params) {
+    public String observeGame(String... params) throws ResponseException {
+        int clientGameID;
+
+        try {
+            clientGameID = Integer.parseInt(params[0]) - 1;
+        } catch (NumberFormatException ex) {
+            return "Please enter a numeric number";
+        }
+
+        ListGamesResult listGamesResult = server.listGames();
+
+        try {
+            int gameID = listGamesResult.games().get(clientGameID).gameID();
+        } catch (IndexOutOfBoundsException ex) {
+            return "Invalid GameID";
+        }
+
+        Repl.client = new InGameClient(serverURL, new ChessBoardBuilder("WHITE"));
         return "";
     }
 
