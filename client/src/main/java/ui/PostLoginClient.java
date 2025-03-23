@@ -47,8 +47,9 @@ public class PostLoginClient implements Client {
             CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
             server.createGame(createGameRequest);
             return String.format("Created game %s", gameName);
+        } else {
+            return  "Error Handling Given Command. Write 'help' for Help!";
         }
-        return  "Error Handling Given Command. Write 'help' for Help!";
     }
 
     public String listGames() {

@@ -1,16 +1,14 @@
 package client;
 
-import dataaccess.SQLAuthDAO;
-import dataaccess.SQLGameDAO;
-import dataaccess.SQLUserDAO;
-import exception.ResponseException;
 import model.*;
-import org.junit.jupiter.api.*;
+import dataaccess.*;
 import server.Server;
 import server.ServerFacade;
+
+import org.junit.jupiter.api.*;
+import exception.ResponseException;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 
 public class ServerFacadeTests {
 
