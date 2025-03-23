@@ -1,10 +1,10 @@
 package ui;
 
-import exception.ResponseException;
-import model.CreateGameRequest;
+import model.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import exception.ResponseException;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;
@@ -52,8 +52,24 @@ public class PostLoginClient implements Client {
         }
     }
 
-    public String listGames() {
-        return  "";
+    public String listGames() throws ResponseException {
+        ListGamesResult listGamesResult = server.listGames();
+        System.out.print("Games:\n");
+        for (int gameCounter = 0; gameCounter < listGamesResult.games().size(); gameCounter++) {
+            GameRecord game = listGamesResult.games().get(gameCounter);
+            System.out.print(game.gameName()+ "(" + (gameCounter+1) + ")" + " - (");
+            if (game.whiteUsername() != null) {
+                System.out.print("White:" + game.whiteUsername());
+            } else {
+                System.out.print("White:    ");
+            }
+            if (game.blackUsername() != null) {
+                System.out.print("Black: " + game.blackUsername() + ")\n");
+            } else {
+                System.out.print("Black:    )\n\n");
+            }
+        }
+        return "";
     }
 
     public String playGame(String... params) {

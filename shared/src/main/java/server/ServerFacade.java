@@ -99,9 +99,9 @@ public class ServerFacade {
         SuccessResult successResult = this.makeRequest("DELETE", path, null, SuccessResult.class);
     }
 
-    public void listGames() throws ResponseException {
+    public ListGamesResult listGames() throws ResponseException {
         var path = "/game";
-        ListGamesResult listGamesResult = this.makeRequest("GET", path, null, ListGamesResult.class);
+        return this.makeRequest("GET", path, null, ListGamesResult.class);
     }
 
     public void createGame(CreateGameRequest request) throws ResponseException {
