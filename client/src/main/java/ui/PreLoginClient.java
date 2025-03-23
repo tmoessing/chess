@@ -20,6 +20,7 @@ public class PreLoginClient implements Client {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "test" -> board();
                 case "login" -> login(params);
                 case "register" -> register(params);
                 case "clear" -> clear();
@@ -69,6 +70,11 @@ public class PreLoginClient implements Client {
     public String clear() throws ResponseException {
         server.clear();
         return "Clearing...";
+    }
+
+    public String board() {
+        ChessBoardBuilder chessBoard = new ChessBoardBuilder();
+        return "";
     }
 
 }
