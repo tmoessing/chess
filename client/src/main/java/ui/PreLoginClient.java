@@ -73,7 +73,8 @@ public class PreLoginClient implements Client {
     }
 
     public String board() {
-        ChessBoardBuilder chessBoard = new ChessBoardBuilder();
+        ChessBoardBuilder chessBoard = new ChessBoardBuilder("WHITE");
+        chessBoard.run();
         return "";
     }
 
