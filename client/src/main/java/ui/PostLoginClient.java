@@ -42,13 +42,13 @@ public class PostLoginClient implements Client {
     }
 
     public String createGame(String... params) throws ResponseException {
-        if (params.length != 0) {
-            String gameName = params[0];
+        if (params.length >= 1) {
+            String gameName = String.join(" ", params);
             CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
             server.createGame(createGameRequest);
-            return String.format("Created game %s", gameName);
+            return String.format("Created Game: %s", gameName);
         } else {
-            return  "Error Handling Given Command. Write 'help' for Help!";
+            return "Error: Not Enough Information";
         }
     }
 

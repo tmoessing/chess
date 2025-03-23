@@ -1,18 +1,16 @@
 package server;
 
-import com.google.gson.Gson;
-import exception.ResponseException;
-
 import model.*;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.*;
 import java.net.*;
+import com.google.gson.Gson;
+import exception.ResponseException;
 
 public class ServerFacade {
 
-    private final String serverUrl;
-    private String authToken;
+    private static String serverUrl;
+    private static String authToken;
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -24,7 +22,7 @@ public class ServerFacade {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
-            http.setRequestProperty("authorization", this.authToken);
+            http.setRequestProperty("authorization", authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);
