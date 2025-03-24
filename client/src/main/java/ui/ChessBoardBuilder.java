@@ -6,10 +6,10 @@ import java.util.Objects;
 import static ui.EscapeSequences.*;
 
 public class ChessBoardBuilder {
-    private final String[] WHITE_ROW_HEADER = {"a", "b", "c", "d", "e", "f", "g", "h"};
-    private final String[] BLACK_ROW_HEADER = {"h", "g", "f", "e", "d", "c", "b", "a"};
-    private final String[] WHITE_COL_HEADER = {"8", "7", "6", "5", "4", "3", "2", "1"};
-    private final String[] BLACK_COL_HEADER = {"1", "2", "3", "4", "5", "6", "7", "8"};
+    private final static String[] WHITE_ROW_HEADER = {"a", "b", "c", "d", "e", "f", "g", "h"};
+    private final static String[] BLACK_ROW_HEADER = {"h", "g", "f", "e", "d", "c", "b", "a"};
+    private final static String[] WHITE_COL_HEADER = {"8", "7", "6", "5", "4", "3", "2", "1"};
+    private final static String[] BLACK_COL_HEADER = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
     private final String color;
 
@@ -68,15 +68,15 @@ public class ChessBoardBuilder {
     }
 
     private void initializePieces() {
-        String TOP_COLOR;
-        String BOTTOM_COLOR;
+        String topColor;
+        String bottomColor;
 
         if (Objects.equals(this.color, "WHITE")) {
-            TOP_COLOR = SET_TEXT_COLOR_RED;
-            BOTTOM_COLOR = SET_TEXT_COLOR_BLUE;
+            topColor = SET_TEXT_COLOR_RED;
+            bottomColor = SET_TEXT_COLOR_BLUE;
         } else {
-            TOP_COLOR = SET_TEXT_COLOR_BLUE;
-            BOTTOM_COLOR = SET_TEXT_COLOR_RED;
+            topColor = SET_TEXT_COLOR_BLUE;
+            bottomColor = SET_TEXT_COLOR_RED;
         }
 
         List<Integer> rookCols = List.of(0, 7);
@@ -85,34 +85,34 @@ public class ChessBoardBuilder {
 
         // Set Pawns
         for (int col = 0; col < 8; col++) {
-            chesspieces[1][col] = TOP_COLOR + PAWN;
-            chesspieces[6][col] = BOTTOM_COLOR + PAWN;
+            chesspieces[1][col] = topColor + PAWN;
+            chesspieces[6][col] = bottomColor + PAWN;
         }
 
         // Set Rooks
         for (int rookColNum : rookCols) {
-            chesspieces[0][rookColNum] = TOP_COLOR + ROOK;
-            chesspieces[7][rookColNum] = BOTTOM_COLOR + ROOK;
+            chesspieces[0][rookColNum] = topColor + ROOK;
+            chesspieces[7][rookColNum] = bottomColor + ROOK;
         }
 
         // Set Knights
         for (int knightColNum : knightCols) {
-            chesspieces[0][knightColNum] = TOP_COLOR + KNIGHT;
-            chesspieces[7][knightColNum] = BOTTOM_COLOR + KNIGHT;
+            chesspieces[0][knightColNum] = topColor + KNIGHT;
+            chesspieces[7][knightColNum] = bottomColor + KNIGHT;
         }
 
         // Set Bishops
         for (int bishopColNum : bishopCols) {
-            chesspieces[0][bishopColNum] = TOP_COLOR + BISHOP;
-            chesspieces[7][bishopColNum] = BOTTOM_COLOR + BISHOP;
+            chesspieces[0][bishopColNum] = topColor + BISHOP;
+            chesspieces[7][bishopColNum] = bottomColor + BISHOP;
         }
 
         // Set Queens and Kings
-        chesspieces[0][3] = TOP_COLOR + QUEEN;
-        chesspieces[0][4] = TOP_COLOR + KING;
+        chesspieces[0][3] = topColor + QUEEN;
+        chesspieces[0][4] = topColor + KING;
 
-        chesspieces[7][3] = BOTTOM_COLOR + QUEEN;
-        chesspieces[7][4] = BOTTOM_COLOR + KING;
+        chesspieces[7][3] = bottomColor + QUEEN;
+        chesspieces[7][4] = bottomColor + KING;
     }
 
     public void initializeBorder() {
