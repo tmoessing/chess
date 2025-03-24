@@ -1,11 +1,10 @@
 package client;
 
-import model.*;
-
 import java.io.*;
 import java.net.*;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.*;
 
 public class ServerFacade {
 

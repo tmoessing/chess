@@ -1,9 +1,11 @@
 package client;
 
-import model.*;
-
 import java.util.Arrays;
 import exception.ResponseException;
+import model.CreateGameRequest;
+import model.GameRecord;
+import model.JoinGameRequest;
+import model.ListGamesResult;
 import ui.ChessBoardBuilder;
 import ui.Repl;
 

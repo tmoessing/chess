@@ -1,7 +1,8 @@
 package client;
 
 import exception.ResponseException;
-import model.*;
+import model.LoginRequest;
+import model.RegisterRequest;
 import ui.Repl;
 
 import java.util.Arrays;
