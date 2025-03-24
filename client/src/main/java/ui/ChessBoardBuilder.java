@@ -17,7 +17,7 @@ public class ChessBoardBuilder {
     private String[][] chesspieces = new String[8][8];
     private String[][] border = new String[10][10];
 
-    ChessBoardBuilder(String color) {
+    public ChessBoardBuilder(String color) {
         this.color = color;
 
     }

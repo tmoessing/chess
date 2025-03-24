@@ -1,5 +1,8 @@
 package ui;
 
+import client.Client;
+import client.PreLoginClient;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;

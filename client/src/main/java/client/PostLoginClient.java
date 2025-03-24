@@ -1,10 +1,11 @@
-package ui;
+package client;
 
 import model.*;
-import server.ServerFacade;
 
 import java.util.Arrays;
 import exception.ResponseException;
+import ui.ChessBoardBuilder;
+import ui.Repl;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;

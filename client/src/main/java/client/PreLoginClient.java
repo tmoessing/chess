@@ -1,15 +1,16 @@
-package ui;
+package client;
 
 import exception.ResponseException;
 import model.*;
-import server.ServerFacade;
+import ui.Repl;
+
 import java.util.Arrays;
 
 public class PreLoginClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
 
-    PreLoginClient(String serverURL) {
+    public PreLoginClient(String serverURL) {
         server = new ServerFacade(serverURL);
         this.serverURL = serverURL;
     }

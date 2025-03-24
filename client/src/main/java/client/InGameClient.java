@@ -1,7 +1,7 @@
-package ui;
+package client;
 
-import exception.ResponseException;
-import server.ServerFacade;
+import ui.ChessBoardBuilder;
+import ui.Repl;
 
 import java.util.Arrays;
 
