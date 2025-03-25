@@ -130,7 +130,7 @@ public class ChessBoardBuilder {
        for (int col = 0; col < 10; col++) {
             String square = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK;
             if (1 <= col & col <= 8 ){
-                square += rowHeader[col-1] + "  ";
+                square +=  " " + rowHeader[col-1] + " ";
             } else {
                 square += EMPTY;
             }
@@ -141,7 +141,7 @@ public class ChessBoardBuilder {
        for (int row = 0; row < 10; row++) {
            String square = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK;
            if (1 <= row & row <= 8 ){
-               square += " " + colHeader[row-1] + "  ";
+               square += " " + colHeader[row-1] + " ";
            } else {
                square += EMPTY;
            }
