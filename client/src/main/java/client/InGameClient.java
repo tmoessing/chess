@@ -24,6 +24,10 @@ public class InGameClient implements Client {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
+            case "redraw" -> redraw();
+            case "resign" -> resign();
+            case "highlight" -> highlight();
+            case "exit" -> exit();
             case "logout" -> logout();
             case "help" -> help();
             case "quit" -> Repl.quitingMessage;
@@ -31,9 +35,26 @@ public class InGameClient implements Client {
         };
     }
 
+    public String redraw() {
+        return "";
+    }
+
+    public String resign() {
+        return "";
+    }
+
+    public String highlight() {
+        return "";
+    }
+
+    public String exit() {
+        Repl.client = new PostLoginClient(this.serverURL);
+        return "Welcome back to the home page!";
+    }
+
     public String logout() {
         Repl.client = new PreLoginClient(this.serverURL);
-        return "Thanks for Playing";
+        return "Thanks for Playing!";
     }
 
     @Override
