@@ -27,7 +27,7 @@ public class InGameClient implements Client {
             case "redraw" -> redraw();
             case "resign" -> resign();
             case "highlight" -> highlight();
-            case "exit" -> exit();
+            case "leave" -> exit();
             case "logout" -> logout();
             case "help" -> help();
             case "quit" -> Repl.quitingMessage;
@@ -36,6 +36,8 @@ public class InGameClient implements Client {
     }
 
     public String redraw() {
+        System.out.print("Redrawing Board...\n");
+        chessBoardBuilder.run();
         return "";
     }
 
