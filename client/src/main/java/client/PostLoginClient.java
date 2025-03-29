@@ -119,7 +119,7 @@ public class PostLoginClient implements Client {
             return "Invalid GameID";
         }
 
-        Repl.client = new InGameClient(serverURL, new ChessBoardBuilder("WHITE"));
+        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder("WHITE"));
         return "";
     }
 

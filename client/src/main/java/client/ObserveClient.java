@@ -5,12 +5,12 @@ import ui.Repl;
 
 import java.util.Arrays;
 
-public class InGameClient implements Client {
+public class ObserveClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
     private ChessBoardBuilder chessBoardBuilder;
 
-    InGameClient(String serverURL, ChessBoardBuilder chessBoardBuilder) {
+    ObserveClient(String serverURL, ChessBoardBuilder chessBoardBuilder) {
         this.serverURL = serverURL;
         this.chessBoardBuilder = chessBoardBuilder;
         this.server = new ServerFacade(serverURL);
@@ -24,29 +24,12 @@ public class InGameClient implements Client {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
-            case "redraw" -> redraw();
-            case "resign" -> resign();
-            case "highlight" -> highlight();
             case "leave" -> leave();
-            case "logout" -> logout();
             case "help" -> help();
+            case "logout" -> logout();
             case "quit" -> Repl.quitingMessage;
-            default -> "Invalid instruction";
+            default -> "Invalid instructions";
         };
-    }
-
-    public String redraw() {
-        System.out.print("Redrawing Board...\n");
-        chessBoardBuilder.run();
-        return "";
-    }
-
-    public String resign() {
-        return "";
-    }
-
-    public String highlight() {
-        return "";
     }
 
     public String leave() {
@@ -60,6 +43,6 @@ public class InGameClient implements Client {
     }
 
     public String help() {
-        return "Game Help Message (help/quit)";
+        return "Observe Help Message (help/quit)";
     }
 }
