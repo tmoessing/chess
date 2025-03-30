@@ -86,7 +86,14 @@ public class PostLoginClient implements Client {
             return "Please enter a numeric number";
         }
 
-        String color = params[1].toUpperCase();
+        String colorString = params[1].toUpperCase();
+        ChessGame.TeamColor color;
+
+        if (colorString.equals("WHITE")) {
+            color = ChessGame.TeamColor.WHITE;
+        } else {
+            color = ChessGame.TeamColor.BLACK;
+        }
 
         int gameID;
         try {
@@ -96,7 +103,7 @@ public class PostLoginClient implements Client {
             return "Invalid GameID";
         }
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(color, gameID);
+        JoinGameRequest joinGameRequest = new JoinGameRequest(colorString, gameID);
         server.joinGame(joinGameRequest);
         GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
         ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
@@ -123,7 +130,7 @@ public class PostLoginClient implements Client {
 
         GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
         ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
-        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder(chessGame, "WHITE"));
+        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder(chessGame, ChessGame.TeamColor.WHITE));
         return "";
     }
 

@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import ui.ChessBoardBuilder;
 import ui.Repl;
 
@@ -8,12 +9,16 @@ import java.util.Arrays;
 public class InGameClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
+    private final ChessGame.TeamColor playerColor;
     private ChessBoardBuilder chessBoardBuilder;
+
 
     InGameClient(String serverURL, ChessBoardBuilder chessBoardBuilder) {
         this.serverURL = serverURL;
         this.chessBoardBuilder = chessBoardBuilder;
         this.server = new ServerFacade(serverURL);
+
+        this.playerColor = chessBoardBuilder.color;
 
         chessBoardBuilder.run();
     }
@@ -26,6 +31,7 @@ public class InGameClient implements Client {
         return switch (cmd) {
             case "redraw" -> redraw();
             case "resign" -> resign();
+            case "move" -> move(params);
             case "highlight" -> highlight(params);
             case "leave" -> leave();
             case "logout" -> logout();
@@ -43,6 +49,13 @@ public class InGameClient implements Client {
 
     public String resign() {
         return "";
+    }
+
+    public String move(String ... params) {
+        if ((chessBoardBuilder.chessGame.getTeamTurn()).equals(this.playerColor)) {
+            return "";
+        }
+        return "Not your Turn";
     }
 
     public String highlight(String ... params) {

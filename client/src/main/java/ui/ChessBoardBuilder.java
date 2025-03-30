@@ -13,14 +13,14 @@ public class ChessBoardBuilder {
     private final static String[] WHITE_COL_HEADER = {"8", "7", "6", "5", "4", "3", "2", "1"};
     private final static String[] BLACK_COL_HEADER = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
-    private final String color;
-    private final ChessGame chessGame;
+    public final ChessGame.TeamColor color;
+    public final ChessGame chessGame;
 
     private String[][] chessboard = new String[8][8];
     private String[][] chesspieces = new String[8][8];
     private String[][] border = new String[10][10];
 
-    public ChessBoardBuilder(ChessGame chessGame, String color) {
+    public ChessBoardBuilder(ChessGame chessGame, ChessGame.TeamColor color) {
         this.color = color;
         this.chessGame = chessGame;
     }
@@ -29,6 +29,11 @@ public class ChessBoardBuilder {
         this.initializeBoard();
         this.initializePieces();
         this.initializeBorder();
+        this.draw();
+    }
+
+    public void draw() {
+        System.out.print("Turn: " + chessGame.getTeamTurn() + "\n");
         System.out.print(EscapeSequences.moveCursorToLocation(0, 0));
         this.drawBoard();
     }
