@@ -42,6 +42,17 @@ public class GameService extends Service {
         return new ListGamesResult(gameDataAccess.listAllGames());
     }
 
+    public GetGameBoardResult getGameBoard(GetGameBoardRequest getGameBoardResult, String authToken) throws DataAccessException {
+        int gameID = getGameBoardResult.gameID();
+        if (!authDataAccess.isAuthTokenExistent(authToken)) {
+            throw new DataAccessException("Error: unauthorized");
+        } else if (!gameDataAccess.isGameExistent(gameID)) {
+            throw new DataAccessException("Error: bad request");
+        }
+
+        return new GetGameBoardResult(gameDataAccess.getGameBoard(gameID));
+    }
+
     public void clearGames() {
         gameDataAccess.clearGames();
     }

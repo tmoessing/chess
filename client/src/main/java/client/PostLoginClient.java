@@ -1,17 +1,18 @@
 package client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import chess.ChessGame;
 import exception.ResponseException;
-import model.CreateGameRequest;
-import model.GameRecord;
-import model.JoinGameRequest;
-import model.ListGamesResult;
+import model.*;
 import ui.ChessBoardBuilder;
 import ui.Repl;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
+    private ArrayList<ChessGame> chessGamesList = new ArrayList<>();
 
     PostLoginClient(String serverURL) {
         server = new ServerFacade(serverURL);
@@ -97,8 +98,9 @@ public class PostLoginClient implements Client {
 
         JoinGameRequest joinGameRequest = new JoinGameRequest(color, gameID);
         server.joinGame(joinGameRequest);
-
-        Repl.client = new InGameClient(serverURL, new ChessBoardBuilder(color));
+        GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
+        ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
+        Repl.client = new InGameClient(serverURL, new ChessBoardBuilder(chessGame, color));
         return "";
     }
 
@@ -119,7 +121,9 @@ public class PostLoginClient implements Client {
             return "Invalid GameID";
         }
 
-        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder("WHITE"));
+        GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
+        ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
+        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder(chessGame, "WHITE"));
         return "";
     }
 

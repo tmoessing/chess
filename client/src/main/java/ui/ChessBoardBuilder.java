@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -12,14 +14,15 @@ public class ChessBoardBuilder {
     private final static String[] BLACK_COL_HEADER = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
     private final String color;
+    private final ChessGame chessGame;
 
     private String[][] chessboard = new String[8][8];
     private String[][] chesspieces = new String[8][8];
     private String[][] border = new String[10][10];
 
-    public ChessBoardBuilder(String color) {
+    public ChessBoardBuilder(ChessGame chessGame, String color) {
         this.color = color;
-
+        this.chessGame = chessGame;
     }
 
     public void run() {

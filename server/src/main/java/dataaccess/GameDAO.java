@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 import model.GameRecord;
 
@@ -20,4 +21,6 @@ public interface GameDAO {
     ArrayList<GameRecord> listAllGames();
 
     void clearGames();
+
+    ChessGame getGameBoard(int gameID);
 }

@@ -26,7 +26,7 @@ public class InGameClient implements Client {
         return switch (cmd) {
             case "redraw" -> redraw();
             case "resign" -> resign();
-            case "highlight" -> highlight();
+            case "highlight" -> highlight(params);
             case "leave" -> leave();
             case "logout" -> logout();
             case "help" -> help();
@@ -45,7 +45,7 @@ public class InGameClient implements Client {
         return "";
     }
 
-    public String highlight() {
+    public String highlight(String ... params) {
         return "";
     }
 

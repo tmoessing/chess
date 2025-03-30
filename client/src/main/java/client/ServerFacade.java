@@ -2,6 +2,8 @@ package client;
 
 import java.io.*;
 import java.net.*;
+
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
@@ -111,6 +113,12 @@ public class ServerFacade {
     public void joinGame(JoinGameRequest request) throws ResponseException {
         var path = "/game";
         SuccessResult successResult = this.makeRequest("PUT", path, request, SuccessResult.class);
+    }
+
+    public ChessGame getGameBoard(GetGameBoardRequest request) throws ResponseException {
+        var path = "/gameBoard";
+        GetGameBoardResult getGameBoardResult = this.makeRequest("POST", path, request, GetGameBoardResult.class);
+        return getGameBoardResult.chessGame();
     }
 
 }

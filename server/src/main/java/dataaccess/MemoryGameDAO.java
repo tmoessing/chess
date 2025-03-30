@@ -74,4 +74,15 @@ public class MemoryGameDAO implements GameDAO {
         ArrayList<GameData> gameList2 = GAME_LIST;
         GAME_LIST.clear();
     }
+
+    public ChessGame getGameBoard(int gameID) {
+        ChessGame chessGame = null;
+        for (GameData gameData : GAME_LIST) {
+            if (gameData.gameID() == gameID) {
+                chessGame = gameData.game();
+                return chessGame;
+            }
+        }
+        return chessGame;
+    }
 }
