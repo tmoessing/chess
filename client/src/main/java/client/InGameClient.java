@@ -58,7 +58,14 @@ public class InGameClient implements Client {
         return "Not your Turn";
     }
 
+//    private switchHighlight() {
+//
+//    }
+
     public String highlight(String ... params) {
+        int row = 1;
+        int col = 2;
+        chessBoardBuilder.highlightMoves(row, col);
         return "";
     }
 

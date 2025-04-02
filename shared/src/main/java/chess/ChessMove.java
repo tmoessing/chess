@@ -13,7 +13,6 @@ public class ChessMove {
     private ChessPosition endPosition;
     private ChessPiece.PieceType promotionPiece;
 
-
     public void setStartPosition(ChessPosition startPosition) {
         this.startPosition = startPosition;
     }

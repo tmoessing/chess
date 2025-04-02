@@ -1,10 +1,8 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -115,7 +113,7 @@ public class ChessBoardBuilder {
         }
     }
 
-    public void initializeBorder() {
+    private void initializeBorder() {
         String[] rowHeader;
         String[] colHeader;
 
@@ -148,6 +146,23 @@ public class ChessBoardBuilder {
            border[row][0] = square;
            border[row][9] = square;
        }
+    }
+
+    public void highlightMoves(int row, int col) {
+        chessboard[row-1][col-1] = SET_BG_COLOR_MAGENTA;
+        ChessPiece chessPiece = this.chessGameChessBoard.getPiece(new ChessPosition(row, col));
+
+        if (chessPiece == null) {
+            System.out.print("No Piece there");
+            return;
+        }
+        Collection<ChessMove> possibleMoves = chessGame.validMoves(new ChessPosition(row, col));
+        for (ChessMove chessMove : possibleMoves) {
+            ChessPosition chessPosition = chessMove.getEndPosition();
+            chessboard[chessPosition.getRow()-1][chessPosition.getColumn()-1] = SET_BG_COLOR_GREEN;
+        }
+
+        this.drawBoard();
     }
 }
 
