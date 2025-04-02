@@ -1,6 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +18,7 @@ public class ChessBoardBuilder {
 
     public final ChessGame.TeamColor color;
     public final ChessGame chessGame;
+    private ChessBoard chessGameChessBoard;
 
     private String[][] chessboard = new String[8][8];
     private String[][] chesspieces = new String[8][8];
@@ -23,6 +27,12 @@ public class ChessBoardBuilder {
     public ChessBoardBuilder(ChessGame chessGame, ChessGame.TeamColor color) {
         this.color = color;
         this.chessGame = chessGame;
+        chessGameChessBoard = chessGame.getBoard();
+        if (color.equals(ChessGame.TeamColor.WHITE)) {
+            chessGameChessBoard.setWhite();
+        } else if (color.equals(ChessGame.TeamColor.BLACK)) {
+            chessGameChessBoard.setBlack();
+        }
     }
 
     public void run() {
@@ -62,65 +72,47 @@ public class ChessBoardBuilder {
             for (int col = 0; col < 8; col++) {
                 String square = "";
                 if ((row % 2 == 0 && col % 2 == 0) | (row % 2 != 0 && col % 2 != 0)){
-                    square += SET_BG_COLOR_WHITE;
+                    square += SET_BG_COLOR_DARK_GREEN;
                 } else {
-                   square +=  SET_BG_COLOR_BLACK;
+                   square +=  SET_BG_COLOR_LIGHT_GREY;
                 }
                 chessboard[row][col] = square;
             }
         }
     }
 
-    private void setPieceColors() {
-
-    }
-
     private void initializePieces() {
-        String topColor;
-        String bottomColor;
 
-        if (Objects.equals(this.color, "WHITE")) {
-            topColor = SET_TEXT_COLOR_RED;
-            bottomColor = SET_TEXT_COLOR_BLUE;
-        } else {
-            topColor = SET_TEXT_COLOR_BLUE;
-            bottomColor = SET_TEXT_COLOR_RED;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece chessPiece = chessGameChessBoard.getPiece(new ChessPosition(row+1, col+1));
+                if (chessPiece == null) {
+                    chesspieces[row][col] = EMPTY;
+                    continue;
+                }
+                ChessPiece.PieceType chessPieceType = chessPiece.getPieceType();
+                ChessGame.TeamColor chessPieceColor = chessPiece.getTeamColor();
+                if (chessPieceColor == ChessGame.TeamColor.WHITE) {
+                    chesspieces[row][col] = SET_TEXT_COLOR_WHITE;
+                } else {
+                    chesspieces[row][col] = SET_TEXT_COLOR_BLACK;
+                }
+
+                if (chessPieceType == ChessPiece.PieceType.PAWN) {
+                    chesspieces[row][col] += PAWN;
+                } else if (chessPieceType == ChessPiece.PieceType.ROOK) {
+                    chesspieces[row][col] += ROOK;
+                } else if (chessPieceType == ChessPiece.PieceType.KNIGHT) {
+                    chesspieces[row][col] += KNIGHT;
+                } else if (chessPieceType == ChessPiece.PieceType.BISHOP) {
+                    chesspieces[row][col] += BISHOP;
+                } else if (chessPieceType == ChessPiece.PieceType.QUEEN) {
+                    chesspieces[row][col] += QUEEN;
+                } else if (chessPieceType == ChessPiece.PieceType.KING) {
+                    chesspieces[row][col] += KING;
+                }
+            }
         }
-
-        List<Integer> rookCols = List.of(0, 7);
-        List<Integer> knightCols = List.of(1,6);
-        List<Integer> bishopCols = List.of(2, 5);
-
-        // Set Pawns
-        for (int col = 0; col < 8; col++) {
-            chesspieces[1][col] = topColor + PAWN;
-            chesspieces[6][col] = bottomColor + PAWN;
-        }
-
-        // Set Rooks
-        for (int rookColNum : rookCols) {
-            chesspieces[0][rookColNum] = topColor + ROOK;
-            chesspieces[7][rookColNum] = bottomColor + ROOK;
-        }
-
-        // Set Knights
-        for (int knightColNum : knightCols) {
-            chesspieces[0][knightColNum] = topColor + KNIGHT;
-            chesspieces[7][knightColNum] = bottomColor + KNIGHT;
-        }
-
-        // Set Bishops
-        for (int bishopColNum : bishopCols) {
-            chesspieces[0][bishopColNum] = topColor + BISHOP;
-            chesspieces[7][bishopColNum] = bottomColor + BISHOP;
-        }
-
-        // Set Queens and Kings
-        chesspieces[0][3] = topColor + QUEEN;
-        chesspieces[0][4] = topColor + KING;
-
-        chesspieces[7][3] = bottomColor + QUEEN;
-        chesspieces[7][4] = bottomColor + KING;
     }
 
     public void initializeBorder() {
@@ -136,7 +128,7 @@ public class ChessBoardBuilder {
         }
 
        for (int col = 0; col < 10; col++) {
-            String square = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK;
+            String square = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_YELLOW;
             if (1 <= col & col <= 8 ){
                 square +=  " " + rowHeader[col-1] + " ";
             } else {
@@ -147,7 +139,7 @@ public class ChessBoardBuilder {
        }
 
        for (int row = 0; row < 10; row++) {
-           String square = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK;
+           String square = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_YELLOW;
            if (1 <= row & row <= 8 ){
                square += " " + colHeader[row-1] + " ";
            } else {
