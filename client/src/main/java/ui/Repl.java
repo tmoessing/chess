@@ -2,12 +2,14 @@ package ui;
 
 import client.Client;
 import client.PreLoginClient;
+import websocket.NotificationHandler;
+import websocket.messages.Notification;
 
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements NotificationHandler {
     public static Client client;
     public static String quitingMessage = "Quiting: Thanks for playing!";
 
@@ -34,6 +36,11 @@ public class Repl {
             }
         }
         System.out.println();
+    }
+
+    public void notify(Notification notification) {
+        System.out.println(SET_TEXT_COLOR_RED + notification.message());
+        printPrompt();
     }
 
     private void printPrompt() {
