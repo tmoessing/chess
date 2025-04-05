@@ -18,7 +18,7 @@ public class WebSocketHandler {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
         switch (userGameCommand.getCommandType()) {
             case CONNECT -> connect(userGameCommand.getAuthToken(), userGameCommand.getGameID(), session);
-//            case MAKE_MOVE -> makeMove(action.visitorName());
+            case MAKE_MOVE -> makeMove(userGameCommand.getAuthToken());
             case LEAVE -> leave(userGameCommand.getAuthToken(), userGameCommand.getGameID(), session);
             case RESIGN -> resign(userGameCommand.getAuthToken(), userGameCommand.getGameID());
         }
@@ -29,6 +29,12 @@ public class WebSocketHandler {
         connections.add(authToken, gameID, session);
         var message = String.format("%s joined the game", authToken);
         var notification = new Notification(Notification.Type.ARRIVAL, message);
+        connections.broadcast(authToken, notification);
+    }
+
+    public void makeMove(String authToken) throws IOException {
+        var message = String.format("%s left the game", authToken);
+        var notification = new Notification(Notification.Type.DEPARTURE, message);
         connections.broadcast(authToken, notification);
     }
 
