@@ -51,22 +51,20 @@ public class InGameClient implements Client {
         return "";
     }
 
-    public String move(String ... params) {
+    public String move(String... params) {
         if ((chessBoardBuilder.chessGame.getTeamTurn()).equals(this.playerColor)) {
             return "";
         }
         return "Not your Turn";
     }
 
-//    private switchHighlight() {
-//
-//    }
 
-    public String highlight(String ... params) {
-        int row = 1;
-        int col = 2;
-        chessBoardBuilder.highlightMoves(row, col);
-        return "";
+    public String highlight(String... params) {
+        if (params.length == 1) {
+            String pos = params[0];
+            return chessBoardBuilder.highlightMoves(pos, this.playerColor);
+        }
+        return "Invalid use of highlight";
     }
 
     public String leave() {

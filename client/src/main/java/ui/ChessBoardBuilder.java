@@ -2,6 +2,7 @@ package ui;
 
 import chess.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -117,7 +118,7 @@ public class ChessBoardBuilder {
         String[] rowHeader;
         String[] colHeader;
 
-        if (Objects.equals(this.color, "WHITE")) {
+        if (Objects.equals(this.color, ChessGame.TeamColor.WHITE)) {
             rowHeader = WHITE_ROW_HEADER;
             colHeader = WHITE_COL_HEADER;
         } else {
@@ -148,21 +149,80 @@ public class ChessBoardBuilder {
        }
     }
 
-    public void highlightMoves(int row, int col) {
-        chessboard[row-1][col-1] = SET_BG_COLOR_MAGENTA;
-        ChessPiece chessPiece = this.chessGameChessBoard.getPiece(new ChessPosition(row, col));
+    public int colNumber(char letter, ChessGame.TeamColor playerColor) {
+        if (playerColor.equals(ChessGame.TeamColor.BLACK)) {
+            return switch (letter) {
+                case 'h' -> 1;
+                case 'g' -> 2;
+                case 'f' -> 3;
+                case 'e' -> 4;
+                case 'd' -> 5;
+                case 'c' -> 6;
+                case 'b' -> 7;
+                case 'a' -> 8;
+                default -> throw new IllegalStateException("Unexpected value: " + letter);
+            };
+        } else {
+            return switch (letter) {
+                case 'a' -> 1;
+                case 'b' -> 2;
+                case 'c' -> 3;
+                case 'd' -> 4;
+                case 'e' -> 5;
+                case 'f' -> 6;
+                case 'g' -> 7;
+                case 'h' -> 8;
+                default -> throw new IllegalStateException("Unexpected value: " + letter);
+            };
+        }
+
+    }
+
+    public String highlightMoves(String pos, ChessGame.TeamColor playerColor) {
+        // Remove Previous Comments
+        this.initializeBoard();
+
+
+        // Split pos into col and row
+        if (pos.length() != 2) {
+            return "Invalid use of Highlight";
+        }
+
+        int rowInt;
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            rowInt = Math.abs(Character.getNumericValue(pos.charAt(1)) - 9);
+        } else {
+            rowInt = Character.getNumericValue(pos.charAt(1));
+        }
+        if (rowInt == 0 || rowInt == 9) {
+            return "Invalid use of Highlight";
+        }
+
+        char colChar = pos.charAt(0);
+        if (!Arrays.asList(WHITE_ROW_HEADER).contains(String.valueOf(colChar))) {
+            return "Invalid use of Highlight";
+        }
+        int colInt = colNumber(colChar, playerColor);
+
+
+        ChessPiece chessPiece = this.chessGameChessBoard.getPiece(new ChessPosition(rowInt, colInt));
 
         if (chessPiece == null) {
-            System.out.print("No Piece there");
-            return;
+            return "No Piece in Position";
         }
-        Collection<ChessMove> possibleMoves = chessGame.validMoves(new ChessPosition(row, col));
+
+        chessboard[rowInt-1][colInt-1] = SET_BG_COLOR_MAGENTA;
+
+        Collection<ChessMove> possibleMoves = chessGame.validMoves(new ChessPosition(rowInt, colInt));
         for (ChessMove chessMove : possibleMoves) {
             ChessPosition chessPosition = chessMove.getEndPosition();
             chessboard[chessPosition.getRow()-1][chessPosition.getColumn()-1] = SET_BG_COLOR_GREEN;
         }
 
         this.drawBoard();
+
+        return "";
+
     }
 }
 
