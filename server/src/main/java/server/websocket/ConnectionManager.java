@@ -10,12 +10,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String userName, int gameID, Session session) {
-        var connection = new Connection(userName, session);
+    public void add(String authToken, int gameID, Session session) {
+        var connection = new Connection(authToken, session);
         connections.put(gameID, connection);
     }
 
-    public void gameEnd(int gameID) {
+    public void leave(String authToken) {
+    //        handle later
+    }
+
+    public void endGame(int gameID) {
         connections.remove(gameID);
     }
 
