@@ -29,22 +29,26 @@ public class WebSocketHandler {
 
         String username = authDAO.getUsernameViaAuthToken(command.getAuthToken());
         int gameID = command.getGameID();
-        ChessBoard chessBoard = gameDAO.getGameBoard(gameID).getBoard();
+
+        String chessBoardString = new Gson().toJson(gameDAO.getGameBoard(gameID));
 
         switch (command.getCommandType()) {
-            case CONNECT -> connect(session, gameID, username);
+            case CONNECT -> connect(session, gameID, username, chessBoardString);
             case MAKE_MOVE -> makeMove(command.getAuthToken());
             case LEAVE -> leave(session, gameID, username);
             case RESIGN -> resign(command.getAuthToken(), command.getGameID());
         }
     }
 
-    private void connect(Session session, int gameID, String username) throws IOException {
+    private void connect(Session session, int gameID, String username, String chessBoardString) throws IOException {
         connections.add(username, gameID, session);
         var message = new Gson().toJson(String.format("%s joined the game", username));
-        var serverMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
-//        connections.broadcast(username, serverMessage);
-        connections.broadcast(null, serverMessage);
+        var serverMessageNotification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        //        connections.broadcast(username, serverMessage);
+        connections.broadcast(null, serverMessageNotification);
+        var serverMessageLoadGame = new Notification(ServerMessage.ServerMessageType.LOAD_GAME, chessBoardString);
+        connections.broadcast(null, serverMessageLoadGame);
+
     }
 
     public void makeMove(String username) throws IOException {
