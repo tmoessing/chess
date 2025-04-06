@@ -2,14 +2,21 @@ package websocket.messages;
 
 import com.google.gson.Gson;
 
-public record Notification(Type type, String message) {
+public class Notification extends ServerMessage {
+    private String notificationMessage;
+
     public enum Type {
         ARRIVAL,
         NOISE,
-        DEPARTURE
+        DEPARTURE,
+    }
+
+    public Notification(ServerMessageType type, String notificationMessage) {
+        super(type);
+        this.notificationMessage = notificationMessage;
     }
 
     public String toString() {
-        return new Gson().toJson(this);
+        return notificationMessage;
     }
 }

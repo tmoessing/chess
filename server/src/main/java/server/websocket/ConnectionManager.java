@@ -1,7 +1,7 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,24 +10,39 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String authToken, int gameID, Session session) {
-        var connection = new Connection(authToken, session);
+    public void add(String username, int gameID, Session session) {
+        var connection = new Connection(username, session);
         connections.put(gameID, connection);
     }
 
-    public void leave(String authToken) {
-    //        handle later
+    public void leave(int gameID, String username) {
+//        var removeList = new ArrayList<Connection>();
+//
+//        for (var c : connections.values()) {
+//            if (c.session.isOpen()) {
+//                if (c.username.equals(username)) {
+//                    removeList.add(c);
+//                }
+//            } else {
+//                removeList.add(c);
+//            }
+//        }
+
+//        // Clean up any connections that were left open.
+//        for (var c : removeList) {
+//            connections.get(gameID;
+//        }
     }
 
     public void endGame(int gameID) {
         connections.remove(gameID);
     }
 
-    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
+    public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeVisitorName)) {
+                if (!c.username.equals(excludeVisitorName)) {
                     c.send(notification.toString());
                 }
             } else {
@@ -37,7 +52,7 @@ public class ConnectionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.visitorName);
+            connections.remove(c.username);
         }
     }
 }
