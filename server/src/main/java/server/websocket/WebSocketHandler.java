@@ -1,8 +1,10 @@
 package server.websocket;
 
-import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
+import chess.ChessBoard;
+import chess.ChessGame;
+import dataaccess.SQLAuthDAO;
 import com.google.gson.Gson;
+import dataaccess.SQLGameDAO;
 import websocket.commands.UserGameCommand;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -15,14 +17,19 @@ import java.sql.SQLException;
 @WebSocket
 public class WebSocketHandler {
 
+    private SQLAuthDAO authDAO = new SQLAuthDAO();
+    private SQLGameDAO gameDAO = new SQLGameDAO();
+
+
     private final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-        String username = getUsernameViaAuthToken(command.getAuthToken());
+        String username = authDAO.getUsernameViaAuthToken(command.getAuthToken());
         int gameID = command.getGameID();
+        ChessBoard chessBoard = gameDAO.getGameBoard(gameID).getBoard();
 
         switch (command.getCommandType()) {
             case CONNECT -> connect(session, gameID, username);
@@ -30,25 +37,6 @@ public class WebSocketHandler {
             case LEAVE -> leave(session, gameID, username);
             case RESIGN -> resign(command.getAuthToken(), command.getGameID());
         }
-    }
-
-    public String getUsernameViaAuthToken(String authToken) {
-        String query = "SELECT username FROM auths WHERE authToken=? LIMIT 1";
-
-        try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(query)) {
-
-            ps.setString(1, authToken);
-
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("username");
-                }
-            }
-        } catch (SQLException | DataAccessException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-        return null;
     }
 
     private void connect(Session session, int gameID, String username) throws IOException {
