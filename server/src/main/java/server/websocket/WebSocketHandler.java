@@ -49,7 +49,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(session, gameID, username, chessGameString);
             case MAKE_MOVE -> {
                 MakeMoveCommand makeMoveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
-                makeMove(session, username, makeMoveCommand);
+                makeMove(session, chessGame, username, makeMoveCommand);
             }
             case LEAVE -> leave(session, gameID, username);
             case RESIGN -> resign(session, gameID, username);
@@ -60,18 +60,21 @@ public class WebSocketHandler {
     public void onError(Session session, Throwable error) {
     }
 
-    private void connect(Session session, int gameID, String username, String chessBoardString) throws IOException {
+    private void connect(Session session, int gameID, String username, String chessGameString) throws IOException {
         connections.add(username, gameID, session);
         var message = new Gson().toJson(String.format("%s joined the game", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
         connections.broadcast(username, serverMessageNotification);
-        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessBoardString);
+        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
         connections.broadcastRoot(username, serverMessageLoadGame);
     }
 
-    public void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
+    public void makeMove(Session session, ChessGame chessGame, String username, MakeMoveCommand command) throws IOException {
+        String chessGameString = new Gson().toJson(chessGame);
         var message = new Gson().toJson(String.format("%s made move ", username));
-        var serverMessageLoadGame = new LoadGame(LOAD_GAME, message);
+        var serverMessageNotification = new Notification(NOTIFICATION, message);
+        connections.broadcast(username, serverMessageNotification);
+        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
         connections.broadcast(null, serverMessageLoadGame);
     }
 
