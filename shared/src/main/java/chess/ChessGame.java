@@ -138,7 +138,7 @@ public class ChessGame {
         ChessPiece chessPiece = this.chessBoard.getPiece(startPosition);
         TeamColor chessPieceColor = chessPiece.getTeamColor();
         Collection<ChessMove> validTeamColorChessMovesCollection = chessPiece.pieceMoves(this.chessBoard, startPosition);
-        Collection<ChessMove> newValidTeamColorChessMovesCollection = new ArrayList<ChessMove>();
+        Collection<ChessMove> newValidTeamColorChessMovesCollection = new ArrayList<>();
 
         // Iterate through each possible chess move. Add chess moves to collection of valid moves when other pieces are on the board
         for (ChessMove chessMoveIndex : validTeamColorChessMovesCollection) {

@@ -1,6 +1,9 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import dataaccess.SQLAuthDAO;
 import com.google.gson.Gson;
 import dataaccess.SQLGameDAO;
@@ -11,6 +14,7 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import websocket.messages.*;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
@@ -49,7 +53,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(session, gameID, username, chessGameString);
             case MAKE_MOVE -> {
                 MakeMoveCommand makeMoveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
-                makeMove(session, chessGame, username, makeMoveCommand);
+                makeMove(session, chessGame, gameID, username, makeMoveCommand);
             }
             case LEAVE -> leave(session, gameID, username);
             case RESIGN -> resign(session, gameID, username);
@@ -69,7 +73,40 @@ public class WebSocketHandler {
         connections.broadcastRoot(username, serverMessageLoadGame);
     }
 
-    public void makeMove(Session session, ChessGame chessGame, String username, MakeMoveCommand command) throws IOException {
+    public void makeMove(Session session, ChessGame chessGame, int gameID, String username, MakeMoveCommand command) throws IOException {
+        // Verify Move
+        ChessMove chessMove = command.getMove();
+        ChessPosition startPosition = chessMove.getStartPosition();
+        Collection<ChessMove> validMoves = chessGame.validMoves(startPosition);
+        ChessPiece chessPiece = chessGame.getBoard().getPiece(startPosition);
+        ChessGame.TeamColor chessPieceColor = chessPiece.getTeamColor();
+        ChessGame.TeamColor teamTurnColor = chessGame.getTeamTurn();
+        ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
+
+
+        if (!validMoves.contains(chessMove)) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Invalid Move"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
+        if (userColor == null) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("You are an observer"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
+        if (chessPieceColor != userColor) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Attempting to Move Opponent"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
+        if (chessPieceColor != teamTurnColor) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Wrong Turn"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
+
+
+
         String chessGameString = new Gson().toJson(chessGame);
         var message = new Gson().toJson(String.format("%s made move ", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);

@@ -93,6 +93,31 @@ public class SQLGameDAO implements GameDAO {
         DatabaseManager.executeUpdate(statement, chessGameJSON, gameID);
     }
 
+    public ChessGame.TeamColor userColor(int gameID, String username) {
+        String query = "SELECT whiteUsername, blackUsername FROM games WHERE gameID=? LIMIT 1";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+            ps.setInt(1, gameID);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    if (whiteUsername.equals(username)){
+                        return ChessGame.TeamColor.WHITE;
+                    } else if (blackUsername.equals(username)) {
+                        return ChessGame.TeamColor.BLACK;
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+        return null;
+    }
+
     public void joinGame(int gameID, String playerColor, String username) {
         String statement;
         if (playerColor.equals("WHITE")) {

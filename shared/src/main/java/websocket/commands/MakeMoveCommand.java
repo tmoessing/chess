@@ -4,13 +4,20 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 
 public class MakeMoveCommand extends UserGameCommand {
-//    private ChessMove chessMove;
     private ChessMove move;
 
 
     public MakeMoveCommand(CommandType commandType, String authToken, Integer gameID, ChessMove chessMove) {
         super(commandType, authToken, gameID);
-        this.move = chessMove;
+        setMove(chessMove);
+    }
+
+    public ChessMove getMove() {
+        return move;
+    }
+
+    public void setMove(ChessMove move) {
+        this.move = move;
     }
 
 }
