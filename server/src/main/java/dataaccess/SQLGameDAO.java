@@ -87,6 +87,12 @@ public class SQLGameDAO implements GameDAO {
         DatabaseManager.executeUpdate(statement, gameID, gameName, chessGameJSON);
     }
 
+    public void updateGame(int gameID, ChessGame chessGame) {
+        var statement = "UPDATE games SET chessGameJSON=? WHERE gameID=? VALUES (?, ?)";
+        var chessGameJSON = new Gson().toJson(chessGame);
+        DatabaseManager.executeUpdate(statement, chessGameJSON, gameID);
+    }
+
     public void joinGame(int gameID, String playerColor, String username) {
         String statement;
         if (playerColor.equals("WHITE")) {
@@ -120,7 +126,7 @@ public class SQLGameDAO implements GameDAO {
 
     public ChessGame getGameBoard(int gameID) {
         ChessGame chessGame = null;
-        var query = "SELECT ChessGameJSON FROM games WHERE gameID = ?";
+            var query = "SELECT ChessGameJSON FROM games WHERE gameID = ?";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(query)) {
             ps.setInt(1, gameID);
