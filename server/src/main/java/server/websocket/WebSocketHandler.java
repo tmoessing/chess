@@ -80,24 +80,8 @@ public class WebSocketHandler {
         ChessGame.TeamColor teamTurnColor = chessGame.getTeamTurn();
         ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
 
-
-        if (!validMoves.contains(chessMove)) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Invalid Move"));
-            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
-            return;
-        }
-        if (userColor == null) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("You are an observer"));
-            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
-            return;
-        }
         if (chessPieceColor != userColor) {
             var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Attempting to Move Opponent"));
-            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
-            return;
-        }
-        if (chessPieceColor != teamTurnColor) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Wrong Turn"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
         }
@@ -105,10 +89,27 @@ public class WebSocketHandler {
         // Make Move
         try {
             chessGame.makeMove(chessMove);
+            gameDAO.updateGame(gameID, chessGame);
         } catch (InvalidMoveException e) {
-            return;
+            if (!validMoves.contains(chessMove)) {
+                var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Invalid Move"));
+                session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+                return;
+            } else if (userColor == null) {
+                var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("You are an observer"));
+                session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+                return;
+            } else if (chessPieceColor != teamTurnColor) {
+                var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Wrong Turn"));
+                session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+                return;
+            } else {
+                System.out.println("Unknown Error");
+                return;
+            }
         }
-        gameDAO.updateGame(gameID, chessGame);
+
+
 
 
         String chessGameString = new Gson().toJson(chessGame);
