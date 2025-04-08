@@ -1,9 +1,6 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import dataaccess.SQLAuthDAO;
 import com.google.gson.Gson;
 import dataaccess.SQLGameDAO;
@@ -105,6 +102,13 @@ public class WebSocketHandler {
             return;
         }
 
+        // Make Move
+        try {
+            chessGame.makeMove(chessMove);
+        } catch (InvalidMoveException e) {
+            return;
+        }
+        gameDAO.updateGame(gameID, chessGame);
 
 
         String chessGameString = new Gson().toJson(chessGame);
