@@ -5,14 +5,18 @@ import chess.ChessGame;
 import dataaccess.SQLAuthDAO;
 import com.google.gson.Gson;
 import dataaccess.SQLGameDAO;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
+import static websocket.messages.ServerMessage.ServerMessageType.LOAD_GAME;
 
 @WebSocket
 public class WebSocketHandler {
@@ -25,16 +29,17 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
+
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
         String username = authDAO.getUsernameViaAuthToken(command.getAuthToken());
         int gameID = command.getGameID();
 
-        String chessBoardString = new Gson().toJson(gameDAO.getGameBoard(gameID));
+        String chessGameString = new Gson().toJson(gameDAO.getGameBoard(gameID));
 
         switch (command.getCommandType()) {
-            case CONNECT -> connect(session, gameID, username, chessBoardString);
-            case MAKE_MOVE -> makeMove(command.getAuthToken());
+            case CONNECT -> connect(session, gameID, username, chessGameString);
+            case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
             case LEAVE -> leave(session, gameID, username);
             case RESIGN -> resign(command.getAuthToken(), command.getGameID());
         }
@@ -44,16 +49,14 @@ public class WebSocketHandler {
         connections.add(username, gameID, session);
         var message = new Gson().toJson(String.format("%s joined the game", username));
         var serverMessageNotification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        //        connections.broadcast(username, serverMessage);
-        connections.broadcast(null, serverMessageNotification);
-        var serverMessageLoadGame = new Notification(ServerMessage.ServerMessageType.LOAD_GAME, chessBoardString);
+        connections.broadcast(username, serverMessageNotification);
+        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessBoardString);
         connections.broadcast(null, serverMessageLoadGame);
-
     }
 
-    public void makeMove(String username) throws IOException {
+    public void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
         var message = new Gson().toJson(String.format("%s made move ", username));
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        var serverMessage = new ServerMessage(LOAD_GAME);
         connections.broadcast(null, serverMessage);
     }
 
