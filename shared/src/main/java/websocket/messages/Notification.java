@@ -3,7 +3,7 @@ package websocket.messages;
 import com.google.gson.Gson;
 
 public class Notification extends ServerMessage {
-    private String notificationMessage;
+    private String message;
 
     public enum Type {
         ARRIVAL,
@@ -13,10 +13,10 @@ public class Notification extends ServerMessage {
 
     public Notification(ServerMessageType type, String notificationMessage) {
         super(type);
-        this.notificationMessage = notificationMessage;
+        this.message = notificationMessage;
     }
 
     public String toString() {
-        return notificationMessage;
+        return message;
     }
 }

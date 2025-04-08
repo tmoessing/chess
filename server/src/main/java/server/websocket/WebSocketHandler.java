@@ -51,7 +51,7 @@ public class WebSocketHandler {
         var serverMessageNotification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(username, serverMessageNotification);
         var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessBoardString);
-        connections.broadcast(null, serverMessageLoadGame);
+        connections.broadcastRoot(username, serverMessageLoadGame);
     }
 
     public void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {

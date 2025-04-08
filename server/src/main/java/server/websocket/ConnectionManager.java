@@ -53,7 +53,17 @@ public class ConnectionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.username);
+            connections.remove(c);
+        }
+    }
+
+    public void broadcastRoot(String rootUsername, ServerMessage notification) throws IOException {
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (c.username.equals(rootUsername)) {
+                    c.send(new Gson().toJson(notification));
+                }
+            }
         }
     }
 }
