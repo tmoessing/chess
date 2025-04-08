@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.mysql.cj.x.protobuf.MysqlxCrud;
 import model.GameRecord;
 
 import java.sql.SQLException;
@@ -91,6 +92,16 @@ public class SQLGameDAO implements GameDAO {
         var statement = "UPDATE games SET chessGameJSON=? WHERE gameID=?";
         var chessGameJSON = new Gson().toJson(chessGame);
         DatabaseManager.executeUpdate(statement, chessGameJSON, gameID);
+    }
+
+    public void userLeaveGame(int gameID, ChessGame.TeamColor removeUserColor) {
+        String statement;
+        if (removeUserColor.equals(ChessGame.TeamColor.WHITE)) {
+            statement = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+        } else {
+            statement = "UPDATE games SET blackUsername=? WHERE gameID=?";
+        }
+        DatabaseManager.executeUpdate(statement, null, gameID);
     }
 
     public ChessGame.TeamColor userColor(int gameID, String username) {

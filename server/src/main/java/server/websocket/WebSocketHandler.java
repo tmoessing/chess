@@ -109,9 +109,6 @@ public class WebSocketHandler {
             }
         }
 
-
-
-
         String chessGameString = new Gson().toJson(chessGame);
         var message = new Gson().toJson(String.format("%s made move ", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
@@ -120,17 +117,29 @@ public class WebSocketHandler {
         connections.broadcast(null, serverMessageLoadGame);
     }
 
-    private void leave(Session session, int gameID, String userName) throws IOException {
-        connections.leave(gameID, userName);
-        var message = new Gson().toJson(String.format("%s left the game.", userName));
-        var serverMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(userName, serverMessage);
+    private void leave(int gameID, String username) throws IOException {
+
+        ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
+        if (username != null) {
+            gameDAO.userLeaveGame(gameID, userColor);
+        }
+
+        connections.leave(gameID, username);
+        var message = new Gson().toJson(String.format("%s left the game.", username));
+        var serverMessage = new Notification(NOTIFICATION, message);
+        connections.broadcast(username, serverMessage);
     }
 
-    private void resign(Session session, int gameID, String userName) throws IOException {
+    private void resign(int gameID, String username) throws IOException {
+        ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
+        if (username != null) {
+            gameDAO.updateGame(gameID);
+            return;
+        }
+
         connections.endGame(gameID);
-        var message = new Gson().toJson(String.format("%s has resigned.", userName));
+        var message = new Gson().toJson(String.format("%s has resigned.", username));
         var serverMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(userName, serverMessage);
+        connections.broadcast(username, serverMessage);
     }
 }

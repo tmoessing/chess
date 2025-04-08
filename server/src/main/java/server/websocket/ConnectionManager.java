@@ -23,22 +23,26 @@ public class ConnectionManager {
     }
 
     public void leave(int gameID, String username) {
-//        var removeList = new ArrayList<Connection>();
-//
-//        for (var c : connections.values()) {
-//            if (c.session.isOpen()) {
-//                if (c.username.equals(username)) {
-//                    removeList.add(c);
-//                }
-//            } else {
-//                removeList.add(c);
-//            }
-//        }
+        var removeList = new ArrayList<Connection>();
 
-//        // Clean up any connections that were left open.
-//        for (var c : removeList) {
-//            connections.get(gameID;
-//        }
+        List<Connection> gameConnections = allConnections.get(gameID);
+        for (var connection : gameConnections) {
+            if (connection.session.isOpen()) {
+                if (connection.username.equals(username)) {
+                    removeList.add(connection);
+                }
+            } else {
+                removeList.add(connection);
+            }
+        }
+
+
+
+        // Clean up any connections that were left open.
+        for (var connectionRemove : removeList) {
+            gameConnections.remove(connectionRemove);
+        }
+        allConnections.put(gameID, gameConnections);
     }
 
     public void endGame(int gameID) {
