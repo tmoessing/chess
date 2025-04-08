@@ -9,9 +9,7 @@ import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import websocket.messages.LoadGame;
-import websocket.messages.Notification;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,16 +31,33 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
         String username = authDAO.getUsernameViaAuthToken(command.getAuthToken());
-        int gameID = command.getGameID();
+        if (username == null || username.equals("null")) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Bad AuthToken"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
 
+        int gameID = command.getGameID();
         String chessGameString = new Gson().toJson(gameDAO.getGameBoard(gameID));
+
+        if (chessGameString == null || chessGameString.equals("null")) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Bad GameID"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
 
         switch (command.getCommandType()) {
             case CONNECT -> connect(session, gameID, username, chessGameString);
             case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
             case LEAVE -> leave(session, gameID, username);
-            case RESIGN -> resign(command.getAuthToken(), command.getGameID());
+            case RESIGN -> resign(session, gameID, username);
         }
+    }
+
+    @OnWebSocketError
+    public void onError(Session session, Throwable error) {
+        System.err.println("WebSocket error for session " + session + ": " + error.getMessage());
+        error.printStackTrace(); // optional but useful for debugging
     }
 
     private void connect(Session session, int gameID, String username, String chessBoardString) throws IOException {
@@ -62,15 +77,15 @@ public class WebSocketHandler {
 
     private void leave(Session session, int gameID, String userName) throws IOException {
         connections.leave(gameID, userName);
-//        var message = String.format("%s left the game", authToken);
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        var message = new Gson().toJson(String.format("%s left the game.", userName));
+        var serverMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(userName, serverMessage);
     }
 
-    private void resign(String authToken, Integer gameID) throws IOException {
+    private void resign(Session session, int gameID, String userName) throws IOException {
         connections.endGame(gameID);
-//        var message = String.format("%s resigned", authToken);
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(authToken, serverMessage);
+        var message = new Gson().toJson(String.format("%s has resigned.", userName));
+        var serverMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(userName, serverMessage);
     }
 }

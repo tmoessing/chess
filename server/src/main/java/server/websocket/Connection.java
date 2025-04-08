@@ -16,4 +16,8 @@ public class Connection {
     public void send(String msg) throws IOException {
         session.getRemote().sendString(msg);
     }
+
+    public void sendError(Session thisSession, String msg) throws IOException {
+        thisSession.getRemote().sendString(msg);
+    }
 }
