@@ -6,14 +6,20 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, List<Connection>> allConnections = new ConcurrentHashMap<>();
 
     public void add(String username, int gameID, Session session) {
         var connection = new Connection(username, session);
-        connections.put(gameID, connection);
+        List<Connection> gameConnections = allConnections.get(gameID);
+        if (gameConnections == null) {
+            gameConnections = new ArrayList<>();
+        }
+        gameConnections.add(connection);
+        allConnections.put(gameID, gameConnections);
     }
 
     public void leave(int gameID, String username) {
@@ -36,34 +42,38 @@ public class ConnectionManager {
     }
 
     public void endGame(int gameID) {
-        connections.remove(gameID);
+        allConnections.remove(gameID);
     }
 
     public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.username.equals(excludeVisitorName)) {
-                    c.send(new Gson().toJson(notification));
+        for (var gameConnection : allConnections.values()) {
+            for (var connection : gameConnection) {
+                if (connection.session.isOpen()) {
+                    if (!connection.username.equals(excludeVisitorName)) {
+                        connection.send(new Gson().toJson(notification));
+                    }
+                } else {
+                    removeList.add(connection);
                 }
-            } else {
-                removeList.add(c);
             }
         }
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c);
+            allConnections.remove(c);
         }
     }
 
     public void broadcastRoot(String rootUsername, ServerMessage notification) throws IOException {
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (c.username.equals(rootUsername)) {
-                    c.send(new Gson().toJson(notification));
+        for (var gameConnection : allConnections.values()) {
+            for (var connection : gameConnection) {
+                if (connection.session.isOpen()) {
+                    if (connection.username.equals(rootUsername)) {
+                        connection.send(new Gson().toJson(notification));
+                    }
                 }
-            }
+                }
         }
     }
 }
