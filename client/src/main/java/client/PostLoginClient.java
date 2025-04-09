@@ -8,15 +8,20 @@ import exception.ResponseException;
 import model.*;
 import ui.ChessBoardBuilder;
 import ui.Repl;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
-    private ArrayList<ChessGame> chessGamesList = new ArrayList<>();
 
-    PostLoginClient(String serverURL) {
+    private WebSocketFacade ws;
+    private final NotificationHandler notificationHandler;
+
+    PostLoginClient(String serverURL, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverURL);
         this.serverURL = serverURL;
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -43,7 +48,7 @@ public class PostLoginClient implements Client {
     }
 
     public String logout() {
-        Repl.client = new PreLoginClient(this.serverURL);
+        Repl.client = new PreLoginClient(this.serverURL, notificationHandler);
         return "Thanks for Playing";
     }
 
@@ -103,11 +108,14 @@ public class PostLoginClient implements Client {
             return "Invalid GameID";
         }
 
+        ws = new WebSocketFacade(serverURL, notificationHandler);
+        ws.enterChessGame(ServerFacade.getAuthToken(), gameID);
+
         JoinGameRequest joinGameRequest = new JoinGameRequest(colorString, gameID);
         server.joinGame(joinGameRequest);
         GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
         ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
-        Repl.client = new InGameClient(serverURL, new ChessBoardBuilder(chessGame, color));
+        Repl.client = new InGameClient(serverURL, notificationHandler, new ChessBoardBuilder(chessGame, color), gameID);
         return "";
     }
 
@@ -122,15 +130,19 @@ public class PostLoginClient implements Client {
 
         ListGamesResult listGamesResult = server.listGames();
 
+        int gameID;
         try {
-            int gameID = listGamesResult.games().get(clientGameID).gameID();
+            gameID = listGamesResult.games().get(clientGameID).gameID();
         } catch (IndexOutOfBoundsException ex) {
             return "Invalid GameID";
         }
 
+        ws = new WebSocketFacade(serverURL, notificationHandler);
+        ws.enterChessGame(ServerFacade.getAuthToken(), gameID);
+
         GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
         ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
-        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder(chessGame, ChessGame.TeamColor.WHITE));
+        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder(chessGame, ChessGame.TeamColor.WHITE), gameID);
         return "";
     }
 

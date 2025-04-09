@@ -48,7 +48,7 @@ public class WebSocketHandler {
         }
 
         switch (command.getCommandType()) {
-            case CONNECT -> connect(session, gameID, username, chessGameString);
+            case CONNECT -> connect(session, gameID, username, chessGame);
             case MAKE_MOVE -> {
                 MakeMoveCommand makeMoveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
                 makeMove(session, chessGame, gameID, username, makeMoveCommand);
@@ -62,12 +62,12 @@ public class WebSocketHandler {
     public void onError(Session session, Throwable error) {
     }
 
-    private void connect(Session session, int gameID, String username, String chessGameString) throws IOException {
+    private void connect(Session session, int gameID, String username, ChessGame chessGame) throws IOException {
         connections.add(username, gameID, session);
         var message = new Gson().toJson(String.format("%s joined the game", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
         connections.broadcast(username, gameID, serverMessageNotification);
-        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
+        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGame);
         connections.broadcastRoot(username, serverMessageLoadGame);
     }
 
@@ -119,7 +119,8 @@ public class WebSocketHandler {
         var message = new Gson().toJson(String.format("%s made move ", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
         connections.broadcast(username, gameID,  serverMessageNotification);
-        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
+//        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
+        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGame);
         connections.broadcast(null, gameID, serverMessageLoadGame);
     }
 

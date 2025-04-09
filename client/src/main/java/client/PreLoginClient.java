@@ -4,16 +4,20 @@ import exception.ResponseException;
 import model.LoginRequest;
 import model.RegisterRequest;
 import ui.Repl;
+import websocket.NotificationHandler;
 
 import java.util.Arrays;
 
 public class PreLoginClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
+    private final NotificationHandler notificationHandler;
 
-    public PreLoginClient(String serverURL) {
+
+    public PreLoginClient(String serverURL, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverURL);
         this.serverURL = serverURL;
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -43,7 +47,7 @@ public class PreLoginClient implements Client {
            LoginRequest loginRequest = new LoginRequest(username, password);
            server.login(loginRequest);
            System.out.printf("Logging in... \nWelcome %s!", username);
-           Repl.client = new PostLoginClient(this.serverURL);
+           Repl.client = new PostLoginClient(this.serverURL, notificationHandler);
            return "";
         } else if (params.length > 2) {
             return "Error: Too Much Information";
@@ -60,7 +64,7 @@ public class PreLoginClient implements Client {
             RegisterRequest registerRequest  = new RegisterRequest(username, password, email);
             server.register(registerRequest);
             System.out.printf("Registering... \nWelcome %s, here are some of the new ", username);
-            Repl.client = new PostLoginClient(this.serverURL);
+            Repl.client = new PostLoginClient(this.serverURL, notificationHandler);
             return Repl.client.help();
         } else if (params.length > 3) {
             return "Error: Too Much Information";

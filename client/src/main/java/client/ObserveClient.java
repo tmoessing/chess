@@ -2,18 +2,25 @@ package client;
 
 import ui.ChessBoardBuilder;
 import ui.Repl;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
 public class ObserveClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
+    private int gameID;
+
+    private WebSocketFacade ws;
+    private NotificationHandler notificationHandler;
     private ChessBoardBuilder chessBoardBuilder;
 
-    ObserveClient(String serverURL, ChessBoardBuilder chessBoardBuilder) {
+    ObserveClient(String serverURL, ChessBoardBuilder chessBoardBuilder, int gameID) {
         this.serverURL = serverURL;
         this.chessBoardBuilder = chessBoardBuilder;
         this.server = new ServerFacade(serverURL);
+        this.gameID = gameID;
 
         chessBoardBuilder.run();
     }
@@ -33,12 +40,14 @@ public class ObserveClient implements Client {
     }
 
     public String leave() {
-        Repl.client = new PostLoginClient(this.serverURL);
+        ws = new WebSocketFacade(serverURL, notificationHandler);
+        ws.leaveChessGame(ServerFacade.getAuthToken(), gameID);
+        Repl.client = new PostLoginClient(this.serverURL, notificationHandler);
         return "Welcome back to the home page!";
     }
 
     public String logout() {
-        Repl.client = new PreLoginClient(this.serverURL);
+        Repl.client = new PreLoginClient(this.serverURL, notificationHandler);
         return "Thanks for Playing!";
     }
 

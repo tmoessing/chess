@@ -13,6 +13,10 @@ public class ServerFacade {
     private static String serverUrl;
     private static String authToken;
 
+    public static String getAuthToken() {
+        return authToken;
+    }
+
     public ServerFacade(String url) {
         serverUrl = url;
     }
