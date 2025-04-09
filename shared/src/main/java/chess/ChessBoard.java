@@ -108,80 +108,80 @@ public class ChessBoard {
         board[7][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
     }
 
-    public void setBlack() {
-        this.board = new ChessPiece[8][8];
-        List<Integer> rookCols = List.of(0, 7);
-        List<Integer> knightCols = List.of(1,6);
-        List<Integer> bishopCols = List.of(2, 5);
-
-        // Set Pawns
-        for (int col = 0; col < 8; col++) {
-            board[1][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-            board[6][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        }
-
-        // Set Rooks
-        for (int rookColNum : rookCols) {
-            board[0][rookColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-            board[7][rookColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        }
-
-        // Set Knights
-        for (int knightColNum : knightCols) {
-            board[0][knightColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-            board[7][knightColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        }
-
-        // Set Bishops
-        for (int bishopColNum : bishopCols) {
-            board[0][bishopColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-            board[7][bishopColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        }
-
-        // Set Queens and Kings
-        board[0][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        board[0][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-
-        board[7][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        board[7][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-    }
-
-    public void setWhite() {
-        this.board = new ChessPiece[8][8];
-        List<Integer> rookCols = List.of(0, 7);
-        List<Integer> knightCols = List.of(1,6);
-        List<Integer> bishopCols = List.of(2, 5);
-
-        // Set Pawns
-        for (int col = 0; col < 8; col++) {
-            board[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-            board[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        }
-
-        // Set Rooks
-        for (int rookColNum : rookCols) {
-            board[0][rookColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-            board[7][rookColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        }
-
-        // Set Knights
-        for (int knightColNum : knightCols) {
-            board[0][knightColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-            board[7][knightColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        }
-
-        // Set Bishops
-        for (int bishopColNum : bishopCols) {
-            board[0][bishopColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-            board[7][bishopColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        }
-
-        // Set Queens and Kings
-        board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-
-        board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-    }
+//    public void setBlack() {
+//        this.board = new ChessPiece[8][8];
+//        List<Integer> rookCols = List.of(0, 7);
+//        List<Integer> knightCols = List.of(1,6);
+//        List<Integer> bishopCols = List.of(2, 5);
+//
+//        // Set Pawns
+//        for (int col = 0; col < 8; col++) {
+//            board[1][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+//            board[6][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+//        }
+//
+//        // Set Rooks
+//        for (int rookColNum : rookCols) {
+//            board[0][rookColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+//            board[7][rookColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+//        }
+//
+//        // Set Knights
+//        for (int knightColNum : knightCols) {
+//            board[0][knightColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+//            board[7][knightColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+//        }
+//
+//        // Set Bishops
+//        for (int bishopColNum : bishopCols) {
+//            board[0][bishopColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+//            board[7][bishopColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+//        }
+//
+//        // Set Queens and Kings
+//        board[0][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+//        board[0][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+//
+//        board[7][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+//        board[7][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+//    }
+//
+//    public void setWhite() {
+//        this.board = new ChessPiece[8][8];
+//        List<Integer> rookCols = List.of(0, 7);
+//        List<Integer> knightCols = List.of(1,6);
+//        List<Integer> bishopCols = List.of(2, 5);
+//
+//        // Set Pawns
+//        for (int col = 0; col < 8; col++) {
+//            board[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+//            board[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+//        }
+//
+//        // Set Rooks
+//        for (int rookColNum : rookCols) {
+//            board[0][rookColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+//            board[7][rookColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+//        }
+//
+//        // Set Knights
+//        for (int knightColNum : knightCols) {
+//            board[0][knightColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+//            board[7][knightColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+//        }
+//
+//        // Set Bishops
+//        for (int bishopColNum : bishopCols) {
+//            board[0][bishopColNum] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+//            board[7][bishopColNum] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+//        }
+//
+//        // Set Queens and Kings
+//        board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+//        board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+//
+//        board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+//        board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+//    }
 
 }

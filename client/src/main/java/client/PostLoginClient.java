@@ -92,12 +92,12 @@ public class PostLoginClient implements Client {
         }
 
         String colorString = params[1].toUpperCase();
-        ChessGame.TeamColor color;
+        ChessGame.TeamColor userColor;
 
         if (colorString.equals("WHITE")) {
-            color = ChessGame.TeamColor.WHITE;
+            userColor = ChessGame.TeamColor.WHITE;
         } else {
-            color = ChessGame.TeamColor.BLACK;
+            userColor = ChessGame.TeamColor.BLACK;
         }
 
         int gameID;
@@ -108,14 +108,13 @@ public class PostLoginClient implements Client {
             return "Invalid GameID";
         }
 
+        JoinGameRequest joinGameRequest = new JoinGameRequest(colorString, gameID);
+        server.joinGame(joinGameRequest);
+
         ws = new WebSocketFacade(serverURL, notificationHandler);
         ws.enterChessGame(ServerFacade.getAuthToken(), gameID);
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(colorString, gameID);
-        server.joinGame(joinGameRequest);
-        GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
-        ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
-        Repl.client = new InGameClient(serverURL, notificationHandler, new ChessBoardBuilder(chessGame, color), gameID);
+        Repl.client = new InGameClient(serverURL, notificationHandler, gameID);
         return "";
     }
 
@@ -140,9 +139,7 @@ public class PostLoginClient implements Client {
         ws = new WebSocketFacade(serverURL, notificationHandler);
         ws.enterChessGame(ServerFacade.getAuthToken(), gameID);
 
-        GetGameBoardRequest getGameBoardRequest = new GetGameBoardRequest(clientGameID);
-        ChessGame chessGame = server.getGameBoard(getGameBoardRequest);
-        Repl.client = new ObserveClient(serverURL, new ChessBoardBuilder(chessGame, ChessGame.TeamColor.WHITE), gameID);
+        Repl.client = new ObserveClient(serverURL, gameID);
         return "";
     }
 

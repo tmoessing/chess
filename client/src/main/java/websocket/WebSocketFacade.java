@@ -4,6 +4,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import websocket.commands.*;
 import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -27,8 +28,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
-                    notificationHandler.notify(notification);
+                    notificationHandler.notify(message);
                 }
             });
 
@@ -46,7 +46,6 @@ public class WebSocketFacade extends Endpoint {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-            this.session.close();
         } catch (IOException e) {
             System.err.println("WebSocket send/close failed: " + e.getMessage());
         }
@@ -56,7 +55,6 @@ public class WebSocketFacade extends Endpoint {
         try {
             var action = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, chessMove);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-            this.session.close();
         } catch (IOException e) {
             System.err.println("WebSocket send/close failed: " + e.getMessage());
         }

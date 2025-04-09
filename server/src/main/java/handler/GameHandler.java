@@ -72,25 +72,4 @@ public class GameHandler extends Handler{
             return new Gson().toJson(new FailureRecord(e.getMessage()));
         }
     }
-
-    public Object handleGetGameBoard(Request req, Response res) {
-        String authToken = req.headers("authorization");
-        GetGameBoardRequest getGameBoardRequest = new Gson().fromJson(req.body(), GetGameBoardRequest.class);
-        try {
-            res.status(200);
-            GetGameBoardResult getGameBoardResponse =  gameService.getGameBoard(getGameBoardRequest, authToken);
-            return new Gson().toJson(getGameBoardResponse);
-        } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "Error: bad request")){
-                res.status(400);
-            } else if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
-                res.status(401);
-            } else {
-                res.status(403);
-            }
-            return new Gson().toJson(new FailureRecord(e.getMessage()));
-        }
-
-
-    }
 }

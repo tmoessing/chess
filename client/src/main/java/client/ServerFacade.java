@@ -119,10 +119,4 @@ public class ServerFacade {
         SuccessResult successResult = this.makeRequest("PUT", path, request, SuccessResult.class);
     }
 
-    public ChessGame getGameBoard(GetGameBoardRequest request) throws ResponseException {
-        var path = "/gameBoard";
-        GetGameBoardResult getGameBoardResult = this.makeRequest("POST", path, request, GetGameBoardResult.class);
-        return getGameBoardResult.chessGame();
-    }
-
 }

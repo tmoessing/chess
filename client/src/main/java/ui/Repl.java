@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import client.Client;
 import client.PreLoginClient;
+import com.google.gson.Gson;
 import server.Server;
 import websocket.NotificationHandler;
 import websocket.messages.ErrorMessage;
@@ -44,11 +45,13 @@ public class Repl implements NotificationHandler {
     }
 
 
-    public void notify(ServerMessage message) {
-        switch (message.getServerMessageType()) {
-            case NOTIFICATION ->  displayNotification((Notification) message);
-            case ERROR ->  displayError((ErrorMessage) message);
-            case LOAD_GAME -> loadGame((LoadGame) message);
+    public void notify(String message) {
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+        switch (type) {
+            case NOTIFICATION ->  displayNotification(new Gson().fromJson(message, Notification.class));
+            case ERROR ->  displayError(new Gson().fromJson(message, ErrorMessage.class));
+            case LOAD_GAME -> loadGame(new Gson().fromJson(message, LoadGame.class));
         }
     }
 
@@ -65,9 +68,10 @@ public class Repl implements NotificationHandler {
     private void loadGame(LoadGame message) {
         ChessBoardBuilder chessBoardBuilder = new ChessBoardBuilder(message.getGame(), ChessGame.TeamColor.WHITE);
         chessBoardBuilder.run();
+        printPrompt();
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_BG_COLOR + ">>> ");
+        System.out.print("\n" + RESET_BG_COLOR + RESET_TEXT_COLOR + ">>> ");
     }
 }

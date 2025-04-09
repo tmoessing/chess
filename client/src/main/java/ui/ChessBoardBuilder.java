@@ -27,11 +27,7 @@ public class ChessBoardBuilder {
         this.color = color;
         this.chessGame = chessGame;
         chessGameChessBoard = chessGame.getBoard();
-        if (color.equals(ChessGame.TeamColor.WHITE)) {
-            chessGameChessBoard.setWhite();
-        } else if (color.equals(ChessGame.TeamColor.BLACK)) {
-            chessGameChessBoard.setBlack();
-        }
+        chessGameChessBoard.resetBoard();
     }
 
     public void run() {
@@ -42,7 +38,7 @@ public class ChessBoardBuilder {
     }
 
     public void draw() {
-        System.out.print("Turn: " + chessGame.getTeamTurn() + "\n");
+        System.out.print("\nTurn: " + chessGame.getTeamTurn() + "\n");
         System.out.print(EscapeSequences.moveCursorToLocation(0, 0));
         this.drawBoard();
     }
@@ -70,7 +66,7 @@ public class ChessBoardBuilder {
         for (int row = 0; row < 8 ; row++) {
             for (int col = 0; col < 8; col++) {
                 String square = "";
-                if ((row % 2 == 0 && col % 2 == 0) | (row % 2 != 0 && col % 2 != 0)){
+                if ((row % 2 == 0 && col % 2 == 0) || (row % 2 != 0 && col % 2 != 0)){
                     square += SET_BG_COLOR_DARK_GREEN;
                 } else {
                    square +=  SET_BG_COLOR_LIGHT_GREY;
@@ -81,7 +77,39 @@ public class ChessBoardBuilder {
     }
 
     private void initializePieces() {
+        //  Initialize for Black
+//        for (int row = 0; row < 8; row++) {
+//            for (int col = 0; col < 8; col++) {
+//                ChessPiece chessPiece = chessGameChessBoard.getPiece(new ChessPosition(row+1, col+1));
+//                if (chessPiece == null) {
+//                    chesspieces[row][col] = EMPTY;
+//                    continue;
+//                }
+//                ChessPiece.PieceType chessPieceType = chessPiece.getPieceType();
+//                ChessGame.TeamColor chessPieceColor = chessPiece.getTeamColor();
+//                if (chessPieceColor == ChessGame.TeamColor.WHITE) {
+//                    chesspieces[row][col] = SET_TEXT_COLOR_WHITE;
+//                } else {
+//                    chesspieces[row][col] = SET_TEXT_COLOR_BLACK;
+//                }
+//
+//                if (chessPieceType == ChessPiece.PieceType.PAWN) {
+//                    chesspieces[row][col] += PAWN;
+//                } else if (chessPieceType == ChessPiece.PieceType.ROOK) {
+//                    chesspieces[row][col] += ROOK;
+//                } else if (chessPieceType == ChessPiece.PieceType.KNIGHT) {
+//                    chesspieces[row][col] += KNIGHT;
+//                } else if (chessPieceType == ChessPiece.PieceType.BISHOP) {
+//                    chesspieces[row][col] += BISHOP;
+//                } else if (chessPieceType == ChessPiece.PieceType.QUEEN) {
+//                    chesspieces[row][col] += QUEEN;
+//                } else if (chessPieceType == ChessPiece.PieceType.KING) {
+//                    chesspieces[row][col] += KING;
+//                }
+//            }
+//        }
 
+        // Initalize for Black
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 ChessPiece chessPiece = chessGameChessBoard.getPiece(new ChessPosition(row+1, col+1));
@@ -92,9 +120,9 @@ public class ChessBoardBuilder {
                 ChessPiece.PieceType chessPieceType = chessPiece.getPieceType();
                 ChessGame.TeamColor chessPieceColor = chessPiece.getTeamColor();
                 if (chessPieceColor == ChessGame.TeamColor.WHITE) {
-                    chesspieces[row][col] = SET_TEXT_COLOR_WHITE;
+                    chesspieces[Math.abs(row)][col] = SET_TEXT_COLOR_WHITE;
                 } else {
-                    chesspieces[row][col] = SET_TEXT_COLOR_BLACK;
+                    chesspieces[Math.abs(row)][col] = SET_TEXT_COLOR_BLACK;
                 }
 
                 if (chessPieceType == ChessPiece.PieceType.PAWN) {

@@ -11,7 +11,6 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import websocket.messages.*;
 
 import java.io.IOException;
-import java.security.KeyStore;
 import java.util.Collection;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -39,9 +38,8 @@ public class WebSocketHandler {
 
         int gameID = command.getGameID();
         ChessGame chessGame = gameDAO.getGameBoard(gameID);
-        String chessGameString = new Gson().toJson(chessGame);
 
-        if (chessGameString == null || chessGameString.equals("null")) {
+        if (chessGame == null) {
             var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Bad GameID"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
@@ -64,7 +62,17 @@ public class WebSocketHandler {
 
     private void connect(Session session, int gameID, String username, ChessGame chessGame) throws IOException {
         connections.add(username, gameID, session);
-        var message = new Gson().toJson(String.format("%s joined the game", username));
+        ChessGame.TeamColor usernameColor = gameDAO.userColor(gameID, username);
+        String usernameRole;
+        if (usernameColor == null) {
+            usernameRole = "observer";
+        } else if (usernameColor.equals(ChessGame.TeamColor.WHITE)) {
+            usernameRole = "white";
+        } else {
+            usernameRole = "black";
+        }
+
+        var message = new Gson().toJson(String.format("%s joined the game as %s", username, usernameRole));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
         connections.broadcast(username, gameID, serverMessageNotification);
         var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGame);
@@ -115,13 +123,19 @@ public class WebSocketHandler {
             }
         }
 
-        String chessGameString = new Gson().toJson(chessGame);
+
         var message = new Gson().toJson(String.format("%s made move ", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
         connections.broadcast(username, gameID,  serverMessageNotification);
-//        var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
         var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGame);
         connections.broadcast(null, gameID, serverMessageLoadGame);
+    }
+
+    private String stringifyMove(ChessMove chessMove) {
+        ChessPosition startPosition = chessMove.getStartPosition();
+        ChessPosition endPosition = chessMove.getStartPosition();
+
+        return "";
     }
 
     private void leave(int gameID, String username) throws IOException {

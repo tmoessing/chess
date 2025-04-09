@@ -10,25 +10,23 @@ import websocket.WebSocketFacade;
 import java.util.Arrays;
 
 public class InGameClient implements Client {
-    private WebSocketFacade ws;
     private final ServerFacade server;
-    private final NotificationHandler notificationHandler;
     private final String serverURL;
-    private ChessGame.TeamColor playerColor;
+
+    private WebSocketFacade ws;
+    private final NotificationHandler notificationHandler;
+
     private int gameID;
+    private ChessGame.TeamColor playerColor;
     private ChessBoardBuilder chessBoardBuilder;
 
 
-    InGameClient(String serverURL, NotificationHandler notificationHandler, ChessBoardBuilder chessBoardBuilder, int gameID) {
+    InGameClient(String serverURL, NotificationHandler notificationHandler, int gameID) {
         this.serverURL = serverURL;
         this.server = new ServerFacade(serverURL);
         this.notificationHandler = notificationHandler;
 
         this.gameID = gameID;
-        this.playerColor = chessBoardBuilder.color;
-        this.chessBoardBuilder = chessBoardBuilder;
-
-        chessBoardBuilder.run();
     }
 
     @Override
@@ -42,7 +40,6 @@ public class InGameClient implements Client {
             case "move" -> move(params);
             case "highlight" -> highlight(params);
             case "leave" -> leave();
-            case "logout" -> logout();
             case "help" -> help();
             case "quit" -> Repl.quitingMessage;
             default -> "Invalid instruction";
@@ -94,12 +91,15 @@ public class InGameClient implements Client {
         return "Welcome back to the home page!";
     }
 
-    public String logout() {
-        Repl.client = new PreLoginClient(this.serverURL, notificationHandler);
-        return "Thanks for Playing!";
-    }
-
     public String help() {
-        return "Game Help Message (help/quit)";
+        return  "Instructions:" +
+                "\n leave - leave the game being observed" +
+                "\n help - get help with possible commands" +
+                "\n quit - quit the application" +
+                "\n highlight <row,col> - highlight possible moves" +
+                "\n redraw - redraw board" +
+                "\n resign - resign the game" +
+                "\n move <row,col> <row,col>- move chessPiece";
+
     }
 }

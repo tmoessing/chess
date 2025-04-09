@@ -16,13 +16,10 @@ public class ObserveClient implements Client {
     private NotificationHandler notificationHandler;
     private ChessBoardBuilder chessBoardBuilder;
 
-    ObserveClient(String serverURL, ChessBoardBuilder chessBoardBuilder, int gameID) {
+    ObserveClient(String serverURL, int gameID) {
         this.serverURL = serverURL;
-        this.chessBoardBuilder = chessBoardBuilder;
         this.server = new ServerFacade(serverURL);
         this.gameID = gameID;
-
-        chessBoardBuilder.run();
     }
 
     @Override
@@ -32,8 +29,8 @@ public class ObserveClient implements Client {
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
             case "leave" -> leave();
+            case "highlight" -> highlight(params);
             case "help" -> help();
-            case "logout" -> logout();
             case "quit" -> Repl.quitingMessage;
             default -> "Invalid instructions";
         };
@@ -46,12 +43,15 @@ public class ObserveClient implements Client {
         return "Welcome back to the home page!";
     }
 
-    public String logout() {
-        Repl.client = new PreLoginClient(this.serverURL, notificationHandler);
-        return "Thanks for Playing!";
+    public String highlight(String[] ... params) {
+        return "";
     }
 
     public String help() {
-        return "Observe Help Message (help/quit)";
+        return  "Instructions:" +
+                "\n leave - leave the game being observed" +
+                "\n help - get help with possible commands" +
+                "\n quit - quit the application" +
+                "\n highlight <row,col> - highlight possible moves";
     }
 }
