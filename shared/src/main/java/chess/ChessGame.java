@@ -15,10 +15,21 @@ public class ChessGame {
     private ChessPosition blackKing;
     private ChessPosition whiteKing;
 
+    private boolean gameStateOver;
+
     // EnPassant Variables
     private ChessMove lastChessMove;
     private boolean canEnPassant = false;
     private ChessPosition pawnPosition;
+
+
+    public boolean isGameStateOver() {
+        return gameStateOver;
+    }
+
+    public void setGameStateOver(boolean gameStateOver) {
+        this.gameStateOver = gameStateOver;
+    }
 
     /**
      * @return Which team's turn it is
@@ -74,6 +85,7 @@ public class ChessGame {
         setBoard(chessBoard);
 
         setTeamTurn(TeamColor.WHITE);
+        setGameStateOver(false);
     }
 
     /**

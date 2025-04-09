@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import websocket.messages.*;
 
 import java.io.IOException;
+import java.security.KeyStore;
 import java.util.Collection;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -52,8 +53,8 @@ public class WebSocketHandler {
                 MakeMoveCommand makeMoveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
                 makeMove(session, chessGame, gameID, username, makeMoveCommand);
             }
-            case LEAVE -> leave(session, gameID, username);
-            case RESIGN -> resign(session, gameID, username);
+            case LEAVE -> leave(gameID, username);
+            case RESIGN -> resign(session, chessGame, gameID, username);
         }
     }
 
@@ -84,6 +85,11 @@ public class WebSocketHandler {
             var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Attempting to Move Opponent"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
+        }
+
+        if (chessGame.isGameStateOver()) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Attempted Move After Resign"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
         }
 
         // Make Move
@@ -118,28 +124,37 @@ public class WebSocketHandler {
     }
 
     private void leave(int gameID, String username) throws IOException {
-
         ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
-        if (username != null) {
+        if (userColor != null) {
             gameDAO.userLeaveGame(gameID, userColor);
         }
 
         connections.leave(gameID, username);
+
         var message = new Gson().toJson(String.format("%s left the game.", username));
         var serverMessage = new Notification(NOTIFICATION, message);
-        connections.broadcast(username, serverMessage);
+        connections.broadcast(null, serverMessage);
     }
 
-    private void resign(int gameID, String username) throws IOException {
+    private void resign(Session session, ChessGame chessGame, int gameID, String username) throws IOException {
         ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
-        if (username != null) {
-            gameDAO.updateGame(gameID);
+        if (userColor == null) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Observer tried to leave"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
         }
 
-        connections.endGame(gameID);
+        if (chessGame.isGameStateOver()) {
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Game is already Over"));
+            session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
+        }
+
+        chessGame.setGameStateOver(true);
+        gameDAO.updateGame(gameID, chessGame);
         var message = new Gson().toJson(String.format("%s has resigned.", username));
-        var serverMessage = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(username, serverMessage);
+        var serverMessage = new Notification(NOTIFICATION, message);
+        connections.broadcast(null, serverMessage);
+        connections.endGame(gameID);
     }
 }

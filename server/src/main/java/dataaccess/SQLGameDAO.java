@@ -114,9 +114,9 @@ public class SQLGameDAO implements GameDAO {
                 if (rs.next()) {
                     String whiteUsername = rs.getString("whiteUsername");
                     String blackUsername = rs.getString("blackUsername");
-                    if (whiteUsername.equals(username)){
+                    if (whiteUsername != null && whiteUsername.equals(username)) {
                         return ChessGame.TeamColor.WHITE;
-                    } else if (blackUsername.equals(username)) {
+                    } else if (blackUsername != null && blackUsername.equals(username)) {
                         return ChessGame.TeamColor.BLACK;
                     } else {
                         return null;

@@ -37,7 +37,6 @@ public class ConnectionManager {
         }
 
 
-
         // Clean up any connections that were left open.
         for (var connectionRemove : removeList) {
             gameConnections.remove(connectionRemove);
@@ -62,11 +61,6 @@ public class ConnectionManager {
                 }
             }
         }
-
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            allConnections.remove(c);
-        }
     }
 
     public void broadcastRoot(String rootUsername, ServerMessage notification) throws IOException {
@@ -77,7 +71,7 @@ public class ConnectionManager {
                         connection.send(new Gson().toJson(notification));
                     }
                 }
-                }
+            }
         }
     }
 }
