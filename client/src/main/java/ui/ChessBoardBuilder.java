@@ -1,11 +1,11 @@
 package ui;
 
 import chess.*;
+import client.ServerFacade;
+import exception.ResponseException;
+import websocket.WebSocketFacade;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 
@@ -175,19 +175,17 @@ public class ChessBoardBuilder {
                 default -> throw new IllegalStateException("Unexpected value: " + letter);
             };
         }
-
     }
 
-    public String highlightMoves(String pos, ChessGame.TeamColor playerColor) {
-        // Remove Previous Comments
-        this.initializeBoard();
-
-
-        // Split pos into col and row
+    private boolean validatePosition(String pos) {
         if (pos.length() != 2) {
-            return "Invalid use of Highlight";
+            System.out.println("Invalid use of Highlight");
+            return false;
         }
+        return true;
+    }
 
+    public int getRowFromPos(String pos, ChessGame.TeamColor playerColor) throws Exception {
         int rowInt;
         if (playerColor == ChessGame.TeamColor.WHITE) {
             rowInt = Math.abs(Character.getNumericValue(pos.charAt(1)) - 9);
@@ -195,20 +193,46 @@ public class ChessBoardBuilder {
             rowInt = Character.getNumericValue(pos.charAt(1));
         }
         if (rowInt == 0 || rowInt == 9) {
-            return "Invalid use of Highlight";
+            throw new Exception("Invalid use of Highlight");
         }
 
+        return rowInt;
+
+    }
+
+    public int getColFromPos(String pos, ChessGame.TeamColor playerColor) throws Exception {
         char colChar = pos.charAt(0);
         if (!Arrays.asList(WHITE_ROW_HEADER).contains(String.valueOf(colChar))) {
-            return "Invalid use of Highlight";
+            throw new Exception("Invalid use of Highlight");
         }
         int colInt = colNumber(colChar, playerColor);
+        return colInt;
+    }
 
+    public void highlightMoves(String pos, ChessGame.TeamColor playerColor) {
+        // Remove Previous Comments
+        this.initializeBoard();
+
+        // Split pos into col and row
+        if (!validatePosition(pos)) {
+            return;
+        }
+
+        int rowInt;
+        int colInt;
+        try {
+            rowInt = getRowFromPos(pos, playerColor);
+            colInt = getColFromPos(pos, playerColor);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
 
         ChessPiece chessPiece = this.chessGameChessBoard.getPiece(new ChessPosition(rowInt, colInt));
 
         if (chessPiece == null) {
-            return "No Piece in Position";
+            System.out.println("No Piece in Position");
+            return;
         }
 
         chessboard[rowInt-1][colInt-1] = SET_BG_COLOR_MAGENTA;
@@ -221,8 +245,66 @@ public class ChessBoardBuilder {
 
         this.drawBoard();
 
-        return "";
+    }
 
+    public ChessMove makeMove(int gameID, String startPos, String endPos, ChessGame.TeamColor playerColor) {
+        // Split pos into col and row
+        if (!validatePosition(startPos) || !validatePosition(endPos)) {
+            return null;
+        }
+
+        int startPosRowInt;
+        int startPosColInt;
+        int endPosRowInt;
+        int endPosColInt;
+        try {
+            startPosRowInt = getRowFromPos(startPos, playerColor);
+            startPosColInt = getColFromPos(startPos, playerColor);
+            endPosRowInt = getRowFromPos(startPos, playerColor);
+            endPosColInt = getColFromPos(startPos, playerColor);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
+        ChessPosition chessStartPosition = new ChessPosition(startPosRowInt, startPosColInt);
+        ChessPosition chessEndPosition = new ChessPosition(endPosRowInt, endPosColInt);
+
+        ChessPiece chessPiece = this.chessGameChessBoard.getPiece(chessStartPosition);
+
+        // Handle Pawn Promotion
+        ChessPiece.PieceType pawnPromotionPiece = null;
+
+        if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (playerColor == ChessGame.TeamColor.WHITE && chessEndPosition.getRow() == 7) {
+                Scanner scanner = new Scanner(System.in);
+                while (pawnPromotionPiece == null) {
+                    System.out.print("Pawn Promotion: Select Q(Queen), B(Bishop), R(Rook), K(Knight)");
+                    String input = scanner.nextLine();
+
+                    var tokens = input.toLowerCase().split(" ");
+                    var cmd = (tokens.length > 0) ? tokens[0] : "help";
+                    switch (cmd) {
+                        case "Q" -> pawnPromotionPiece = ChessPiece.PieceType.QUEEN;
+                        case "B" -> pawnPromotionPiece = ChessPiece.PieceType.BISHOP;
+                        case "R" -> pawnPromotionPiece = ChessPiece.PieceType.ROOK;
+                        case "K" -> pawnPromotionPiece = ChessPiece.PieceType.KNIGHT;
+                        default ->  System.out.print(SET_TEXT_COLOR_WHITE + "Invalid Piece Selection\n" +
+                                "Pawn Promotion: Select Q(Queen), B(Bishop), R(Rook), K(Knight)");
+                    }
+                }
+            }
+        }
+
+        ChessMove chessMove = new ChessMove(chessStartPosition, chessEndPosition, pawnPromotionPiece);
+
+        Collection<ChessMove> possibleMoves = chessGame.validMoves(chessStartPosition);
+        if (!possibleMoves.contains(chessMove)) {
+            System.out.println("Chess Move is not valid. Please Try Again");
+            return null;
+        }
+
+        return chessMove;
     }
 }
 
