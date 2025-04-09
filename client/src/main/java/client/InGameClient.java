@@ -3,11 +3,13 @@ package client;
 import chess.ChessGame;
 import ui.ChessBoardBuilder;
 import ui.Repl;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
 public class InGameClient implements Client {
     private final ServerFacade server;
+    private WebSocketFacade ws;
     private final String serverURL;
     private final ChessGame.TeamColor playerColor;
     private ChessBoardBuilder chessBoardBuilder;
