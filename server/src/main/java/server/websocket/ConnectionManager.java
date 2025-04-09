@@ -48,19 +48,26 @@ public class ConnectionManager {
         allConnections.remove(gameID);
     }
 
-    public void broadcast(String excludeVisitorName, ServerMessage notification) throws IOException {
+    public void broadcast(String excludeVisitorName, int gameID, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var gameConnection : allConnections.values()) {
-            for (var connection : gameConnection) {
-                if (connection.session.isOpen()) {
-                    if (!connection.username.equals(excludeVisitorName)) {
-                        connection.send(new Gson().toJson(notification));
-                    }
-                } else {
-                    removeList.add(connection);
+
+        List<Connection> gameConnections = allConnections.get(gameID);
+
+        for (var connection : gameConnections) {
+            if (connection.session.isOpen()) {
+                if (!connection.username.equals(excludeVisitorName)) {
+                    connection.send(new Gson().toJson(notification));
                 }
+            } else {
+                removeList.add(connection);
             }
         }
+
+        // Clean up any connections that were left open.
+        for (var connectionRemove : removeList) {
+            gameConnections.remove(connectionRemove);
+        }
+        allConnections.put(gameID, gameConnections);
     }
 
     public void broadcastRoot(String rootUsername, ServerMessage notification) throws IOException {

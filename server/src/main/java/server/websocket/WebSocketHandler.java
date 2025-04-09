@@ -66,7 +66,7 @@ public class WebSocketHandler {
         connections.add(username, gameID, session);
         var message = new Gson().toJson(String.format("%s joined the game", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
-        connections.broadcast(username, serverMessageNotification);
+        connections.broadcast(username, gameID, serverMessageNotification);
         var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
         connections.broadcastRoot(username, serverMessageLoadGame);
     }
@@ -118,9 +118,9 @@ public class WebSocketHandler {
         String chessGameString = new Gson().toJson(chessGame);
         var message = new Gson().toJson(String.format("%s made move ", username));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
-        connections.broadcast(username, serverMessageNotification);
+        connections.broadcast(username, gameID,  serverMessageNotification);
         var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGameString);
-        connections.broadcast(null, serverMessageLoadGame);
+        connections.broadcast(null, gameID, serverMessageLoadGame);
     }
 
     private void leave(int gameID, String username) throws IOException {
@@ -133,7 +133,7 @@ public class WebSocketHandler {
 
         var message = new Gson().toJson(String.format("%s left the game.", username));
         var serverMessage = new Notification(NOTIFICATION, message);
-        connections.broadcast(null, serverMessage);
+        connections.broadcast(null, gameID, serverMessage);
     }
 
     private void resign(Session session, ChessGame chessGame, int gameID, String username) throws IOException {
@@ -154,7 +154,7 @@ public class WebSocketHandler {
         gameDAO.updateGame(gameID, chessGame);
         var message = new Gson().toJson(String.format("%s has resigned.", username));
         var serverMessage = new Notification(NOTIFICATION, message);
-        connections.broadcast(null, serverMessage);
+        connections.broadcast(null, gameID, serverMessage);
         connections.endGame(gameID);
     }
 }
