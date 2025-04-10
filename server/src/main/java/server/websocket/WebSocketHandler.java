@@ -96,14 +96,43 @@ public class WebSocketHandler {
         }
 
         if (chessGame.isGameStateOver()) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Error: Attempted Move After Resign"));
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Error: Attempted Move After Game End"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
         }
 
+
         // Make Move
         try {
             chessGame.makeMove(chessMove);
+
+            // Check if in Check
+            if (chessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
+                var message = new Gson().toJson(String.format("WHITE is in Check"));
+                var serverMessageNotification = new Notification(NOTIFICATION, message);
+                connections.broadcast(null, gameID,  serverMessageNotification);
+            }
+            // Check if in Check
+            if (chessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
+                var message = new Gson().toJson(String.format("BLACK is in Check"));
+                var serverMessageNotification = new Notification(NOTIFICATION, message);
+                connections.broadcast(null, gameID,  serverMessageNotification);
+            }
+
+            // Check if in CheckMate
+            if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                chessGame.setGameStateOver(true);
+                var message = new Gson().toJson(String.format("BLACK is in Checkmate", username));
+                var serverMessageNotification = new Notification(NOTIFICATION, message);
+                connections.broadcast(null, gameID,  serverMessageNotification);
+            }
+            if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                chessGame.setGameStateOver(true);
+                var message = new Gson().toJson(String.format("WHITE is in Checkmate", username));
+                var serverMessageNotification = new Notification(NOTIFICATION, message);
+                connections.broadcast(null, gameID,  serverMessageNotification);
+            }
+
             gameDAO.updateGame(gameID, chessGame);
         } catch (InvalidMoveException e) {
             if (!validMoves.contains(chessMove)) {
@@ -119,11 +148,11 @@ public class WebSocketHandler {
                 session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
                 return;
             } else {
-                System.out.println("Unknown Error");
+                var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson(e.getMessage()));
+                session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
                 return;
             }
         }
-
 
         var message = new Gson().toJson(String.format("%s made move %s", username, stringifyMove(chessMove)));
         var serverMessageNotification = new Notification(NOTIFICATION, message);

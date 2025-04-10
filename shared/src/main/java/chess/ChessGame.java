@@ -130,9 +130,9 @@ public class ChessGame {
 //                    validTeamColorChessMovesCollection.add(enPassantMove);
 //                }
 //
-//                // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
-//                Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
-//                validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
+                // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
+                Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
+                validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
             }
         }
 
@@ -215,7 +215,24 @@ public class ChessGame {
         }
 
         // Check if team is in check
-        if (isInCheck(chessPieceColor)) {throw new InvalidMoveException("You are in check and can't move this piece");}
+        if (isInCheck(chessPieceColor)) {
+            // Move Piece
+            this.chessBoard.addPiece(startPosition, null);
+            this.chessBoard.addPiece(endPosition, chessPieceObject);
+            if (isInCheck(chessPieceColor)) {
+                throw new InvalidMoveException("You are in check and can not move this piece");
+            } else {
+                // Save past move
+                this.lastChessMove = move;
+                // Switch Color
+                if (chessPieceColor == TeamColor.BLACK) {
+                    setTeamTurn(TeamColor.WHITE);
+                } else {
+                    setTeamTurn(TeamColor.BLACK);
+                }
+                return;
+            }
+        }
 
         // Check if EnPassant Conditions is true and see if given move is enPassant move
         this.setCanEnPassant(startPosition, chessPieceObject);
@@ -291,6 +308,9 @@ public class ChessGame {
             this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), chessPiece);
 
             if (!isInCheck(teamColor)) {
+                // Revert Chess Move
+                this.chessBoard.addPiece(startPosition, chessPiece);
+                this.chessBoard.addPiece(chessMoveIndex.getEndPosition(), chessPieceInEndPosition);
                 return false;
             }
 

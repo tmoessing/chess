@@ -196,7 +196,7 @@ public class ChessBoardBuilder {
     public int getRowFromPos(String pos, ChessGame.TeamColor playerColor) throws Exception {
         int rowInt;
         rowInt = Math.abs(Character.getNumericValue(pos.charAt(1)) - 9);
-        if (rowInt == 0 || rowInt == 9) {
+        if (rowInt <= 0 || rowInt >= 9) {
             throw new Exception("Invalid use of command");
         }
 
@@ -228,7 +228,7 @@ public class ChessBoardBuilder {
             rowInt = getRowFromPos(pos, playerColor)-1;
             colInt = getColFromPos(pos, playerColor)-1;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Invalid use of command");
             return;
         }
 
@@ -242,7 +242,7 @@ public class ChessBoardBuilder {
 
         if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
             clientChessBoard[rowInt][colInt] = SET_BG_COLOR_MAGENTA;
-        } else {
+        }else {
             clientChessBoard[7-rowInt][7-colInt] = SET_BG_COLOR_MAGENTA;
         }
 
