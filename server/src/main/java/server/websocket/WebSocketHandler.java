@@ -108,31 +108,30 @@ public class WebSocketHandler {
         try {
             chessGame.makeMove(chessMove);
 
-            // Check if in Check
-            if (chessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
-                var message = new Gson().toJson(String.format("WHITE is in Check"));
-                var serverMessageNotification = new Notification(NOTIFICATION, message);
-                connections.broadcast(null, gameID,  serverMessageNotification);
-            }
-            // Check if in Check
-            if (chessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
-                var message = new Gson().toJson(String.format("BLACK is in Check"));
-                var serverMessageNotification = new Notification(NOTIFICATION, message);
-                connections.broadcast(null, gameID,  serverMessageNotification);
-            }
+
 
             // Check if in CheckMate
             if (chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
                 chessGame.setGameStateOver(true);
                 var message = new Gson().toJson(String.format("BLACK is in Checkmate", username));
-                var serverMessageNotification = new Notification(NOTIFICATION, message);
-                connections.broadcast(null, gameID,  serverMessageNotification);
-            }
-            if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                var serverCheckMateNotification = new Notification(NOTIFICATION, message);
+                connections.broadcast(null, gameID, serverCheckMateNotification);
+            } else if (chessGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 chessGame.setGameStateOver(true);
                 var message = new Gson().toJson(String.format("WHITE is in Checkmate", username));
-                var serverMessageNotification = new Notification(NOTIFICATION, message);
-                connections.broadcast(null, gameID,  serverMessageNotification);
+                var serverCheckMateNotification = new Notification(NOTIFICATION, message);
+                connections.broadcast(null, gameID,  serverCheckMateNotification);
+            } else {
+                // Check if in Check
+                if (chessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
+                    var message = new Gson().toJson(String.format("WHITE is in Check"));
+                    var serverCheckNotification = new Notification(NOTIFICATION, message);
+                    connections.broadcast(null, gameID,  serverCheckNotification);
+                } else if (chessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
+                    var message = new Gson().toJson(String.format("BLACK is in Check"));
+                    var serverCheckNotification = new Notification(NOTIFICATION, message);
+                    connections.broadcast(null, gameID,  serverCheckNotification);
+                }
             }
 
             gameDAO.updateGame(gameID, chessGame);
