@@ -1,12 +1,7 @@
 package ui;
 
 import chess.*;
-import client.ServerFacade;
-import exception.ResponseException;
-import websocket.WebSocketFacade;
-
 import java.util.*;
-
 import static ui.EscapeSequences.*;
 
 public class ChessBoardBuilder {
@@ -15,25 +10,28 @@ public class ChessBoardBuilder {
     private final static String[] WHITE_COL_HEADER = {"8", "7", "6", "5", "4", "3", "2", "1"};
     private final static String[] BLACK_COL_HEADER = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
-    public final ChessGame.TeamColor color;
-    public final ChessGame chessGame;
-    private ChessBoard chessGameChessBoard;
+    public ChessGame.TeamColor userPerspectiveColor;
+    public ChessGame chessGame;
 
-    private String[][] chessboard = new String[8][8];
-    private String[][] chesspieces = new String[8][8];
-    private String[][] border = new String[10][10];
+    private ChessBoard chessBoard;
 
-    public ChessBoardBuilder(ChessGame chessGame, ChessGame.TeamColor color) {
-        this.color = color;
+    private String[][] clientChessBoard = new String[8][8];
+    private String[][] clientChessPiece = new String[8][8];
+    private String[][] clientBorder = new String[10][10];
+
+    public ChessBoardBuilder(ChessGame chessGame, ChessGame.TeamColor userPerspectiveColor) {
+        this.userPerspectiveColor = userPerspectiveColor;
         this.chessGame = chessGame;
-        chessGameChessBoard = chessGame.getBoard();
-        chessGameChessBoard.resetBoard();
+        this.chessBoard = chessGame.getBoard();
+
+        this.chessBoard.resetBoard();
     }
 
     public void run() {
         this.initializeBoard();
         this.initializePieces();
         this.initializeBorder();
+
         this.draw();
     }
 
@@ -46,13 +44,13 @@ public class ChessBoardBuilder {
     private void drawBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
-                if (border[row][col] != null) {
-                    System.out.print(border[row][col]);
+                if (clientBorder[row][col] != null) {
+                    System.out.print(clientBorder[row][col]);
                 }
                 try {
-                    System.out.print(chessboard[row-1][col-1]);
-                    if (chesspieces[row-1][col-1] != null) {
-                        System.out.print(chesspieces[row-1][col-1]);
+                    System.out.print(clientChessBoard[row-1][col-1]);
+                    if (clientChessPiece[row-1][col-1] != null) {
+                        System.out.print(clientChessPiece[row-1][col-1]);
                     } else {
                         System.out.print(EMPTY);
                     }
@@ -71,82 +69,59 @@ public class ChessBoardBuilder {
                 } else {
                    square +=  SET_BG_COLOR_LIGHT_GREY;
                 }
-                chessboard[row][col] = square;
+                clientChessBoard[row][col] = square;
             }
         }
     }
 
     private void initializePieces() {
-        //  Initialize for Black
-//        for (int row = 0; row < 8; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                ChessPiece chessPiece = chessGameChessBoard.getPiece(new ChessPosition(row+1, col+1));
-//                if (chessPiece == null) {
-//                    chesspieces[row][col] = EMPTY;
-//                    continue;
-//                }
-//                ChessPiece.PieceType chessPieceType = chessPiece.getPieceType();
-//                ChessGame.TeamColor chessPieceColor = chessPiece.getTeamColor();
-//                if (chessPieceColor == ChessGame.TeamColor.WHITE) {
-//                    chesspieces[row][col] = SET_TEXT_COLOR_WHITE;
-//                } else {
-//                    chesspieces[row][col] = SET_TEXT_COLOR_BLACK;
-//                }
-//
-//                if (chessPieceType == ChessPiece.PieceType.PAWN) {
-//                    chesspieces[row][col] += PAWN;
-//                } else if (chessPieceType == ChessPiece.PieceType.ROOK) {
-//                    chesspieces[row][col] += ROOK;
-//                } else if (chessPieceType == ChessPiece.PieceType.KNIGHT) {
-//                    chesspieces[row][col] += KNIGHT;
-//                } else if (chessPieceType == ChessPiece.PieceType.BISHOP) {
-//                    chesspieces[row][col] += BISHOP;
-//                } else if (chessPieceType == ChessPiece.PieceType.QUEEN) {
-//                    chesspieces[row][col] += QUEEN;
-//                } else if (chessPieceType == ChessPiece.PieceType.KING) {
-//                    chesspieces[row][col] += KING;
-//                }
-//            }
-//        }
-
-        // Initalize for Black
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                ChessPiece chessPiece = chessGameChessBoard.getPiece(new ChessPosition(row+1, col+1));
+                int userRow;
+                int userCol;
+                if (userPerspectiveColor == ChessGame.TeamColor.BLACK) {
+                    userRow = Math.abs((row+1));
+                    userCol = Math.abs((col+1));
+                } else {
+                    userRow = Math.abs((row) - 8);
+                    userCol = Math.abs((col) - 8);
+                }
+                ChessPiece chessPiece = chessBoard.getPiece(new ChessPosition(userRow, userCol));
                 if (chessPiece == null) {
-                    chesspieces[row][col] = EMPTY;
+                    clientChessPiece[row][col] = EMPTY;
                     continue;
                 }
                 ChessPiece.PieceType chessPieceType = chessPiece.getPieceType();
                 ChessGame.TeamColor chessPieceColor = chessPiece.getTeamColor();
                 if (chessPieceColor == ChessGame.TeamColor.WHITE) {
-                    chesspieces[Math.abs(row)][col] = SET_TEXT_COLOR_WHITE;
+                    clientChessPiece[row][col] = SET_TEXT_COLOR_WHITE;
                 } else {
-                    chesspieces[Math.abs(row)][col] = SET_TEXT_COLOR_BLACK;
+                    clientChessPiece[row][col] = SET_TEXT_COLOR_BLACK;
                 }
 
                 if (chessPieceType == ChessPiece.PieceType.PAWN) {
-                    chesspieces[row][col] += PAWN;
+                    clientChessPiece[row][col] += PAWN;
                 } else if (chessPieceType == ChessPiece.PieceType.ROOK) {
-                    chesspieces[row][col] += ROOK;
+                    clientChessPiece[row][col] += ROOK;
                 } else if (chessPieceType == ChessPiece.PieceType.KNIGHT) {
-                    chesspieces[row][col] += KNIGHT;
+                    clientChessPiece[row][col] += KNIGHT;
                 } else if (chessPieceType == ChessPiece.PieceType.BISHOP) {
-                    chesspieces[row][col] += BISHOP;
+                    clientChessPiece[row][col] += BISHOP;
                 } else if (chessPieceType == ChessPiece.PieceType.QUEEN) {
-                    chesspieces[row][col] += QUEEN;
+                    clientChessPiece[row][col] += QUEEN;
                 } else if (chessPieceType == ChessPiece.PieceType.KING) {
-                    chesspieces[row][col] += KING;
+                    clientChessPiece[row][col] += KING;
                 }
             }
         }
+        var x = 9;
     }
 
     private void initializeBorder() {
         String[] rowHeader;
         String[] colHeader;
 
-        if (Objects.equals(this.color, ChessGame.TeamColor.WHITE)) {
+        if (Objects.equals(this.userPerspectiveColor, ChessGame.TeamColor.WHITE)) {
             rowHeader = WHITE_ROW_HEADER;
             colHeader = WHITE_COL_HEADER;
         } else {
@@ -161,8 +136,8 @@ public class ChessBoardBuilder {
             } else {
                 square += EMPTY;
             }
-           border[0][col] = square;
-           border[9][col] = square;
+           clientBorder[0][col] = square;
+           clientBorder[9][col] = square;
        }
 
        for (int row = 0; row < 10; row++) {
@@ -172,8 +147,8 @@ public class ChessBoardBuilder {
            } else {
                square += EMPTY;
            }
-           border[row][0] = square;
-           border[row][9] = square;
+           clientBorder[row][0] = square;
+           clientBorder[row][9] = square;
        }
     }
 
@@ -256,19 +231,19 @@ public class ChessBoardBuilder {
             return;
         }
 
-        ChessPiece chessPiece = this.chessGameChessBoard.getPiece(new ChessPosition(rowInt, colInt));
+        ChessPiece chessPiece = this.chessBoard.getPiece(new ChessPosition(rowInt, colInt));
 
         if (chessPiece == null) {
             System.out.println("No Piece in Position");
             return;
         }
 
-        chessboard[rowInt-1][colInt-1] = SET_BG_COLOR_MAGENTA;
+        clientChessBoard[rowInt-1][colInt-1] = SET_BG_COLOR_MAGENTA;
 
         Collection<ChessMove> possibleMoves = chessGame.validMoves(new ChessPosition(rowInt, colInt));
         for (ChessMove chessMove : possibleMoves) {
             ChessPosition chessPosition = chessMove.getEndPosition();
-            chessboard[chessPosition.getRow()-1][chessPosition.getColumn()-1] = SET_BG_COLOR_GREEN;
+            clientChessBoard[chessPosition.getRow()-1][chessPosition.getColumn()-1] = SET_BG_COLOR_GREEN;
         }
 
         this.drawBoard();
@@ -298,7 +273,7 @@ public class ChessBoardBuilder {
         ChessPosition chessStartPosition = new ChessPosition(startPosRowInt, startPosColInt);
         ChessPosition chessEndPosition = new ChessPosition(endPosRowInt, endPosColInt);
 
-        ChessPiece chessPiece = this.chessGameChessBoard.getPiece(chessStartPosition);
+        ChessPiece chessPiece = this.chessBoard.getPiece(chessStartPosition);
 
         // Handle Pawn Promotion
         ChessPiece.PieceType pawnPromotionPiece = null;

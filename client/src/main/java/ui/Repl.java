@@ -4,7 +4,6 @@ import chess.ChessGame;
 import client.Client;
 import client.PreLoginClient;
 import com.google.gson.Gson;
-import server.Server;
 import websocket.NotificationHandler;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGame;
@@ -18,6 +17,7 @@ import static ui.EscapeSequences.*;
 public class Repl implements NotificationHandler {
     public static Client client;
     public static String quitingMessage = "Quiting: Thanks for playing!";
+    public static ChessGame.TeamColor userPerspectiveColor;
 
     public Repl(String serverURL) {
         client = new PreLoginClient(serverURL, this);
@@ -56,7 +56,7 @@ public class Repl implements NotificationHandler {
     }
 
     private void displayNotification(Notification notification) {
-        System.out.println(SET_TEXT_COLOR_RED + notification.getMessage());
+        System.out.println(SET_TEXT_COLOR_BLUE + notification.getMessage());
         printPrompt();
     }
 
@@ -66,7 +66,7 @@ public class Repl implements NotificationHandler {
     }
 
     private void loadGame(LoadGame message) {
-        ChessBoardBuilder chessBoardBuilder = new ChessBoardBuilder(message.getGame(), ChessGame.TeamColor.WHITE);
+        ChessBoardBuilder chessBoardBuilder = new ChessBoardBuilder(message.getGame(), userPerspectiveColor);
         chessBoardBuilder.run();
         printPrompt();
     }

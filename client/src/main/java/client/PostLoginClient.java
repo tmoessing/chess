@@ -1,12 +1,9 @@
 package client;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-
 import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
-import ui.ChessBoardBuilder;
 import ui.Repl;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
@@ -96,9 +93,13 @@ public class PostLoginClient implements Client {
 
         if (colorString.equals("WHITE")) {
             userColor = ChessGame.TeamColor.WHITE;
-        } else {
+        } else if (colorString.equals("BLACK")) {
             userColor = ChessGame.TeamColor.BLACK;
+        } else {
+            return "Invalid Color";
         }
+
+        Repl.userPerspectiveColor = userColor;
 
         int gameID;
         try {
@@ -136,10 +137,12 @@ public class PostLoginClient implements Client {
             return "Invalid GameID";
         }
 
+        Repl.userPerspectiveColor = ChessGame.TeamColor.WHITE;
+
         ws = new WebSocketFacade(serverURL, notificationHandler);
         ws.enterChessGame(ServerFacade.getAuthToken(), gameID);
 
-        Repl.client = new ObserveClient(serverURL, gameID);
+        Repl.client = new ObserveClient(serverURL, notificationHandler, gameID);
         return "";
     }
 

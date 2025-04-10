@@ -13,12 +13,17 @@ public class ObserveClient implements Client {
     private int gameID;
 
     private WebSocketFacade ws;
-    private NotificationHandler notificationHandler;
+    private final NotificationHandler notificationHandler;
+
     private ChessBoardBuilder chessBoardBuilder;
 
-    ObserveClient(String serverURL, int gameID) {
+
+    ObserveClient(String serverURL, NotificationHandler notificationHandler, int gameID) {
         this.serverURL = serverURL;
         this.server = new ServerFacade(serverURL);
+
+        this.notificationHandler = notificationHandler;
+
         this.gameID = gameID;
     }
 
@@ -40,6 +45,8 @@ public class ObserveClient implements Client {
         ws = new WebSocketFacade(serverURL, notificationHandler);
         ws.leaveChessGame(ServerFacade.getAuthToken(), gameID);
         Repl.client = new PostLoginClient(this.serverURL, notificationHandler);
+
+        Repl.userPerspectiveColor = null;
         return "Welcome back to the home page!";
     }
 

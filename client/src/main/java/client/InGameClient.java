@@ -87,7 +87,9 @@ public class InGameClient implements Client {
     public String leave() {
         ws = new WebSocketFacade(serverURL, notificationHandler);
         ws.leaveChessGame(ServerFacade.getAuthToken(), gameID);
+
         Repl.client = new PostLoginClient(this.serverURL, notificationHandler);
+        Repl.userPerspectiveColor = null;
         return "Welcome back to the home page!";
     }
 
