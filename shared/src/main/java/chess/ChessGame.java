@@ -124,12 +124,7 @@ public class ChessGame {
                 }
 
 //                // Check EnPassant Conditions
-//                this.setCanEnPassant(indexChessPosition, chessPiece);
-//                if (this.canEnPassant) {
-//                    ChessMove enPassantMove = this.createEnPassantMove(indexChessPosition, chessPiece);
-//                    validTeamColorChessMovesCollection.add(enPassantMove);
-//                }
-//
+
                 // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
                 Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
                 validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);

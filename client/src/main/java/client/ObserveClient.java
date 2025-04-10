@@ -1,6 +1,5 @@
 package client;
 
-import ui.ChessBoardBuilder;
 import ui.Repl;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
@@ -14,7 +13,7 @@ public class ObserveClient implements Client {
     private final String serverURL;
     private int gameID;
 
-    private WebSocketFacade ws;
+    private WebSocketFacade websocket;
     private final NotificationHandler notificationHandler;
 
     ObserveClient(String serverURL, NotificationHandler notificationHandler, int gameID) {
@@ -33,7 +32,7 @@ public class ObserveClient implements Client {
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
             case "redraw" -> redraw();
-            case "leave" -> leave();
+            case "leave" -> leaveObserve();
             case "highlight" -> highlight(params);
             case "help" -> help();
             case "quit" -> Repl.quitingMessage;
@@ -41,9 +40,9 @@ public class ObserveClient implements Client {
         };
     }
 
-    public String leave() {
-        ws = new WebSocketFacade(serverURL, notificationHandler);
-        ws.leaveChessGame(ServerFacade.getAuthToken(), gameID);
+    public String leaveObserve() {
+        websocket = new WebSocketFacade(serverURL, notificationHandler);
+        websocket.leaveChessGame(ServerFacade.getAuthToken(), gameID);
         Repl.client = new PostLoginClient(this.serverURL, notificationHandler);
 
         Repl.userPerspectiveColor = null;

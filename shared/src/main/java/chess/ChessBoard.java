@@ -66,12 +66,6 @@ public class ChessBoard {
         return board[yRow][xCol];
     }
 
-    public ChessPiece getPieceRaw(ChessPosition position){
-        int yRow = position.getRow();
-        int xCol = position.getColumn();
-        return board[yRow][xCol];
-    }
-
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)

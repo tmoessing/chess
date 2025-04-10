@@ -90,13 +90,15 @@ public class WebSocketHandler {
         ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
 
         if (chessPieceColor != userColor) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Error: Attempted to Move Opponent"));
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    new Gson().toJson("Error: Attempted to Move Opponent"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
         }
 
         if (chessGame.isGameStateOver()) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Error: Attempted Move After Game End"));
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    new Gson().toJson("Error: Attempted Move After Game End"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
         }

@@ -158,31 +158,17 @@ public class ChessBoardBuilder {
     }
 
     public int colNumber(char letter, ChessGame.TeamColor playerColor) {
-        if (playerColor.equals(ChessGame.TeamColor.BLACK)) {
-            return switch (letter) {
-                case 'a' -> 1;
-                case 'b' -> 2;
-                case 'c' -> 3;
-                case 'd' -> 4;
-                case 'e' -> 5;
-                case 'f' -> 6;
-                case 'g' -> 7;
-                case 'h' -> 8;
-                default -> throw new IllegalStateException("Unexpected value: " + letter);
-            };
-        } else {
-            return switch (letter) {
-                case 'a' -> 1;
-                case 'b' -> 2;
-                case 'c' -> 3;
-                case 'd' -> 4;
-                case 'e' -> 5;
-                case 'f' -> 6;
-                case 'g' -> 7;
-                case 'h' -> 8;
-                default -> throw new IllegalStateException("Unexpected value: " + letter);
-            };
-        }
+        return switch (letter) {
+            case 'a' -> 1;
+            case 'b' -> 2;
+            case 'c' -> 3;
+            case 'd' -> 4;
+            case 'e' -> 5;
+            case 'f' -> 6;
+            case 'g' -> 7;
+            case 'h' -> 8;
+            default -> throw new IllegalStateException("Unexpected value: " + letter);
+        };
     }
 
     private boolean validatePosition(String pos) {
@@ -315,4 +301,3 @@ public class ChessBoardBuilder {
         return new ChessMove(chessBoardStartPosition, chessBoardEndPosition, pawnPromotionPiece);
     }
 }
-
