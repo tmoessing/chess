@@ -35,6 +35,12 @@ public class ChessBoardBuilder {
         this.draw();
     }
 
+    public void updateGame(ChessGame chessGame, ChessGame.TeamColor userPerspectiveColor){
+        this.userPerspectiveColor = userPerspectiveColor;
+        this.chessGame = chessGame;
+        this.chessBoard = chessGame.getBoard();
+    }
+
     public void draw() {
         System.out.print("\nTurn: " + chessGame.getTeamTurn() + "\n");
         System.out.print(EscapeSequences.moveCursorToLocation(0, 0));
@@ -67,7 +73,7 @@ public class ChessBoardBuilder {
                 if ((row % 2 == 0 && col % 2 == 0) || (row % 2 != 0 && col % 2 != 0)){
                     square += SET_BG_COLOR_DARK_GREEN;
                 } else {
-                   square +=  SET_BG_COLOR_LIGHT_GREY;
+                    square +=  SET_BG_COLOR_LIGHT_GREY;
                 }
                 clientChessBoard[row][col] = square;
             }
@@ -81,10 +87,10 @@ public class ChessBoardBuilder {
                 int userCol;
                 if (userPerspectiveColor == ChessGame.TeamColor.BLACK) {
                     userRow = Math.abs((row+1));
-                    userCol = Math.abs((col+1));
+                    userCol = Math.abs((8-col));
                 } else {
-                    userRow = Math.abs((row) - 8);
-                    userCol = Math.abs((col) - 8);
+                    userRow = Math.abs((row)-8);
+                    userCol = Math.abs((col+1));
                 }
                 ChessPiece chessPiece = chessBoard.getPiece(new ChessPosition(userRow, userCol));
                 if (chessPiece == null) {
@@ -114,7 +120,6 @@ public class ChessBoardBuilder {
                 }
             }
         }
-        var x = 9;
     }
 
     private void initializeBorder() {
@@ -129,40 +134,40 @@ public class ChessBoardBuilder {
             colHeader = BLACK_COL_HEADER;
         }
 
-       for (int col = 0; col < 10; col++) {
+        for (int col = 0; col < 10; col++) {
             String square = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_YELLOW;
             if (1 <= col & col <= 8 ){
                 square +=  " " + rowHeader[col-1] + " ";
             } else {
                 square += EMPTY;
             }
-           clientBorder[0][col] = square;
-           clientBorder[9][col] = square;
-       }
+            clientBorder[0][col] = square;
+            clientBorder[9][col] = square;
+        }
 
-       for (int row = 0; row < 10; row++) {
-           String square = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_YELLOW;
-           if (1 <= row & row <= 8 ){
-               square += " " + colHeader[row-1] + " ";
-           } else {
-               square += EMPTY;
-           }
-           clientBorder[row][0] = square;
-           clientBorder[row][9] = square;
-       }
+        for (int row = 0; row < 10; row++) {
+            String square = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_YELLOW;
+            if (1 <= row & row <= 8 ){
+                square += " " + colHeader[row-1] + " ";
+            } else {
+                square += EMPTY;
+            }
+            clientBorder[row][0] = square;
+            clientBorder[row][9] = square;
+        }
     }
 
     public int colNumber(char letter, ChessGame.TeamColor playerColor) {
         if (playerColor.equals(ChessGame.TeamColor.BLACK)) {
             return switch (letter) {
-                case 'h' -> 1;
-                case 'g' -> 2;
-                case 'f' -> 3;
-                case 'e' -> 4;
-                case 'd' -> 5;
-                case 'c' -> 6;
-                case 'b' -> 7;
-                case 'a' -> 8;
+                case 'a' -> 1;
+                case 'b' -> 2;
+                case 'c' -> 3;
+                case 'd' -> 4;
+                case 'e' -> 5;
+                case 'f' -> 6;
+                case 'g' -> 7;
+                case 'h' -> 8;
                 default -> throw new IllegalStateException("Unexpected value: " + letter);
             };
         } else {
@@ -182,7 +187,7 @@ public class ChessBoardBuilder {
 
     private boolean validatePosition(String pos) {
         if (pos.length() != 2) {
-            System.out.println("Invalid use of Highlight");
+            System.out.println("Invalid use of command");
             return false;
         }
         return true;
@@ -190,13 +195,9 @@ public class ChessBoardBuilder {
 
     public int getRowFromPos(String pos, ChessGame.TeamColor playerColor) throws Exception {
         int rowInt;
-        if (playerColor == ChessGame.TeamColor.WHITE) {
-            rowInt = Math.abs(Character.getNumericValue(pos.charAt(1)) - 9);
-        } else {
-            rowInt = Character.getNumericValue(pos.charAt(1));
-        }
+        rowInt = Math.abs(Character.getNumericValue(pos.charAt(1)) - 9);
         if (rowInt == 0 || rowInt == 9) {
-            throw new Exception("Invalid use of Highlight");
+            throw new Exception("Invalid use of command");
         }
 
         return rowInt;
@@ -206,7 +207,7 @@ public class ChessBoardBuilder {
     public int getColFromPos(String pos, ChessGame.TeamColor playerColor) throws Exception {
         char colChar = pos.charAt(0);
         if (!Arrays.asList(WHITE_ROW_HEADER).contains(String.valueOf(colChar))) {
-            throw new Exception("Invalid use of Highlight");
+            throw new Exception("Invalid use of command");
         }
         int colInt = colNumber(colChar, playerColor);
         return colInt;
@@ -224,26 +225,36 @@ public class ChessBoardBuilder {
         int rowInt;
         int colInt;
         try {
-            rowInt = getRowFromPos(pos, playerColor);
-            colInt = getColFromPos(pos, playerColor);
+            rowInt = getRowFromPos(pos, playerColor)-1;
+            colInt = getColFromPos(pos, playerColor)-1;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
         }
 
-        ChessPiece chessPiece = this.chessBoard.getPiece(new ChessPosition(rowInt, colInt));
+        ChessPosition chessPosition = new ChessPosition(8-rowInt, colInt+1);
+        ChessPiece chessPiece = this.chessBoard.getPiece(chessPosition);
 
         if (chessPiece == null) {
             System.out.println("No Piece in Position");
             return;
         }
 
-        clientChessBoard[rowInt-1][colInt-1] = SET_BG_COLOR_MAGENTA;
+        if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
+            clientChessBoard[rowInt][colInt] = SET_BG_COLOR_MAGENTA;
+        } else {
+            clientChessBoard[7-rowInt][7-colInt] = SET_BG_COLOR_MAGENTA;
+        }
 
-        Collection<ChessMove> possibleMoves = chessGame.validMoves(new ChessPosition(rowInt, colInt));
+
+        Collection<ChessMove> possibleMoves = chessGame.validMoves(chessPosition);
         for (ChessMove chessMove : possibleMoves) {
-            ChessPosition chessPosition = chessMove.getEndPosition();
-            clientChessBoard[chessPosition.getRow()-1][chessPosition.getColumn()-1] = SET_BG_COLOR_GREEN;
+            ChessPosition chessValidPosition = chessMove.getEndPosition();
+            if (playerColor.equals(ChessGame.TeamColor.WHITE)) {
+                clientChessBoard[Math.abs(8 - chessValidPosition.getRow())][Math.abs(1 - chessValidPosition.getColumn())] = SET_BG_COLOR_GREEN;
+            } else {
+                clientChessBoard[Math.abs(1 - chessValidPosition.getRow())][Math.abs(8 - chessValidPosition.getColumn())] = SET_BG_COLOR_GREEN;
+            }
         }
 
         this.drawBoard();
@@ -256,30 +267,32 @@ public class ChessBoardBuilder {
             return null;
         }
 
+        // Create Board Move for Board
         int startPosRowInt;
         int startPosColInt;
         int endPosRowInt;
         int endPosColInt;
         try {
-            startPosRowInt = getRowFromPos(startPos, playerColor);
-            startPosColInt = getColFromPos(startPos, playerColor);
-            endPosRowInt = getRowFromPos(startPos, playerColor);
-            endPosColInt = getColFromPos(startPos, playerColor);
+            startPosRowInt = getRowFromPos(startPos, playerColor)-1;
+            startPosColInt = getColFromPos(startPos, playerColor)-1;
+            endPosRowInt = getRowFromPos(endPos, playerColor)-1;
+            endPosColInt = getColFromPos(endPos, playerColor)-1;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
 
-        ChessPosition chessStartPosition = new ChessPosition(startPosRowInt, startPosColInt);
-        ChessPosition chessEndPosition = new ChessPosition(endPosRowInt, endPosColInt);
+        ChessPosition chessBoardStartPosition = new ChessPosition(8-startPosRowInt, startPosColInt+1);
+        ChessPosition chessBoardEndPosition = new ChessPosition(8-endPosRowInt, endPosColInt+1);
 
-        ChessPiece chessPiece = this.chessBoard.getPiece(chessStartPosition);
+        ChessPiece chessPiece = this.chessBoard.getPiece(chessBoardStartPosition);
 
         // Handle Pawn Promotion
         ChessPiece.PieceType pawnPromotionPiece = null;
 
         if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if (playerColor == ChessGame.TeamColor.WHITE && chessEndPosition.getRow() == 7) {
+            if ((playerColor == ChessGame.TeamColor.WHITE && chessBoardEndPosition.getRow() == 7) ||
+                    (playerColor == ChessGame.TeamColor.BLACK && chessBoardEndPosition.getRow() == 2)) {
                 Scanner scanner = new Scanner(System.in);
                 while (pawnPromotionPiece == null) {
                     System.out.print("Pawn Promotion: Select Q(Queen), B(Bishop), R(Rook), K(Knight)");
@@ -299,15 +312,7 @@ public class ChessBoardBuilder {
             }
         }
 
-        ChessMove chessMove = new ChessMove(chessStartPosition, chessEndPosition, pawnPromotionPiece);
-
-        Collection<ChessMove> possibleMoves = chessGame.validMoves(chessStartPosition);
-        if (!possibleMoves.contains(chessMove)) {
-            System.out.println("Chess Move is not valid. Please Try Again");
-            return null;
-        }
-
-        return chessMove;
+        return new ChessMove(chessBoardStartPosition, chessBoardEndPosition, pawnPromotionPiece);
     }
 }
 

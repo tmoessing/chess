@@ -123,16 +123,16 @@ public class ChessGame {
                     continue;
                 }
 
-                // Check EnPassant Conditions
-                this.setCanEnPassant(indexChessPosition, chessPiece);
-                if (this.canEnPassant) {
-                    ChessMove enPassantMove = this.createEnPassantMove(indexChessPosition, chessPiece);
-                    validTeamColorChessMovesCollection.add(enPassantMove);
-                }
-
-                // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
-                Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
-                validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
+//                // Check EnPassant Conditions
+//                this.setCanEnPassant(indexChessPosition, chessPiece);
+//                if (this.canEnPassant) {
+//                    ChessMove enPassantMove = this.createEnPassantMove(indexChessPosition, chessPiece);
+//                    validTeamColorChessMovesCollection.add(enPassantMove);
+//                }
+//
+//                // Add Chess Piece Valid Moves Collection to validTeamColorChessMovesCollection
+//                Collection<ChessMove> validChessPieceMovesCollection = chessPiece.pieceMoves(this.chessBoard, indexChessPosition);
+//                validTeamColorChessMovesCollection.addAll(validChessPieceMovesCollection);
             }
         }
 
@@ -321,6 +321,10 @@ public class ChessGame {
         // Check for a previous move
         if (this.lastChessMove != null) {
             ChessPiece lastChessPieceMoved = this.chessBoard.getPiece(this.lastChessMove.getEndPosition());
+            if (lastChessPieceMoved == null) {
+                this.canEnPassant = false;
+                return;
+            }
             // Check if last piece moved is a pawn and moved twice
             if ((lastChessPieceMoved.getPieceType() == ChessPiece.PieceType.PAWN) &&
                     (Math.abs(this.lastChessMove.getStartPosition().getRow() -

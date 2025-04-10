@@ -17,7 +17,9 @@ import static ui.EscapeSequences.*;
 public class Repl implements NotificationHandler {
     public static Client client;
     public static String quitingMessage = "Quiting: Thanks for playing!";
+
     public static ChessGame.TeamColor userPerspectiveColor;
+    public static ChessBoardBuilder chessBoardBuilder = new ChessBoardBuilder(new ChessGame(), userPerspectiveColor);
 
     public Repl(String serverURL) {
         client = new PreLoginClient(serverURL, this);
@@ -66,8 +68,9 @@ public class Repl implements NotificationHandler {
     }
 
     private void loadGame(LoadGame message) {
-        ChessBoardBuilder chessBoardBuilder = new ChessBoardBuilder(message.getGame(), userPerspectiveColor);
-        chessBoardBuilder.run();
+        Repl.chessBoardBuilder.updateGame(message.getGame(), userPerspectiveColor);
+
+        Repl.chessBoardBuilder.run();
         printPrompt();
     }
 

@@ -90,14 +90,15 @@ public class WebSocketHandler {
         ChessGame.TeamColor userColor = gameDAO.userColor(gameID, username);
 
         if (chessPieceColor != userColor) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Attempting to Move Opponent"));
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Error: Attempted to Move Opponent"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
             return;
         }
 
         if (chessGame.isGameStateOver()) {
-            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Attempted Move After Resign"));
+            var serverMessageNotification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, new Gson().toJson("Error: Attempted Move After Resign"));
             session.getRemote().sendString(new Gson().toJson(serverMessageNotification));
+            return;
         }
 
         // Make Move
@@ -124,7 +125,7 @@ public class WebSocketHandler {
         }
 
 
-        var message = new Gson().toJson(String.format("%s made move ", username));
+        var message = new Gson().toJson(String.format("%s made move %s", username, stringifyMove(chessMove)));
         var serverMessageNotification = new Notification(NOTIFICATION, message);
         connections.broadcast(username, gameID,  serverMessageNotification);
         var serverMessageLoadGame = new LoadGame(LOAD_GAME, chessGame);
@@ -132,10 +133,27 @@ public class WebSocketHandler {
     }
 
     private String stringifyMove(ChessMove chessMove) {
-        ChessPosition startPosition = chessMove.getStartPosition();
-        ChessPosition endPosition = chessMove.getStartPosition();
+        ChessPosition startPos = chessMove.getStartPosition();
+        ChessPosition endPos = chessMove.getEndPosition(); // Fixed
 
-        return "";
+        String startPosString = colGetter(startPos) + String.valueOf(startPos.getRow());
+        String endPosString = colGetter(endPos) + String.valueOf(endPos.getRow());
+
+        return startPosString + " to " + endPosString;
+    }
+
+    private char colGetter(ChessPosition chessPosition) {
+        switch (chessPosition.getCol()) {
+            case 1 -> {return 'a';}
+            case 2 -> {return 'b';}
+            case 3 -> {return 'c';}
+            case 4 -> {return 'd';}
+            case 5 -> {return 'e';}
+            case 6 -> {return 'f';}
+            case 7 -> {return 'g';}
+            case 8 -> {return 'h';}
+            default -> {return ' ';}
+        }
     }
 
     private void leave(int gameID, String username) throws IOException {

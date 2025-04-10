@@ -9,6 +9,9 @@ import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
+import static ui.Repl.chessBoardBuilder;
+import static ui.Repl.userPerspectiveColor;
+
 public class InGameClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
@@ -17,9 +20,6 @@ public class InGameClient implements Client {
     private final NotificationHandler notificationHandler;
 
     private int gameID;
-    private ChessGame.TeamColor playerColor;
-    private ChessBoardBuilder chessBoardBuilder;
-
 
     InGameClient(String serverURL, NotificationHandler notificationHandler, int gameID) {
         this.serverURL = serverURL;
@@ -59,26 +59,29 @@ public class InGameClient implements Client {
     }
 
     public String move(String... params) {
-        if ((chessBoardBuilder.chessGame.getTeamTurn()).equals(this.playerColor)) {
-            return "";
-        } else if (params.length == 2) {
-            String startPos = params[0];
-            String endPos = params[1];
-            ChessMove chessMove = chessBoardBuilder.makeMove(gameID, startPos, endPos, this.playerColor);
-            if (chessMove != null) {
-                ws = new WebSocketFacade(serverURL, notificationHandler);
-                ws.makeMove(ServerFacade.getAuthToken(), gameID, chessMove);
+        if ((chessBoardBuilder.chessGame.getTeamTurn()).equals(userPerspectiveColor)) {
+            if ((params.length == 2)) {
+                String startPos = params[0];
+                String endPos = params[1];
+                ChessMove chessMove = chessBoardBuilder.makeMove(gameID, startPos, endPos, userPerspectiveColor);
+                if (chessMove != null) {
+                    ws = new WebSocketFacade(serverURL, notificationHandler);
+                    ws.makeMove(ServerFacade.getAuthToken(), gameID, chessMove);
+                }
+                return "";
+            } else {
+                return "Invalid use of move";
             }
-            return "";
+        } else {
+            return "Not your Turn";
         }
-        return "Not your Turn";
     }
 
 
     public String highlight(String... params) {
         if (params.length == 1) {
             String pos = params[0];
-            chessBoardBuilder.highlightMoves(pos, this.playerColor);
+            chessBoardBuilder.highlightMoves(pos, Repl.userPerspectiveColor);
             return "";
         }
         return "Invalid use of highlight";

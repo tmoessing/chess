@@ -7,6 +7,8 @@ import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
+import static ui.Repl.chessBoardBuilder;
+
 public class ObserveClient implements Client {
     private final ServerFacade server;
     private final String serverURL;
@@ -14,9 +16,6 @@ public class ObserveClient implements Client {
 
     private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
-
-    private ChessBoardBuilder chessBoardBuilder;
-
 
     ObserveClient(String serverURL, NotificationHandler notificationHandler, int gameID) {
         this.serverURL = serverURL;
@@ -33,6 +32,7 @@ public class ObserveClient implements Client {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
+            case "redraw" -> redraw();
             case "leave" -> leave();
             case "highlight" -> highlight(params);
             case "help" -> help();
@@ -50,8 +50,19 @@ public class ObserveClient implements Client {
         return "Welcome back to the home page!";
     }
 
-    public String highlight(String[] ... params) {
+    public String redraw() {
+        System.out.print("Redrawing Board...\n");
+        chessBoardBuilder.run();
         return "";
+    }
+
+    public String highlight(String... params) {
+        if (params.length == 1) {
+            String pos = params[0];
+            chessBoardBuilder.highlightMoves(pos, Repl.userPerspectiveColor);
+            return "";
+        }
+        return "Invalid use of highlight";
     }
 
     public String help() {
@@ -59,6 +70,7 @@ public class ObserveClient implements Client {
                 "\n leave - leave the game being observed" +
                 "\n help - get help with possible commands" +
                 "\n quit - quit the application" +
-                "\n highlight <row,col> - highlight possible moves";
+                "\n highlight <row,col> - highlight possible moves" +
+                "\n redraw - redraw board";
     }
 }
